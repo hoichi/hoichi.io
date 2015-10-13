@@ -1,0 +1,14 @@
+@import url(http://fonts.googleapis.com/css?family=Rambla:400,400italic,700,700italic);
+
+$fonts: (
+  copy: (Rambla, Helvetica, sans-serif),
+  headers: (Rambla, Helvetica, sans-serif)
+);
+
+body {
+  // We could use shorthand if libsass didn't try to _divide_ font-size by font-height ;)
+  font-weight: normal;
+  font-size: ms(0);
+  line-height: 1.5;
+  font-family: map-get($fonts, copy);
+}
