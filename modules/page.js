@@ -3,12 +3,10 @@
 const   fm = require('front-matter'),
         fs = require('fs'),
         path = require('path'),
-        stampit = require('stampit');
+        u = require('./utils.js');
 
-/*
- *  Takes a source object with a source path etc. And the options from the global config.
- */
-function Page(source, options) {
+
+function pageFabric() {
     var _isReady = false,
         _category,      // post category
         _content,       // post content in HTML (HTML is lingua franca and we're agnostic
@@ -21,33 +19,39 @@ function Page(source, options) {
         _slug,          // the part of the URL after the last slash
         _source,        // an object dealing with the MD source (do we need to expose it in API?)
         _style,         // looks specific to the page
-        _tags;          // a bunch of post tags
+        _tags,          // a bunch of post tags
+        _time;          // a dateString, etc. '25 Dec 1995 13:30:00 +0430'
 
-    function ifReadyCb(cb) {
-        if (!_isReady) {
-            throw new Error('Object Page should be properly filled before you can consume it\'s data. Use `fromSource` or something.');
-        } else {
-            return cb();
-        }
+    return getApi();
+
+
+    function getApi() {
+        return {
+            get category()      {return ifReady(_category)},
+            get content()       {return ifReady(_content)},
+            get description()   {return ifReady(_description)},
+            get excerpt()       {return ifReady(_excerpt)},
+            get title()         {return ifReady(_title)},
+            get slug()          {return ifReady(_slug)},
+            get style()         {return ifReady(_style)},
+            get tags()          {return ifReady(_tags)},
+            get time()          {return ifReady(_time)},
+
+            url() {return `${_category}/${_slug}`; },   // todo
+
+            prev() {return _site.prev(_index)},         // todo
+
+            next() {return _site.next(_index)},         // todo
+
+            ready,
+            fromSource
+        };
     }
 
-    function ifReady(val) {
-        if (!_isReady) {
-            throw new Error('Object Page should be properly filled before you can consume it\'s data. Use `fromSource` or something.');
-        } else {
-            return val;
-        }
-    }
-
-    function ready(val) {
-        if (typeof val !== 'undefined' && typeof val !== 'null') {
-            _isReady = !!val;
-        }
-
-        return val;
-    }
-
-    function fromSource(source, options) {
+    /*
+     *  Takes a source object with a source path etc. And the options from the global config.
+     */
+    function fromSource(source, site, options) {
         // fixme: нужны ли дефолты здесь?
         const cfg = Object.assign({
             defCat: 'blog',
@@ -71,19 +75,22 @@ function Page(source, options) {
         try {
             ({attributes: meta, body} = fm(srcCont));
         } catch(Err) {
-            throw new Error(`Reading front-matter failed (${Err.message}`);
+            throw new Error(`Reading front-matter failed (${Err.message})`);
         }
 
         try {
             _content = cfg.markup(body);
         } catch(Err) {
-            throw new Error("Markup conversion failed:\n" + Err.message);
+            throw new Error(`Markup conversion failed (${Err.message})`);
         }
+
+        _site   = site;
 
         _category       = meta.category     || cfg.defCat;
         _excerpt        = meta.excerpt      || '';          // todo: first paragraph
         _description    = meta.description  || _excerpt;
-        _title          = meta.title        || '';
+        _time           = meta.time         || new Date();
+        _title          = meta.title        || 'No title';
         _tags           = meta.tags         || [];
 
         _isStub = (meta.isStub || !_title || !_content);
@@ -92,38 +99,41 @@ function Page(source, options) {
             _content = _description = _excerpt = '';
         }
 
-        _slug = slugify(_title);
+        _slug = meta.slug || u.slugify(_title);
+
+        _isReady = true;
+
+        return getApi();
     }
 
-    return {
-        get category()      {return ifReady(_category)},
-        get content()       {return ifReady(_content)},
-        get description()   {return ifReady(_description)},
-        get excerpt()       {return ifReady(_excerpt)},
-        get title()         {return ifReady(_title)},
-        get slug()          {return ifReady(_slug)},
-        get tags()          {return ifReady(_tags)},
+    function ifReadyCb(cb) {
+        if (!_isReady) {
+            throw new Error('Object Page should be properly filled before you can consume it\'s data. Use `fromSource` or something.');
+        } else {
+            return cb();
+        }
+    }
 
-        url() {return `${_p.category}/${_p.slug}`;    /*todo*/ },
+    function ifReady(val) {
+        if (!_isReady) {
+            throw new Error(`Object Page should be properly filled before you can consume it's data. Use \`fromSource\` or something.`);
+        } else {
+            return val;
+        }
+    }
 
-        prev() {return _p.site.prev(_p.index)},
+    function ready(val) {
+        if (typeof val !== 'undefined' &&
+            (val !== null || typeofval !== 'object') )
+        {
+            _isReady = !!val;
+        }
 
-        next() {return _p.site.next(_p.index)},
-
-        ready,
-        fromSource
-    };
-
-    function slugify(s) {
-        return s.replace(/\s|\W/, '-');
+        return val;
     }
 }
 
-function makeAPath(meta, template) {
-    var re = /\$\((\w+)\)/g;
 
-    return template.replace(
-        re,
-        (_match, key) => {meta[key]}
-    );
+export default {
+    create: pageFabric
 }
