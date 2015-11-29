@@ -3,7 +3,7 @@
     - [x] shorter slugs (from filenames or yfm)
     - [x] <slug>/index.html
     - [x] compile sass (update node-sass)
-    - [ ] build _pages_ (as opposed to posts)
+    - [x] build _pages_ (as opposed to posts)
     - [ ] compile rss
     - [ ] make an all-building task
 - [ ] local server (with browser-sync) so we can check css, for instance

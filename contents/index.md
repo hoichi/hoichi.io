@@ -2,6 +2,8 @@
 permalink: false
 title: Hoichi Behind The Frontend 
 template: index.jade
+path: ./
+slug: ''
 ---
 
 # And so it starts.

@@ -110,9 +110,7 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
                 },
                 html = tpl(data);
 
-        // ++ get the path and the slug
-        // ++ write a file
-        let fullPath = path.resolve(cfg.rootDir, `build/blog/${post.slug}/index.html`);
+        let fullPath = path.resolve(cfg.rootDir, `build`, post.path, post.slug, `index.html`);
         u.makePathSync(fullPath);
         fs.writeFileSync(fullPath, html, {flag: 'w+'});
 

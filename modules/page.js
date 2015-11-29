@@ -1,41 +1,45 @@
 'use strict';
 
-const   fm = require('front-matter'),
-        fs = require('fs'),
-        path = require('path'),
-        u = require('./utils.js');
+const   fm =    require('front-matter'),
+        fs =    require('fs'),
+        _ =     require('lodash'),
+        path =  require('path'),
+        u =     require('./utils.js');
 
 
 function pageFabric() {
-    var _isReady = false,
-        _category,      // post category
-        _content,       // post content in HTML (HTML is lingua franca and we're agnostic
+    var _p = {
+        isReady: false,
+        category: '',       // post category
+        content: '',        // post content in HTML (HTML is lingua franca and we're agnostic
                             // of original markup as much as possible)
-        _description,   // post description for meta, search engines and prob. TOCs and archive stuff
-        _excerpt,       // before the fold
-        _isStub = false,
-        _title,
-        _site,          // the object for the site that contains the page
-        _slug,          // the part of the URL after the last slash
-        _source,        // an object dealing with the MD source (do we need to expose it in API?)
-        _style,         // looks specific to the page
-        _tags,          // a bunch of post tags
-        _time;          // a dateString, etc. '25 Dec 1995 13:30:00 +0430'
+        description: '',    // post description for meta, search engines and prob. TOCs and archive stuff
+        excerpt: '',        // before the fold
+        isStub: false,
+        path: '',           // the part between the building dir and the slug
+        site: null,         // the object for the site that contains the page
+        slug: '',           // the part of the URL after the last slash
+        style: {},          // looks specific to the page
+        tags: [],           // a bunch of post tags
+        time: new Date(),   // a dateString, etc. '25 Dec 1995 13:30:00 +0430'
+        title: ''
+    };
 
     return getApi();
 
 
     function getApi() {
         return {
-            get category()      {return ifReady(_category)},
-            get content()       {return ifReady(_content)},
-            get description()   {return ifReady(_description)},
-            get excerpt()       {return ifReady(_excerpt)},
-            get title()         {return ifReady(_title)},
-            get slug()          {return ifReady(_slug)},
-            get style()         {return ifReady(_style)},
-            get tags()          {return ifReady(_tags)},
-            get time()          {return ifReady(_time)},
+            get category()      {return ifReady(_p.category)},
+            get content()       {return ifReady(_p.content)},
+            get description()   {return ifReady(_p.description)},
+            get excerpt()       {return ifReady(_p.excerpt)},
+            get path()          {return ifReady(_p.path)},
+            get slug()          {return ifReady(_p.slug)},
+            get style()         {return ifReady(_p.style)},
+            get tags()          {return ifReady(_p.tags)},
+            get time()          {return ifReady(_p.time)},
+            get title()         {return ifReady(_p.title)},
 
             url() {return `${_category}/${_slug}`; },   // todo
 
@@ -53,13 +57,13 @@ function pageFabric() {
      */
     function fromSource(source, site, options) {
         // fixme: нужны ли дефолты здесь?
-        const cfg = Object.assign({
-            defCat: 'blog',
-            extensions: '*',
-            encoding: 'UTF-8',
-            markup: s => s,  /* do nufin' by default. agnostic, muthafucka! */
-            rootDir: __dirname
-        }, options);
+        const   cfg = Object.assign({
+                    defCat: 'blog',
+                    extensions: '*',
+                    encoding: 'UTF-8',
+                    markup: s => s,  /* do nufin' by default. agnostic, muthafucka! */
+                    rootDir: __dirname
+                }, options);
 
         const baseParser = new RegExp(`(.*)\.(${cfg.extensions})`);
 
@@ -70,8 +74,6 @@ function pageFabric() {
             meta,
             body;
 
-        _source = source;
-
         try {
             ({attributes: meta, body} = fm(srcCont));
         } catch(Err) {
@@ -79,35 +81,42 @@ function pageFabric() {
         }
 
         try {
-            _content = cfg.markup(body);
+            _p.content = cfg.markup(body);
         } catch(Err) {
             throw new Error(`Markup conversion failed (${Err.message})`);
         }
 
-        _site   = site;
+        const   pageDefaults = {
+            category: cfg.defCat,
+            path: cfg.defCat,
+            /* $TODO: maybe parse default path from the relative path? Or maybe it should be a callback/template from cfg (or passed options) that can use relative path, category, default category, whatevs. */
+            slug: u.slugify(meta.title),
+            title: '* * *'
+        };
 
-        _category       = meta.category     || cfg.defCat;
-        _excerpt        = meta.excerpt      || '';          // todo: first paragraph
-        _description    = meta.description  || _excerpt;
-        _time           = meta.time         || new Date();
-        _title          = meta.title        || 'No title';
-        _tags           = meta.tags         || [];
+        _.assign(
+            _p,
+            pageDefaults,
+            meta,
+            {
+                site: site,
+                isStub: meta.isStub || !meta.title || !body,
 
-        _isStub = (meta.isStub || !_title || !_content);
-        if (_isStub) {
+                isReady: true
+            }
+        );
+
+        // some post-meta logic
+        if (_p.isStub) {
             // not sure if it actually frees any memory immediately but let's try
-            _content = _description = _excerpt = '';
+            _p.content = _p.description = _p.excerpt = '';
         }
-
-        _slug = meta.slug || u.slugify(_title);
-
-        _isReady = true;
 
         return getApi();
     }
 
     function ifReadyCb(cb) {
-        if (!_isReady) {
+        if (!_p.isReady) {
             throw new Error('Object Page should be properly filled before you can consume it\'s data. Use `fromSource` or something.');
         } else {
             return cb();
@@ -115,7 +124,7 @@ function pageFabric() {
     }
 
     function ifReady(val) {
-        if (!_isReady) {
+        if (!_p.isReady) {
             throw new Error(`Object Page should be properly filled before you can consume it's data. Use \`fromSource\` or something.`);
         } else {
             return val;
@@ -126,7 +135,7 @@ function pageFabric() {
         if (typeof val !== 'undefined' &&
             (val !== null || typeofval !== 'object') )
         {
-            _isReady = !!val;
+            _p.isReady = !!val;
         }
 
         return val;
