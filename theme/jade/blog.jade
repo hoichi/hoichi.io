@@ -1,0 +1,13 @@
+extends ./page/page.jade
+//-
+block content
+    each post in posts
+        .b-post
+            h1.b-post__header
+                a.b-post__header-link(href=post.link)= post.title
+            .b-post-meta
+            .b-post__body
+                p !{post.excerpt}
+            .b-post-footer
+                p
+                    a.b-post__more(href=post.link+'#fold') Read more

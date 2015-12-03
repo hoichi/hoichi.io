@@ -4,7 +4,14 @@
     - [x] <slug>/index.html
     - [x] compile sass (update node-sass)
     - [x] build _pages_ (as opposed to posts)
-    - [ ] compile rss
+    - [ ] build collections
+        - [x] blog feed
+            - [x] take the first 10 or so (no pagination so far)
+            - [x] feed it to the template function
+            - [x] fix jade
+        - [x] rss feed
+        - [ ] exclude home page from feeds
+    - [ ] copy assets
     - [ ] make an all-building task
 - [ ] local server (with browser-sync) so we can check css, for instance
 - [ ] finish the site

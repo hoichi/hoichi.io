@@ -32,8 +32,10 @@ function pageFabric() {
         return {
             get category()      {return ifReady(_p.category)},
             get content()       {return ifReady(_p.content)},
+            get date()          {return ifReady(_p.time)},
             get description()   {return ifReady(_p.description)},
             get excerpt()       {return ifReady(_p.excerpt)},
+            get link()          {return ifReady( path.join(_p.path, _p.slug) )},
             get path()          {return ifReady(_p.path)},
             get slug()          {return ifReady(_p.slug)},
             get style()         {return ifReady(_p.style)},
@@ -107,6 +109,12 @@ function pageFabric() {
         );
 
         // some post-meta logic
+        if (!_p.excerpt) {
+            [, _p.excerpt] = /<p>(.*)?<\/p>/.exec(_p.content);
+            // $TODO: take it from non-parsed markdown? maybe?
+            // $TODO: look up all those excerpts, teasers and other page anatomy
+        }
+
         if (_p.isStub) {
             // not sure if it actually frees any memory immediately but let's try
             _p.content = _p.description = _p.excerpt = '';

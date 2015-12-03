@@ -14,6 +14,7 @@ const api = {
     get collections()   {return ifReady(_content)},
     get data()          {return ifReady(_data)},
     get description()   {return ifReady(_description)},
+    get domain()        {return ifReady(_domain)},
     get pages()         {return ifReady(_pages)},
     get posts()         {return ifReady(_posts)},
     get time()          {return ifReady(_time)},
@@ -27,6 +28,7 @@ var _isReady = false,
     _categories,
     _data,
     _description,
+    _domain,
     _pages,
     _posts,
     _tags,
@@ -38,6 +40,7 @@ function init() {
     _categories = ['blog'];
     _data = {};
     _description = '';
+    _domain = 'hoichi.io';
     _pages = [];
     _posts = [];
     _tags = [];
