@@ -13,7 +13,8 @@
         - [ ] exclude home page from feeds
     - [ ] copy assets
     - [ ] make an all-building task
-- [ ] local server (with browser-sync) so we can check css, for instance
+- [ ] local server (with browser-sync) so we can check rss, for instance
+    - [ ] check rss
 - [ ] finish the site
     - [ ] layout
         - [ ] single posts

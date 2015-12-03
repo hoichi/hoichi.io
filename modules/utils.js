@@ -47,11 +47,19 @@ function makePathSync(sPath, options = {}) {
             fs.mkdirSync(dir);
         }
     });
+}
 
+function renderTemplate(tpl, data, dirs) {
+    const   html = tpl(data),
+            sPath = Array.isArray(dirs) ? path.join(...dirs) : dirs;
+
+    makePathSync(sPath);
+    fs.writeFileSync(sPath, html, {flag: 'w+'});
 }
 
 module.exports = {
     makePathSync,
+    renderTemplate,
     slugify,
     tplToPath
 };

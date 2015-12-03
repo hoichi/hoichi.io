@@ -104,35 +104,27 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
     }
 
     site.posts.forEach(function gtScatter_forEachPost(post, idx) {
-        const   tpl     = cfg.layouts['single'],
-                data = {
-                    'page':post
-                },
-                html = tpl(data);
-
-        let fullPath = path.resolve(cfg.rootDir, `build`, post.path, post.slug, `index.html`);
-        u.makePathSync(fullPath);
-        fs.writeFileSync(fullPath, html, {flag: 'w+'});
+        u.renderTemplate(
+            cfg.layouts['single'],
+            {page:post, site},
+            [cfg.rootDir, `build`, post.path, post.slug, `index.html`]
+        );
 
         //$TODO: use post.layout (or should a ~~post~~ page type mean more than just layout?)
-
         //$TODO: pagination
     });
 
-    const   forFeed = site.posts.slice(0, 10),
-            feedTpl = cfg.layouts['blog'],
-            feedHtml = feedTpl({posts: forFeed});
-    let fullPath = path.resolve(cfg.rootDir, `build/blog/index.html`);
-    fs.writeFileSync(fullPath, feedHtml, {flag: 'w+'});
+    u.renderTemplate(
+        cfg.layouts['blog'],
+        {posts: site.posts.slice(0, 10), site},
+        [cfg.rootDir, `build/blog/index.html`]
+    );
 
-    const   forRSS = site.posts.slice(0, 20),
-            rssTpl = cfg.layouts['rss'],
-            rssHtml = rssTpl({posts: forRSS, site});
-    fullPath = path.resolve(cfg.rootDir, `build/feed/index.xml`);
-    u.makePathSync(fullPath);
-    fs.writeFileSync(fullPath, rssHtml, {flag: 'w+'});
-
-    // $TODO: abstract the whole render-write cycle
+    u.renderTemplate(
+        cfg.layouts['rss'],
+        {posts: site.posts.slice(0, 20), site},
+        [cfg.rootDir, `build/feed/index.html`]
+    );
 });
 
 gulp.task('renderArchives', ['loadCfg', 'loadJade', 'pages.parse'], function gt_pages_render(cb_t) {
