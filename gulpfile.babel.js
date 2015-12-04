@@ -18,7 +18,6 @@ var _           = require('lodash'),
     rename      = require('gulp-rename'),
     sass        = require('gulp-sass'),
     sourcemaps  = require('gulp-sourcemaps'),
-    through     = require('through2'),
     u           = require('./modules/utils.js'),
     watch       = require('gulp-watch'),
     yaml        = require('js-yaml');
@@ -38,23 +37,6 @@ const cfg = {
     };
 
 var site;
-
-function playTheVinyl(file, fn, opts, cb) { // fixme: we never finish the task
-    var err;
-    try {
-        if (file.isNull() || file.contents === null) {
-            cb(null, file);
-            return;
-        } else if (file.isStream()) {
-            err = new Error('Can\'t compile a stream. Please pass a regular file.');
-            throw err;
-        }
-
-        fn.call(file, opts);    // todo: will we need a callback some day?
-    } catch(e) {
-        cb(e);
-    }
-}
 
 gulp.task('loadCfg', function gt_loadCfg(cb) {
     // just start with loading global stuff
@@ -110,20 +92,27 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
             [cfg.rootDir, `build`, post.path, post.slug, `index.html`]
         );
 
-        //$TODO: use post.layout (or should a ~~post~~ page type mean more than just layout?)
-        //$TODO: pagination
+        // $TODO: use post.layout (or should a ~~post~~ page type mean more than just layout?)
+        // $TODO: pagination
     });
 
     u.renderTemplate(
         cfg.layouts['blog'],
-        {posts: site.posts.slice(0, 10), site},
+        {
+            // $FIXME: de-hardcode, de-heuristicize
+            posts: _(site.posts).filter({'path': 'blog'}).slice(0, 10).value(),
+            site
+        },
         [cfg.rootDir, `build/blog/index.html`]
     );
 
     u.renderTemplate(
         cfg.layouts['rss'],
-        {posts: site.posts.slice(0, 20), site},
-        [cfg.rootDir, `build/feed/index.html`]
+        {
+            posts: _(site.posts).filter({'path': 'blog'}).slice(0, 20).value(),
+            site
+        },
+        [cfg.rootDir, `build/feed/index.xml`]
     );
 });
 
@@ -143,6 +132,13 @@ gulp.task('sass', function gtSass () {
         .pipe(gulp.dest('./build/css'));
 });
 
+gulp.task('static', function gtStatic () {
+    gulp.src('./theme/static/**/*.*')
+        .pipe(gulp.dest('./build/'));
+});
+
 gulp.task('sass:watch', function gtSassWatch () {
     gulp.watch('./theme/sass/**/*.scss', ['sass']);
 });
+
+gulp.task('default', ['scatter', 'static', 'sass']);

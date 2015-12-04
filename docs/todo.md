@@ -1,18 +1,18 @@
-- [ ] make a working building script
+- [x] make a working building script
     - [x] create dirs (make an util for nested dirs)
     - [x] shorter slugs (from filenames or yfm)
     - [x] <slug>/index.html
     - [x] compile sass (update node-sass)
     - [x] build _pages_ (as opposed to posts)
-    - [ ] build collections
+    - [x] build collections
         - [x] blog feed
             - [x] take the first 10 or so (no pagination so far)
             - [x] feed it to the template function
             - [x] fix jade
         - [x] rss feed
-        - [ ] exclude home page from feeds
-    - [ ] copy assets
-    - [ ] make an all-building task
+        - [x] exclude home page from feeds
+    - [x] copy assets
+    - [x] make an all-building task
 - [ ] local server (with browser-sync) so we can check rss, for instance
     - [ ] check rss
 - [ ] finish the site
@@ -31,11 +31,17 @@
     - [ ] contents
         - [ ] front page
         - [ ] about
-
+- [ ] modularize and improve
 ## Improvements
 
 - [ ] remove obsolete files
         (either delete whole dirs or override the older and remove the nonexistent)
+- [ ] async
+- [ ] watch
+- [ ] configurable dirs
+    - [ ] theme dir (even if it's just one theme)
+- [ ] tests
+- [ ] greenkeeper
 
 ## Modularity and publishing
 

@@ -43,8 +43,6 @@ function pageFabric() {
             get time()          {return ifReady(_p.time)},
             get title()         {return ifReady(_p.title)},
 
-            url() {return `${_category}/${_slug}`; },   // todo
-
             prev() {return _site.prev(_index)},         // todo
 
             next() {return _site.next(_index)},         // todo
