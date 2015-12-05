@@ -32,8 +32,11 @@
   },
   "devDependencies": {
     "ava": "^0.4.0",
+    "browser-sync": "2.10.0",
     "eslint-plugin-react": "3.10.0",
-    "gulp-ava": "^0.2.1"
+    "gulp": "3.9.0",
+    "gulp-ava": "^0.2.1",
+    "send": "0.13.0"
   },
   "scripts": {
     "test": "ava"

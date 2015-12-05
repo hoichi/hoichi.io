@@ -10,6 +10,8 @@ html.no-js(lang='en')
     //link(rel='apple-touch-icon', href='apple-touch-icon.png')
     // Place favicon.ico in the root directory
     link(rel='stylesheet', href='/css/style.css')
+    link(rel='alternate' type='application/rss+xml' href='https://#{site.domain}/feed/index.xml')
+    //- $FIXME: get rid of index.xml
     script(src='/js/vendor/modernizr-2.8.3.min.js')
   body
     <!--[if lt IE 8]>

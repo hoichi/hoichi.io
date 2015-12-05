@@ -1,10 +1,10 @@
-'use strict'
+'use strict';
 
 import mPage from './modules/page.js';
 import mSite, {init as siteInit} from './modules/site.js';
 
 var _           = require('lodash'),
-    bSync       = require('browser-sync'),
+    bSync       = require('browser-sync').create(),
     chalk       = require('chalk'),
     fMatter     = require('gulp-front-matter'),
     fs          = require('fs'),
@@ -135,6 +135,14 @@ gulp.task('sass', function gtSass () {
 gulp.task('static', function gtStatic () {
     gulp.src('./theme/static/**/*.*')
         .pipe(gulp.dest('./build/'));
+});
+
+gulp.task('serve', function gtServe () {
+    bSync.init({
+        server: {
+            baseDir: "./build/"
+        }
+    });
 });
 
 gulp.task('sass:watch', function gtSassWatch () {
