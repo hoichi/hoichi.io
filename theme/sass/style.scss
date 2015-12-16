@@ -15,10 +15,9 @@
 /*
   Import third-party stuff
 */
-@import 'vendors/include-media';
-@import 'vendors/modular-scale';
-@import 'vendors/normalize';
-@import 'vendors/h5bp-base';
+@import 'lib/include-media';
+@import 'lib/modular-scale';
+@import 'lib/sanitize';
 
 /*
   And here go our own styles
@@ -34,8 +33,5 @@
 /*
   H5Bp helpers (supposed to go _after_ custom styles)
 */
-@import 'vendors/h5bp-helpers';
+@import 'lib/h5bp-helpers';
 
-html {
-  display: inline-block;
-}

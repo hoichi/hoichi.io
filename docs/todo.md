@@ -37,6 +37,11 @@
 - [ ] remove obsolete files
         (either delete whole dirs or override the older and remove the nonexistent)
 - [ ] async
+    - [ ] read on getify
+        - [ ] [Part 1: Concurrency, Async, Parallelism](http://blog.getify.com/concurrently-javascript-1/)
+        - [ ] [Part 2: Reactive Programming (Observables)](http://blog.getify.com/concurrently-javascript-2/)
+        - [ ] [Part 3: CSP (Communicating Sequential Processes)](http://blog.getify.com/concurrently-javascript-3/)
+ 
 - [ ] watch
 - [ ] configurable dirs
     - [ ] theme dir (even if it's just one theme)

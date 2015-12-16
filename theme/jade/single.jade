@@ -1,4 +1,6 @@
 extends ./page/page.jade
 //-
 block content
-  != page.content
+  h1= page.title
+  article
+    != page.content

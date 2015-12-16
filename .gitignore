@@ -89,3 +89,6 @@ build/
 
 ### Dolphin ###
 .directory
+
+### incoming stuff dir ###
+.in/

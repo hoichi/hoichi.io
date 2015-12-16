@@ -1,14 +1,36 @@
-@import url(http://fonts.googleapis.com/css?family=Rambla:400,400italic,700,700italic);
+//copy
+@import url(https://fonts.googleapis.com/css?family=Artifika|Bitter|Droid+Sans|Ek+Mukta|Hind|Hind+Vadodara|PT+Sans|Roboto+Condensed|Source+Sans+Pro|Tienne);
+//headers
+@import url(https://fonts.googleapis.com/css?family=Amaranth|Averia+Gruesa+Libre|Averia+Libre|Cuprum|Headland+One|IM+Fell+Great+Primer|Kadwa|Roboto+Slab|Scada|Shanti|Tienne);
+// code
+@import url(https://fonts.googleapis.com/css?family=Cousine|Source+Code+Pro|Ubuntu+Mono);
+
 
 $fonts: (
-  copy: (Rambla, Helvetica, sans-serif),
-  headers: (Rambla, Helvetica, sans-serif)
+  copy: (Bitter, 'Ek Mukta', Tienne, Bitter, 'Droid Sans', 'Source Sans Pro', 'Roboto Condensed', Cousine, 'Roboto Mono', Cousine, 'Roboto Slab','Noto Serif','Arimo', 'Istok Web', Helvetica, sans-serif),
+  headers: (Scada, 'IM Fell Great Primer', Scada, 'Averia Libre', Scada, 'Headland One', Vollkorn, Shanti, Amaranth, Helvetica, sans-serif)
 );
 
-body {
+body, p {
   // We could use shorthand if libsass didn't try to _divide_ font-size by font-height ;)
   font-weight: normal;
-  font-size: ms(0);
+  font-size: 18px;
   line-height: 1.5;
   font-family: map-get($fonts, copy);
+  /*
+  background-color: #33333c;
+  color: yellow;
+  */
+}
+
+p {
+  margin-bottom: 12px;
+  //color: whitesmoke;
+}
+
+h1 {
+  font-size: 48px;
+  line-height: 1.2;
+  margin: 48px 0 24px 0;
+  font-family: map-get($fonts, headers);
 }
