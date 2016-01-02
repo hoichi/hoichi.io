@@ -1,36 +1,26 @@
-//copy
-@import url(https://fonts.googleapis.com/css?family=Artifika|Bitter|Droid+Sans|Ek+Mukta|Hind|Hind+Vadodara|PT+Sans|Roboto+Condensed|Source+Sans+Pro|Tienne);
-//headers
-@import url(https://fonts.googleapis.com/css?family=Amaranth|Averia+Gruesa+Libre|Averia+Libre|Cuprum|Headland+One|IM+Fell+Great+Primer|Kadwa|Roboto+Slab|Scada|Shanti|Tienne);
-// code
-@import url(https://fonts.googleapis.com/css?family=Cousine|Source+Code+Pro|Ubuntu+Mono);
+@import url(https://fonts.googleapis.com/css?family=Cousine);
 
+$font-family: (Cousine, monospace);
+$font-size: 16px;
+$line-height: $font-size*1.5;
 
-$fonts: (
-  copy: (Bitter, 'Ek Mukta', Tienne, Bitter, 'Droid Sans', 'Source Sans Pro', 'Roboto Condensed', Cousine, 'Roboto Mono', Cousine, 'Roboto Slab','Noto Serif','Arimo', 'Istok Web', Helvetica, sans-serif),
-  headers: (Scada, 'IM Fell Great Primer', Scada, 'Averia Libre', Scada, 'Headland One', Vollkorn, Shanti, Amaranth, Helvetica, sans-serif)
-);
-
-body, p {
+body, p, div, article, h1, h2, h3, h4, h5, h6 {
   // We could use shorthand if libsass didn't try to _divide_ font-size by font-height ;)
+  font-family: $font-family;
+  font-size: $font-size;
+  line-height: $line-height;
   font-weight: normal;
-  font-size: 18px;
-  line-height: 1.5;
-  font-family: map-get($fonts, copy);
-  /*
-  background-color: #33333c;
-  color: yellow;
-  */
 }
 
 p {
-  margin-bottom: 12px;
-  //color: whitesmoke;
+  margin-bottom: $line-height;
+}
+
+header {
+  margin: $line-height*2 0 $line-height 0;
 }
 
 h1 {
-  font-size: 48px;
-  line-height: 1.2;
-  margin: 48px 0 24px 0;
-  font-family: map-get($fonts, headers);
+  font-size: $font-size*2;
+  line-height: $font-size*2;
 }

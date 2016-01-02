@@ -86,6 +86,10 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
     }
 
     site.posts.forEach(function gtScatter_forEachPost(post, idx) {
+        console.info({
+            title: post.title,
+            category: post.category
+        });
         u.renderTemplate(
             cfg.layouts['single'],
             {page:post, site},
@@ -137,16 +141,18 @@ gulp.task('static', function gtStatic () {
         .pipe(gulp.dest('./build/'));
 });
 
-gulp.task('serve', function gtServe () {
+gulp.task('sass:watch', function gtSassWatch () {
+    gulp.watch('./theme/sass/**/*.scss', ['sass']);
+});
+
+gulp.task('watch', ['sass:watch']);
+
+gulp.task('serve', ['watch'], function gtServe () {
     bSync.init({
         server: {
             baseDir: "./build/"
         }
     });
-});
-
-gulp.task('sass:watch', function gtSassWatch () {
-    gulp.watch('./theme/sass/**/*.scss', ['sass']);
 });
 
 gulp.task('default', ['scatter', 'static', 'sass']);

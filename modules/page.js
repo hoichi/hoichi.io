@@ -10,7 +10,7 @@ const   fm =    require('front-matter'),
 function pageFabric() {
     var _p = {
         isReady: false,
-        category: '',       // post category
+        category: [],       // post category
         content: '',        // post content in HTML (HTML is lingua franca and we're agnostic
                             // of original markup as much as possible)
         description: '',    // post description for meta, search engines and prob. TOCs and archive stuff
@@ -58,7 +58,7 @@ function pageFabric() {
     function fromSource(source, site, options) {
         // fixme: нужны ли дефолты здесь?
         const   cfg = Object.assign({
-                    defCat: 'blog',
+                    defCat: {title: 'blog', slug: 'blog'},
                     extensions: '*',
                     encoding: 'UTF-8',
                     markup: s => s,  /* do nufin' by default. agnostic, muthafucka! */
@@ -86,9 +86,9 @@ function pageFabric() {
             throw new Error(`Markup conversion failed (${Err.message})`);
         }
 
-        const   pageDefaults = {
+        const pageDefaults = {
             category: cfg.defCat,
-            path: cfg.defCat,
+            path: cfg.defCat.slug,
             /* $TODO: maybe parse default path from the relative path? Or maybe it should be a callback/template from cfg (or passed options) that can use relative path, category, default category, whatevs. */
             slug: u.slugify(meta.title),
             title: '* * *'
@@ -101,7 +101,6 @@ function pageFabric() {
             {
                 site: site,
                 isStub: meta.isStub || !meta.title || !body,
-
                 isReady: true
             }
         );
@@ -145,6 +144,10 @@ function pageFabric() {
         }
 
         return val;
+    }
+
+    function getCrumbs() {
+        var crumbs = [{path: '/'}];
     }
 }
 

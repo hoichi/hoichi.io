@@ -1,6 +1,12 @@
 extends ./page/page.jade
 //-
 block content
-  h1= page.title
-  article
-    != page.content
+    header
+        .breadcrumbs
+            a(href='/') hoichi.io
+            | /
+            a(href='/'+page.category.slug+'/')= page.category.title
+            | /
+        h1= page.title
+    article
+        != page.content
