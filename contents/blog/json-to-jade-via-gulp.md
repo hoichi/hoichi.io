@@ -8,7 +8,7 @@ Suppose you build something with Gulp using Jade templates. Suppose you have som
 
 So. We have Gulp. We have [gulp-jade](https://www.npmjs.org/package/gulp-data). Its page mentions it's working with [gulp-data](https://www.npmjs.com/package/gulp-data) and even gives us a couple examples. Here's what we can write in our `gulpfile.js`:
 
-```JS
+```javascript
 var gulp = require('gulp'),
     data = require('gulp-data'),
     jade = require('gulp-jade');
@@ -27,7 +27,7 @@ Right? But how do we access that big, big data from within Jade? Took me a while
 
 Luckily, turns out is pretty simple. Suppose this is your JSON:
 
-```JSON
+```javascript
 {
   "myVar1": "I AM A STRING!",
   "myVar2": "BUT NOT _THE_ STRING!",
@@ -41,7 +41,7 @@ Luckily, turns out is pretty simple. Suppose this is your JSON:
 
 Here's what you do in Jade:
 
-```Jade
+```jade
 - var strings = [myVar1, myVar2]
 
 //- or:
@@ -55,7 +55,7 @@ each val in MyArray
 
 You can use every variable from your JSON's root! Real simple. Unless your JSON looks like this (happens to the best of us):
 
-```JSON
+```javascript
 [
   { "title": "Title 1",
     "items": []
@@ -69,7 +69,7 @@ You can use every variable from your JSON's root! Real simple. Unless your JSON 
 
 How do you approach this suitcase without a handle? Damn if I know. Maybe there is some global variable, maybe there isn't. I don't even know whether it's legit JSON. But you can always change it to this:
 
-```JSON
+```javascript
 { "myHugeBigMammothOfData" =  [
                                 { "title": "Title 1",
                                   "items": []

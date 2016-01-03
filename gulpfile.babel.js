@@ -86,10 +86,6 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
     }
 
     site.posts.forEach(function gtScatter_forEachPost(post, idx) {
-        console.info({
-            title: post.title,
-            category: post.category
-        });
         u.renderTemplate(
             cfg.layouts['single'],
             {page:post, site},
@@ -136,10 +132,12 @@ gulp.task('sass', function gtSass () {
         .pipe(gulp.dest('./build/css'));
 });
 
-gulp.task('static', function gtStatic () {
-    gulp.src('./theme/static/**/*.*')
-        .pipe(gulp.dest('./build/'));
+gulp.task('static-js', function gtStatic () {
+    gulp.src('./theme/js/lib/*.js')
+        .pipe(gulp.dest('./build/js/'));
 });
+
+gulp.task('static', ['static-js']);
 
 gulp.task('sass:watch', function gtSassWatch () {
     gulp.watch('./theme/sass/**/*.scss', ['sass']);
