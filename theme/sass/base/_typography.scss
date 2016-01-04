@@ -3,6 +3,7 @@
 $font-family: (Cousine, 'PT Mono', monospace);
 $font-size: 16px;
 $line-height: $font-size*1.5;
+$l-pad: ($line-height - $font-size) / 2;
 
 body, p, div, article, h1, h2, h3, h4, h5, h6 {
   // We could use shorthand if libsass didn't try to _divide_ font-size by font-height ;)
@@ -12,7 +13,17 @@ body, p, div, article, h1, h2, h3, h4, h5, h6 {
   font-weight: normal;
 
   color: #d6e5c4;
+}
+
+body {
+  margin: 0;
+
   background-color: #2f2a24;
+
+  /*
+  background-size: 100% $line-height;
+  background-image: linear-gradient(to bottom, yellow 0%, transparent 7%, transparent 100%);
+  */
 }
 
 p {
@@ -24,6 +35,9 @@ p {
 }
 
 h1 {
-  font-size: $font-size*2;
-  line-height: $font-size*2;
+  font-size: 32px;
+  line-height: 48px;
+  margin: $line-height 0;
+  text-transform: uppercase;
+  color: #a6e0b2;
 }
