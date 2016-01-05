@@ -1,0 +1,36 @@
+body, p, div, article, h1, h2, h3, h4, h5, h6 {
+  // We could use shorthand if libsass didn't try to _divide_ font-size by font-height ;)
+  font-family: $font-family;
+  font-size: $font-size;
+  line-height: $line-height;
+  font-weight: normal;
+
+  color: #d6e5c4;
+}
+
+body {
+  margin: 0;
+
+  background-color: #2f2a24;
+
+  /*
+  background-size: 100% $line-height;
+  background-image: linear-gradient(to bottom, yellow 0%, transparent 7%, transparent 100%);
+  */
+}
+
+p {
+  margin-bottom: $line-height;
+}
+
+.b-post__header {
+  margin: $line-height*2 0 $line-height 0;
+}
+
+h1 {
+  font-size: 32px;
+  line-height: 48px;
+  margin: $line-height 0;
+  text-transform: uppercase;
+  color: #a6e0b2;
+}
