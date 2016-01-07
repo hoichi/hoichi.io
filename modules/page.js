@@ -1,10 +1,11 @@
 'use strict';
 
-const   fm =    require('front-matter'),
-        fs =    require('fs'),
-        _ =     require('lodash'),
-        path =  require('path'),
-        u =     require('./utils.js');
+const   fm      = require('front-matter'),
+        fs      = require('fs'),
+        _       = require('lodash'),
+        path    = require('path'),
+        u       = require('./utils.js'),
+        url     = require('url');
 
 
 function pageFabric() {
@@ -21,6 +22,7 @@ function pageFabric() {
         slug: '',           // the part of the URL after the last slash
         style: {},          // looks specific to the page
         tags: [],           // a bunch of post tags
+        template: '',       // the template used for page rendering
         time: new Date(),   // a dateString, etc. '25 Dec 1995 13:30:00 +0430'
         title: ''
     };
@@ -35,11 +37,12 @@ function pageFabric() {
             get date()          {return ifReady(_p.time)},
             get description()   {return ifReady(_p.description)},
             get excerpt()       {return ifReady(_p.excerpt)},
-            get link()          {return ifReady( path.join(_p.path, _p.slug) )},
+            get link()          {return ifReady( url.resolve(_p.path, _p.slug) )},
             get path()          {return ifReady(_p.path)},
             get slug()          {return ifReady(_p.slug)},
             get style()         {return ifReady(_p.style)},
             get tags()          {return ifReady(_p.tags)},
+            get template()      {return ifReady(_p.template)},
             get time()          {return ifReady(_p.time)},
             get title()         {return ifReady(_p.title)},
 
@@ -91,6 +94,7 @@ function pageFabric() {
             path: cfg.defCat.slug,
             /* $TODO: maybe parse default path from the relative path? Or maybe it should be a callback/template from cfg (or passed options) that can use relative path, category, default category, whatevs. */
             slug: u.slugify(meta.title),
+            template: 'single',
             title: '* * *'
         };
 

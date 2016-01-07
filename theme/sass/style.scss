@@ -10,25 +10,24 @@
   Global theme variables go first. Some of them overwrite third parties'
   defaults, none of them the use third parties' mixins.
 */
-@import 'globals';
+@import 'globals/_globals';
+@import 'globals/_palette';
 
 /*
   Import third-party stuff
 */
 @import 'lib/include-media';
-@import 'lib/modular-scale';
-//@import 'lib/sanitize';
+@import 'lib/sanitize';
 
 /*
   And here go our own styles
 */
 
-@import 'base/typography';
-
+@import 'modules/_base';
 @import 'modules/masthead';
 @import 'modules/content';
 @import 'modules/list';
-@import 'modules/prism';
+@import 'modules/prism';  // not quite vendor after all my changes
 
 /*
   H5Bp helpers (supposed to go _after_ custom styles)

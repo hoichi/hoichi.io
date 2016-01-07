@@ -24,18 +24,15 @@ html.no-js(lang='en')
     // Add your site or application content here
     script.
       Prism.highlightAll(false, function () {console.log('#');});
-    header#masthead.Masthead(role='banner')
+    header.b-Masthead.centered(role='banner')
       block header
-        //hgroup.Masthead-Logo
-        //  .Masthead-Logo-Title= title
-        //  .Masthead-Logo-Subtitle= description
-        //nav.Masthead-Menu
-        //  span.Masthead-Menu-Item
-        //    a(href='/') Home
 
-    main#content.Content(role='main')
+    main#content.Content.centered(role='main')
       block content
 
-    footer#colophon.Colophon(role='contentinfo')
+    footer#colophon.b-Colophon.centered(role='contentinfo')
       block footer
-        span &copy; ’15 Sergey Samokhov aka @hoichi
+        p.b-Colophon__by
+          | By Sergey <a rel='author' href='https://github.com/hoichi'>'hoichi'</a> Samokhov.<br>
+          | Licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br>
+          | github: <a href='//github.com/hoichi'>hoichi</a> | mail: <span class='u-quasi-link' title="Feel free to mail me, but you're gonna have to type the address yourself">hi(!dot)hoichi(!at)io</span>

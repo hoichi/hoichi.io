@@ -87,7 +87,7 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
 
     site.posts.forEach(function gtScatter_forEachPost(post, idx) {
         u.renderTemplate(
-            cfg.layouts['single'],
+            cfg.layouts[post.template],
             {page:post, site},
             [cfg.rootDir, `build`, post.path, post.slug, `index.html`]
         );
