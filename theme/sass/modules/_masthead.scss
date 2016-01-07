@@ -1,20 +1,19 @@
-.Masthead {
-  background-color: #f3df49;
-  color: #2e2e2c;
+.b-Masthead {
+  text-align: left;
+  margin-top: $line-height*4;
+  margin-bottom: $line-height;
 
-  padding: 0 ms(-1);
-  overflow: hidden;
-  vertical-align: text-bottom;
+  & a {
+    color: $color-primary-3;
+  }
+
+  & a:hover,
+  & a:active,
+  & a:focus {
+    color: $color-primary-0;
+  }
 }
 
-.Masthead-Logo {
-  float: left;
-}
-
-.Masthead-Logo-Title {
-  margin: 0;
-}
-
-.Masthead-Menu {
-  float: right;
+.b-Masthead__breadcrumbs {
+  color: $color-primary-4;
 }

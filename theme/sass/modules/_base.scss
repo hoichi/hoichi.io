@@ -13,16 +13,13 @@ html, body {
 }
 
 :root {
-  background-color: $color-obsidian;
-  color: $color-secondary-1-3;
-}
-
-body, p, div, article, h1, h2, h3, h4, h5, h6 {
-  // We could use shorthand if libsass didn't try to _divide_ font-size by font-height ;)
   font-family: $font-family;
   font-size: $font-size;
   line-height: $line-height;
   font-weight: normal;
+
+  background-color: $color-obsidian;
+  color: $color-secondary-1-3;
 }
 
 p, pre {
@@ -62,83 +59,23 @@ a,
   text-decoration: underline;
 }
 
+a:visited {
+    color: $color-secondary-1-3;
+}
+a:hover,
+a:active,
+a:focus {
+  color: $color-secondary-1-1;
+}
+
 .u-quasi-link {
   cursor: no-drop;
 }
 
-a {
-  &:visited {
-    color: $color-secondary-1-3;
-  }
-
-  &:hover,
-  &:active,
-  &:focus {
-    color: $color-secondary-1-1;
-  }
-}
-
-
-.b-Masthead {
-  text-align: left;
-  margin: $line-height*4 0 $line-height 0;
-
-  & a {
-    color: $color-primary-3;
-  }
-
-  & a:hover,
-  & a:active,
-  & a:focus {
-    color: $color-primary-0;
-  }
-}
-
-.b-Masthead__breadcrumbs {
-  color: $color-primary-4;
-}
-
-.centered {
+.u-centered {
   width: 80%;
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
   text-align: left;
 }
-
-.b-post__header {
-  font-weight: bold;
-  margin-left: -2ch;
-
-  &::before {
-    content: '# ';
-  }
-}
-
-.b-post__more {
-  text-decoration: none;
-  
-  &:hover,
-  &:focus,
-  &:active {
-    text-decoration: underline;
-  }
-}
-
-.b-Colophon {
-  margin-top: $line-height * 3;
-  color: $color-secondary-1-4;
-
-  a {
-    color: $color-secondary-1-3;
-  }
-  a:visited {
-    color: $color-secondary-1-4;
-  };
-}
-
-.b-Colophon__by::before {
-  content: '___';
-  display: block;
-}
-

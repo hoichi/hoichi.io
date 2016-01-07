@@ -11,7 +11,7 @@
   defaults, none of them the use third parties' mixins.
 */
 @import 'globals/_globals';
-@import 'globals/_palette';
+@import 'globals/_palette'; // $fixme: don't use paletton's vars directly, create some readable aliases
 
 /*
   Import third-party stuff
@@ -23,10 +23,11 @@
   And here go our own styles
 */
 
-@import 'modules/_base';
+@import 'modules/base';
 @import 'modules/masthead';
 @import 'modules/content';
-@import 'modules/list';
+@import 'modules/colophon';
+
 @import 'modules/prism';  // not quite vendor after all my changes
 
 /*
