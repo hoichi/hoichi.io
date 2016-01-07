@@ -13,4 +13,7 @@ block content
             .b-post-meta
             .b-post__body
                 p
-                    a.b-post__more(href=post.link) !{post.excerpt}
+                    a.b-post__more(href=post.link)
+                        | !{post.excerpt}
+                        br
+                        | ...

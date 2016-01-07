@@ -1,8 +1,12 @@
-.Content {
+.b-Content {
   width: 80%;
   max-width: 700px;
   margin: 0 auto;
   text-align: left;
+}
+
+.b-post {
+  margin-bottom: $line-height * 2;
 }
 
 .b-post__header {

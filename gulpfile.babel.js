@@ -12,6 +12,7 @@ var _           = require('lodash'),
     gulp        = require('gulp'),
     jade        = require('jade'),
     md          = require('markdown-it')(),
+    modRw       = require('connect-modrewrite'),
     newer       = require('gulp-newer'),
     path        = require('path'),
     prism       = require('prismjs'),
@@ -112,7 +113,7 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
             posts: _(site.posts).filter({'path': 'blog'}).slice(0, 20).value(),
             site
         },
-        [cfg.rootDir, `build/feed/index.xml`]
+        [cfg.rootDir, `build/feed.xml`]
     );
 });
 
@@ -132,9 +133,14 @@ gulp.task('sass', function gtSass () {
         .pipe(gulp.dest('./build/css'));
 });
 
-gulp.task('static-js', function gtStatic () {
+gulp.task('static-js', function gtStaticJS () {
     gulp.src('./theme/js/lib/*.js')
         .pipe(gulp.dest('./build/js/'));
+});
+
+gulp.task('static-rewrites', function gtStaticRw () {
+    gulp.src('./theme/_rewrites')
+        .pipe(gulp.dest('./build/_rewrites'));  // rewrite rules for netlify. for browserSync, see below.
 });
 
 gulp.task('static', ['static-js']);
@@ -149,7 +155,12 @@ gulp.task('serve', ['watch'], function gtServe () {
     bSync.init({
         server: {
             baseDir: "./build/"
-        }
+        },
+        middleware: [
+            modRw([
+                '^/feed/??$ /feed.xml [L]'  // see _redirects for production redirects (https://www.netlify.com/docs/redirects)
+            ])
+        ]
     });
 });
 
