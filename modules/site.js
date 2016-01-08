@@ -63,12 +63,11 @@ function ifReady(val) {
 function addPost(post) {
     ifReady(null);
 
-    // с индексом, да
     if ( !Array.isArray(_posts) ) {
         _posts = [];
     }
 
-    let pos = _.sortedIndex(_posts, post.time, (p) => p.time);
+    let pos = _.sortedIndex(_posts, post, p => p.time.toISOString());
     _posts.splice(pos, 0, post);
 }
 

@@ -9,11 +9,11 @@ block content
     each post in posts
         .b-post
             h2.b-post__header
-                a.b-post__header-link(href=post.link)= post.title
+                a.b-post__header-link(href=post.href)= post.title
             .b-post-meta
             .b-post__body
                 p
-                    a.b-post__more(href=post.link)
+                    a.b-post__more(href=post.href)
                         | !{post.excerpt}
                         br
                         | ...

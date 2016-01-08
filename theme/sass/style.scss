@@ -10,8 +10,8 @@
   Global theme variables go first. Some of them overwrite third parties'
   defaults, none of them the use third parties' mixins.
 */
-@import 'globals/_globals';
-@import 'globals/_palette'; // $fixme: don't use paletton's vars directly, create some readable aliases
+@import 'globals/palette'; // color vars in `globals` use vars from `palette`, so
+@import 'globals/globals';
 
 /*
   Import third-party stuff
@@ -29,7 +29,7 @@
 @import 'modules/colophon';
 
 @import 'modules/prism';  // not quite vendor after all my changes
-@import 'modules/muut';  // not vendor at all from the start
+//@import 'modules/muut';  // not vendor at all from the start
 
 /*
   H5Bp helpers (supposed to go _after_ custom styles)

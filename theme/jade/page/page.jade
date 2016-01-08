@@ -9,14 +9,12 @@ html.no-js(lang='en')
     meta(name='viewport', content='width=device-width, initial-scale=1')
     //link(rel='apple-touch-icon', href='apple-touch-icon.png')
     // Place favicon.ico in the root directory
+    link(rel='stylesheet' href='//cdn.muut.com/1/moot.css')
+    //- $FIXME: make a block and add extra styles only where they're needed
     link(rel='stylesheet', href='/css/style.css')
-    //link(rel='stylesheet', href='/css/prism.css')
     link(rel='alternate' type='application/rss+xml' href='/feed/')
-    //- link(rel='alternate' type='application/rss+xml' href='https://#{site.domain}/feed/index.xml')
-    //- $FIXME: get rid of index.xml
     script(src='/js/vendor/modernizr-2.8.3.min.js')
     script(src='/js/prism.js')
-    //- $FIXME: do those styles and scripts really belong in templates?
   body
     <!--[if lt IE 8]>
     <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
