@@ -9,8 +9,11 @@ block header
         = ' / '
     h1= page.title
 block content
-    article
-        != page.content
-    footer
-        | <a class="muut" href="https://muut.com/i/hoichi-io/comments" type="dynamic">hoichi-io</a>
-        | <script src="//cdn.muut.com/1/moot.min.js"></script>
+    block content__article
+        article
+            != page.content
+    block content__footer
+        footer
+            //a.muut(href='https://muut.com/i/hoichi-io/comments'+page.href, data-show_title='false') hoichi-io
+            //script(src='//code.jquery.com/jquery-1.11.2.min.js')
+            //script(src='//cdn.muut.com/1/moot.min.js')

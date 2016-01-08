@@ -37,7 +37,7 @@ function pageFabric() {
             get date()          {return ifReady(_p.time)},
             get description()   {return ifReady(_p.description)},
             get excerpt()       {return ifReady(_p.excerpt)},
-            get link()          {return ifReady( url.resolve(_p.path, _p.slug) )},
+            get href()          {return ifReady(`/${_p.path}/${_p.slug}/`)},
             get path()          {return ifReady(_p.path)},
             get slug()          {return ifReady(_p.slug)},
             get style()         {return ifReady(_p.style)},
