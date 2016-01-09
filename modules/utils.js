@@ -57,7 +57,15 @@ function renderTemplate(tpl, data, dirs) {
     fs.writeFileSync(sPath, html, {flag: 'w+'});
 }
 
+function dateFormatter(locale = 'en_US', options) {
+    // $TODO: something more customizable? moments.js? or?
+    let dtf = new Intl.DateTimeFormat(locale, options);
+    return dtf.format.bind(dtf);
+}
+
+//noinspection SpellCheckingInspection
 module.exports = {
+    dateFormatter,
     makePathSync,
     renderTemplate,
     slugify,

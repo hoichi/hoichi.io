@@ -6,7 +6,6 @@ import mSite, {init as siteInit} from './modules/site.js';
 var _           = require('lodash'),
     bSync       = require('browser-sync').create(),
     chalk       = require('chalk'),
-    fMatter     = require('gulp-front-matter'),
     fs          = require('fs'),
     glob        = require('glob'),
     gulp        = require('gulp'),
@@ -15,7 +14,6 @@ var _           = require('lodash'),
     modRw       = require('connect-modrewrite'),
     newer       = require('gulp-newer'),
     path        = require('path'),
-    prism       = require('prismjs'),
     rename      = require('gulp-rename'),
     sass        = require('gulp-sass'),
     sourcemaps  = require('gulp-sourcemaps'),
@@ -24,7 +22,7 @@ var _           = require('lodash'),
     yaml        = require('js-yaml');
 
 const cfg = {
-        layouts: {},    // fixme: that doesn't belong in config
+        layouts: {},
         sources: {
             contents: {
                 path: 'contents',
@@ -34,7 +32,8 @@ const cfg = {
             templates: 'theme/jade',
             styles: 'theme/sass'
         },
-        rootDir: __dirname
+        rootDir: __dirname,
+        date_short: u.dateFormatter('en-US', {year: 'numeric', month: 'short', day: 'numeric'})
     };
 
 var site;
@@ -89,7 +88,7 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
     site.posts.forEach(function gtScatter_forEachPost(post, idx) {
         u.renderTemplate(
             cfg.layouts[post.template],
-            {page:post, site},
+            {page:post, site, cfg},
             [cfg.rootDir, `build`, post.path, post.slug, `index.html`]
         );
 
@@ -101,8 +100,10 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
         cfg.layouts['blog'],
         {
             // $FIXME: de-hardcode, de-heuristicize
+            // $TODO: blog pagination
             posts: _(site.posts).filter({'path': 'blog'}).slice(0, 10).value(),
-            site
+            site,
+            cfg
         },
         [cfg.rootDir, `build/blog/index.html`]
     );
@@ -111,7 +112,8 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
         cfg.layouts['rss'],
         {
             posts: _(site.posts).filter({'path': 'blog'}).slice(0, 20).value(),
-            site
+            site,
+            cfg
         },
         [cfg.rootDir, `build/feed.xml`]
     );

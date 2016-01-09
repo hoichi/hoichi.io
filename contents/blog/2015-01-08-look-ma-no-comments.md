@@ -1,11 +1,11 @@
 ---
 permalink: false
 title: Look Ma, No Comments!
-date: 2016-01-06
+date: 2016-01-09
 slug: look-ma-no-comments
 ---
 
-Ok, since this blog is experimental anyway I've decided to experient some more and go without comments, at least for now. The first reason, to be honest, is I've played with [Muut](https://muut.com/) (don't get me started on things like Disqus), aaand it's somewhat hard. Much as I'm intrigued by [Riot](http://riotjs.com/) from the same authors, overriding a whole lot of Muut's css rules is boring (and none of those`!important`s are particularly easy on those poor eyes).
+Ok, since this blog is experimental anyway, I've decided to experient some more and go without comments, at least for now. The first reason, to be honest, is I've played with [Muut](https://muut.com/) (don't get me started on things like Disqus), aaand it's somewhat hard. Much as I'm intrigued by [Riot](http://riotjs.com/) from the same authors, overriding a whole lot of Muut's css rules is boring (and none of those`!important`s are particularly easy on those poor eyes).
 
 There goes my idea of having a fully static site _and_ comments. If (or when) I decide to roll my own comments, I'm gonna need a DB, user authentification and a whole lot of stuff I haven't even begun to think about. Not to mention paying for Heroku or whatever.
 

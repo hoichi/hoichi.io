@@ -13,7 +13,6 @@ block content
         article
             != page.content
     block content__footer
-        footer
-            //a.muut(href='https://muut.com/i/hoichi-io/comments'+page.href, data-show_title='false') hoichi-io
-            //script(src='//code.jquery.com/jquery-1.11.2.min.js')
-            //script(src='//cdn.muut.com/1/moot.min.js')
+        footer.b-Content__meta
+            .b-Content__meta-date= cfg.date_short(page.date)
+

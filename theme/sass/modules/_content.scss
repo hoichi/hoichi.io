@@ -10,11 +10,25 @@
 }
 
 .b-post__header {
-  font-weight: bold;
-  margin-left: -2ch;
+  @include media('>=tablet') {
+    margin-left: -13ch;
+  }
+}
 
-  &::before {
-    content: '# ';
+.b-post__date {
+  @include media('>=tablet') {
+    display: inline-block;
+    text-align: right;
+  }
+
+  width: 12ch;
+
+  color: $hdr-meta-color;
+}
+
+.b-post__title {
+  @include media('>=tablet') {
+    display: inline-block;
   }
 }
 
@@ -26,4 +40,9 @@
   &:active {
     text-decoration: underline;
   }
+}
+
+.b-Content__meta-date {
+  text-align: right;
+  color: $page-meta-color;
 }
