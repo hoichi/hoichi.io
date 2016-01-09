@@ -1,7 +1,7 @@
 ---
 permalink: false
 title: Hello world
-time: 2016-01-07
+date: 2016-01-07
 slug: hello-world
 ---
 

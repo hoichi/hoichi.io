@@ -9,6 +9,8 @@ const   _   = require('lodash'),
         path = require('path'),
         u = require('./utils.js');
 
+// $FIXME: make it all private (see page.js)
+
 const api = {
     get categories()    {return ifReady(_category)},
     get collections()   {return ifReady(_content)},
@@ -62,6 +64,9 @@ function ifReady(val) {
 
 function addPost(post) {
     ifReady(null);
+    if (!post.published) {
+        return;
+    }
 
     if ( !Array.isArray(_posts) ) {
         _posts = [];

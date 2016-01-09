@@ -1,7 +1,7 @@
 ---
 permalink: false
 title: Look Ma, No Comments!
-time: 2016-01-06
+date: 2016-01-06
 slug: look-ma-no-comments
 ---
 

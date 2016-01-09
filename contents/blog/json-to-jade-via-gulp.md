@@ -1,5 +1,6 @@
 ---
 permalink: false
+published: false
 title: Feeding JSON data to Jade templates via a Gulp script
 slug: json-to-jade-via-gulp
 ---

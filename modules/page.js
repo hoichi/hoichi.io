@@ -11,39 +11,40 @@ const   fm      = require('front-matter'),
 function pageFabric() {
     var _p = {
         isReady: false,
-        category: [],       // post category
-        content: '',        // post content in HTML (HTML is lingua franca and we're agnostic
-                            // of original markup as much as possible)
-        description: '',    // post description for meta, search engines and prob. TOCs and archive stuff
-        excerpt: '',        // before the fold
-        isStub: false,
-        path: '',           // the part between the building dir and the slug
-        site: null,         // the object for the site that contains the page
-        slug: '',           // the part of the URL after the last slash
-        style: {},          // looks specific to the page
-        tags: [],           // a bunch of post tags
-        template: '',       // the template used for page rendering
-        time: new Date(),   // a dateString, etc. '25 Dec 1995 13:30:00 +0430'
+        category: [],       //  post category. not sure about multiple categories
+                            //      but let's not rule the out yet
+        content: '',        //  post content in HTML (HTML is lingua franca and we're agnostic
+                            //      of original markup as much as possible)
+        date: new Date(),   //  a dateString, etc. '25 Dec 1995 13:30:00 +0430'
+        description: '',    //  post description for meta, search engines and prob. TOCs and archive stuff
+        excerpt: '',        //  before the fold
+        path: '',           //  the part between the building dir and the slug
+        published: true,    //  if a page is published (same as Jekyll)
+        site: null,         //  the object for the site that contains the page
+        slug: '',           //  the part of the URL after the last slash
+        style: {},          //  looks specific to the page, maybe? does nothing so far
+        tags: [],           //  a bunch of post tags
+        template: '',       //  the template used for page rendering
         title: ''
     };
 
     return getApi();
 
-
     function getApi() {
         return {
             get category()      {return ifReady(_p.category)},
             get content()       {return ifReady(_p.content)},
-            get date()          {return ifReady(_p.time)},
+            get date()          {return ifReady(_p.date)},
             get description()   {return ifReady(_p.description)},
             get excerpt()       {return ifReady(_p.excerpt)},
             get href()          {return ifReady(`/${_p.path}/${_p.slug}/`)},
+            get published()     {return ifReady(_p.published)},
             get path()          {return ifReady(_p.path)},
             get slug()          {return ifReady(_p.slug)},
             get style()         {return ifReady(_p.style)},
             get tags()          {return ifReady(_p.tags)},
             get template()      {return ifReady(_p.template)},
-            get time()          {return ifReady(_p.time)},
+            get time()          {return ifReady(_p.date)},
             get title()         {return ifReady(_p.title)},
 
             prev() {return _site.prev(_index)},         // todo
@@ -59,7 +60,7 @@ function pageFabric() {
      *  Takes a source object with a source path etc. And the options from the global config.
      */
     function fromSource(source, site, options) {
-        // fixme: нужны ли дефолты здесь?
+        // fixme: do we need defaults _here_?
         const   cfg = Object.assign({
                     defCat: {title: 'blog', slug: 'blog'},
                     extensions: '*',
@@ -93,6 +94,7 @@ function pageFabric() {
             category: cfg.defCat,
             path: cfg.defCat.slug,
             /* $TODO: maybe parse default path from the relative path? Or maybe it should be a callback/template from cfg (or passed options) that can use relative path, category, default category, whatevs. */
+            published: meta.title && body && true,  // if it looks ready, it's ready by default
             slug: u.slugify(meta.title),
             template: 'single',
             title: '* * *'
@@ -104,7 +106,6 @@ function pageFabric() {
             meta,
             {
                 site: site,
-                isStub: meta.isStub || !meta.title || !body,
                 isReady: true
             }
         );
@@ -117,9 +118,10 @@ function pageFabric() {
             // $TODO: look up all those excerpts, teasers and other page anatomy
         }
 
-        if (_p.isStub) {
+        if (!_p.published) {
             // not sure if it actually frees any memory immediately but let's try
-            _p.content = _p.description = _p.excerpt = '';
+            // $TODO: and hey, how 'bout an object pool?
+            _p.content = ''; _p.description = ''; _p.excerpt = '';
         }
 
         return getApi();
