@@ -72,7 +72,7 @@ function addPost(post) {
         _posts = [];
     }
 
-    let pos = _.sortedIndex(_posts, post, p => p.time.toISOString());
+    let pos = _.sortedIndex(_posts, post, p => -p.date.getTime());
     _posts.splice(pos, 0, post);
 }
 

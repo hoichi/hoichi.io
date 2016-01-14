@@ -1,53 +1,33 @@
-- [x] make a working building script
-    - [x] create dirs (make an util for nested dirs)
-    - [x] shorter slugs (from filenames or yfm)
-    - [x] <slug>/index.html
-    - [x] compile sass (update node-sass)
-    - [x] build _pages_ (as opposed to posts)
-    - [x] build collections
-        - [x] blog feed
-            - [x] take the first 10 or so (no pagination so far)
-            - [x] feed it to the template function
-            - [x] fix jade
-        - [x] rss feed
-        - [x] exclude home page from feeds
-    - [x] copy assets
-    - [x] make an all-building task
-- [x] local server (with browser-sync) so we can check rss, for instance
-    - [x] check rss
-- [ ] finish the site
-    - [ ] layout
-        - [ ] single posts
-        - [ ] collections
-        - [ ] pages
-        - [ ] navigation
-        - [ ] rss
-    - [ ] style
-        - [ ] copy
-        - [ ] code (prism.js and stuff)
-        - [ ] header
-        - [ ] footer
-        - [ ] nav
-    - [ ] contents
-        - [ ] front page
-        - [ ] about
-- [ ] modularize and improve
-## Improvements
+- [ ] REGROUP
+    - [ ] cull dependencies
+        - [ ] try [greenkeeper](http://greenkeeper.io/)
+        - [ ] try lodash 4.0
+    - [ ] try and lose Babel
+    - [ ] npm module: Page/Site/Template compiler
+        - [ ] Jekyll compatibility, more or less
+        - [ ] Change `gulp.src` to glob (so the module can be used with or without gulp)
+    - [ ] npm module: console output (log, messages, debug)
+- [ ] IMPROVEMENTS
+    - [ ] host Hack on Netlify
+          [see](https://github.com/chrissimpkins/Hack#host-hack-font-files-on-your-server)
+    - [ ] tests
+        - [ ] write some tests (starting with them modules)
+        - [ ] add nyc
+    - [ ] watch
+        - (md, templates)->(pages,collections)
+        - scss->css
+        - assets->assets
+        - js?
+        - in fact, start with that first one _and make it work in gulp_. or in any npm script
+        - [ ] async
+            - [ ] read on getify
+                - [ ] [Part 1: Concurrency, Async, Parallelism](http://blog.getify.com/concurrently-javascript-1/)
+                - [ ] [Part 2: Reactive Programming (Observables)](http://blog.getify.com/concurrently-javascript-2/)
+                - [ ] [Part 3: CSP (Communicating Sequential Processes)](http://blog.getify.com/concurrently-javascript-3/)
 
-- [ ] remove obsolete files
-        (either delete whole dirs or override the older and remove the nonexistent)
-- [ ] async
-    - [ ] read on getify
-        - [ ] [Part 1: Concurrency, Async, Parallelism](http://blog.getify.com/concurrently-javascript-1/)
-        - [ ] [Part 2: Reactive Programming (Observables)](http://blog.getify.com/concurrently-javascript-2/)
-        - [ ] [Part 3: CSP (Communicating Sequential Processes)](http://blog.getify.com/concurrently-javascript-3/)
- 
-- [ ] watch
-- [ ] configurable dirs
-    - [ ] theme dir (even if it's just one theme)
-- [ ] tests
-- [ ] greenkeeper
-
+- [ ] TECHNOLOGIES
+    - [ ] Redux? (for state)
+    
 ## Modularity and publishing
 
 Start by making some building blocks:
