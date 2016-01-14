@@ -1,13 +1,21 @@
 - [ ] REGROUP
     - [ ] cull dependencies
+        - [x] Lose anything I don't use right now 
+                _as in, don't try to make `autoprefixer` work. if it's not in the gulpfile, kill it now and add later_
+        - [ ] Try and lose Babel
+            - [ ] And maybe AVA. Tests are for modules, and those should be separate projects. If that is doable without publishing before testing.
         - [ ] try [greenkeeper](http://greenkeeper.io/)
         - [ ] try lodash 4.0
-    - [ ] try and lose Babel
     - [ ] npm module: Page/Site/Template compiler
         - [ ] Jekyll compatibility, more or less
         - [ ] Change `gulp.src` to glob (so the module can be used with or without gulp)
     - [ ] npm module: console output (log, messages, debug)
+- [ ] BUGS
+    - [ ] AVA errors @ `makePathSync(sPath, options = {})`
+        Should it go through Babel before AVA?. AVA can [require Babel](https://github.com/sindresorhus/ava#configuration). Then again, we're trying to lose Babel. Then _again_, if we move the engine to separate module(s), we can babelify dem modules and use what ES6 is supported by node for the site itself.
+        And not use AVA for the site itself either.
 - [ ] IMPROVEMENTS
+    - [ ] favicon (http://blog.iconfactory.com/2015/11/the-new-favicon/)
     - [ ] host Hack on Netlify
           [see](https://github.com/chrissimpkins/Hack#host-hack-font-files-on-your-server)
     - [ ] tests

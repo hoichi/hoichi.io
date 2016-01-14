@@ -5,20 +5,15 @@ import mSite, {init as siteInit} from './modules/site.js';
 
 var _           = require('lodash'),
     bSync       = require('browser-sync').create(),
-    chalk       = require('chalk'),
     fs          = require('fs'),
-    glob        = require('glob'),
     gulp        = require('gulp'),
     jade        = require('jade'),
     md          = require('markdown-it')(),
     modRw       = require('connect-modrewrite'),
-    newer       = require('gulp-newer'),
     path        = require('path'),
-    rename      = require('gulp-rename'),
     sass        = require('gulp-sass'),
     sourcemaps  = require('gulp-sourcemaps'),
     u           = require('./modules/utils.js'),
-    watch       = require('gulp-watch'),
     yaml        = require('js-yaml');
 
 const cfg = {
