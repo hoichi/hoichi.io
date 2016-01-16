@@ -1,16 +1,15 @@
 - [ ] REGROUP
-    - [ ] cull dependencies
-        - [x] Lose anything I don't use right now 
-                _as in, don't try to make `autoprefixer` work. if it's not in the gulpfile, kill it now and add later_
-        - [ ] Try and lose Babel
-            - [ ] And maybe AVA. Tests are for modules, and those should be separate projects. If that is doable without publishing before testing.
-        - [ ] try [greenkeeper](http://greenkeeper.io/)
-        - [ ] try lodash 4.0
+    - [ ] npm module: console output (log, messages, debug)
+        - [ ] see specs here: https://www.npmjs.com/package/log (and maybe look at that thing in general. and at this thing: https://www.npmjs.com/package/debug. and its patch: https://www.npmjs.com/package/debug-reloadable)
+        - [ ] Travis
+        - [ ] Greenkeeper
     - [ ] npm module: Page/Site/Template compiler
         - [ ] Jekyll compatibility, more or less
         - [ ] Change `gulp.src` to glob (so the module can be used with or without gulp)
-    - [ ] npm module: console output (log, messages, debug)
+    - [ ] lose Babel for Gulp and use plain harmony
+    - [ ] lose AVA from the site repo as well
 - [ ] BUGS
+    - [ ] `gulp.serve` doesn't build anything and doesn't know when there's no build 
     - [ ] AVA errors @ `makePathSync(sPath, options = {})`
         Should it go through Babel before AVA?. AVA can [require Babel](https://github.com/sindresorhus/ava#configuration). Then again, we're trying to lose Babel. Then _again_, if we move the engine to separate module(s), we can babelify dem modules and use what ES6 is supported by node for the site itself.
         And not use AVA for the site itself either.
@@ -32,6 +31,7 @@
                 - [ ] [Part 1: Concurrency, Async, Parallelism](http://blog.getify.com/concurrently-javascript-1/)
                 - [ ] [Part 2: Reactive Programming (Observables)](http://blog.getify.com/concurrently-javascript-2/)
                 - [ ] [Part 3: CSP (Communicating Sequential Processes)](http://blog.getify.com/concurrently-javascript-3/)
+            - [ ] see https://promisesaplus.com/implementations
 
 - [ ] TECHNOLOGIES
     - [ ] Redux? (for state)
