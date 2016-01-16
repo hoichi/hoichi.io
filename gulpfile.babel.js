@@ -135,12 +135,12 @@ gulp.task('static-js', function gtStaticJS () {
         .pipe(gulp.dest('./build/js/'));
 });
 
-gulp.task('static-rewrites', function gtStaticRw () {
-    gulp.src('./theme/_rewrites')
-        .pipe(gulp.dest('./build/_rewrites'));  // rewrite rules for netlify. for browserSync, see below.
+gulp.task('static-redirects', function gtStaticRw () {
+    gulp.src('./theme/_redirects')
+        .pipe(gulp.dest('./build/ z'));  // rewrite rules for netlify. for browserSync, see below.
 });
 
-gulp.task('static', ['static-js']);
+gulp.task('static', ['static-js', 'static-redirects']);
 
 gulp.task('sass:watch', function gtSassWatch () {
     gulp.watch('./theme/sass/**/*.scss', ['sass']);
