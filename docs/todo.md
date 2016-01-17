@@ -9,6 +9,9 @@
     - [ ] lose Babel for Gulp and use plain harmony
     - [ ] lose AVA from the site repo as well
 - [ ] BUGS
+    - [ ] RSS
+        - [ ] not full articles
+        - [ ] links to the naked domain
     - [ ] `gulp.serve` doesn't build anything and doesn't know when there's no build 
     - [ ] AVA errors @ `makePathSync(sPath, options = {})`
         Should it go through Babel before AVA?. AVA can [require Babel](https://github.com/sindresorhus/ava#configuration). Then again, we're trying to lose Babel. Then _again_, if we move the engine to separate module(s), we can babelify dem modules and use what ES6 is supported by node for the site itself.

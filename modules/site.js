@@ -42,7 +42,7 @@ function init() {
     _categories = ['blog'];
     _data = {};
     _description = '';
-    _domain = 'hoichi.io';
+    _domain = 'www.hoichi.io';
     _pages = [];
     _posts = [];
     _tags = [];
