@@ -1,12 +1,8 @@
 - [ ] REGROUP
-    - [ ] npm module: console output (log, messages, debug)
-        - [ ] see specs here: https://www.npmjs.com/package/log (and maybe look at that thing in general. and at this thing: https://www.npmjs.com/package/debug. and its patch: https://www.npmjs.com/package/debug-reloadable)
-        - [ ] Travis
-        - [ ] Greenkeeper
     - [ ] npm module: Page/Site/Template compiler
         - [ ] Jekyll compatibility, more or less
         - [ ] Change `gulp.src` to glob (so the module can be used with or without gulp)
-    - [ ] lose Babel for Gulp and use plain harmony
+    - [ ] lose Babel for Gulp and use plain harmony?
     - [ ] lose AVA from the site repo as well
 - [ ] BUGS
     - [ ] `gulp.serve` doesn't build anything and doesn't know when there's no build 

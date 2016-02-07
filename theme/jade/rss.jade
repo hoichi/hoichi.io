@@ -14,8 +14,7 @@ rss(version='2.0', xmlns:atom='http://www.w3.org/2005/Atom')
                 link https://#{site.domain}/blog/#{post.slug}
                 description
                     | <![CDATA[
-                    | !{post.excerpt}
-                    p: a(href='https://#{site.domain}/blog/#{post.slug}' rel="nofollow") 'Read more &raquo;'
+                    | !{post.content}
                     | ]]>
                 pubDate= post.date.toUTCString()
                 guid(isPermaLink='false') https://#{site.domain}/blog/#{post.slug}
