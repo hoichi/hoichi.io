@@ -5,6 +5,7 @@ import mSite, {init as siteInit} from './modules/site.js';
 
 var _           = require('lodash'),
     bSync       = require('browser-sync').create(),
+    fiy         = require('fiy'),
     fs          = require('fs'),
     gulp        = require('gulp'),
     jade        = require('jade'),
@@ -52,7 +53,7 @@ gulp.task('loadJade', ['loadCfg'], function gt_loadJade(cb_t) {
             cfg.layouts[key] = method;
         })
         .on( 'end', function gtLoadJade_onEnd() {
-            console.log('that would be all'); cb_t()
+            fiy.say('that would be all'); cb_t()
         })
     ;
 });
