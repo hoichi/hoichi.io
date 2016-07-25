@@ -5,7 +5,6 @@ import mSite, {init as siteInit} from './modules/site.js';
 
 var _           = require('lodash'),
     bSync       = require('browser-sync').create(),
-    fiy         = require('fiy'),
     fs          = require('fs'),
     gulp        = require('gulp'),
     jade        = require('jade'),
@@ -53,7 +52,8 @@ gulp.task('loadJade', ['loadCfg'], function gt_loadJade(cb_t) {
             cfg.layouts[key] = method;
         })
         .on( 'end', function gtLoadJade_onEnd() {
-            fiy.say('that would be all'); cb_t()
+            console.log('that would be all');
+            cb_t();
         })
     ;
 });
@@ -87,9 +87,6 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
             {page:post, site, cfg},
             [cfg.rootDir, `build`, post.path, post.slug, `index.html`]
         );
-
-        // $TODO: use post.layout (or should a ~~post~~ page type mean more than just layout?)
-        // $TODO: pagination
     });
 
     u.renderTemplate(
@@ -102,6 +99,18 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
             cfg
         },
         [cfg.rootDir, `build/blog/index.html`]
+    );
+
+    u.renderTemplate(
+        cfg.layouts['blog'],
+        {
+            // $FIXME: de-hardcode, de-heuristicize
+            // $TODO: blog pagination
+            posts: _(site.posts).filter({'path': '100'}).slice(0, 10).value(),
+            site,
+            cfg
+        },
+        [cfg.rootDir, `build/100/index.html`]
     );
 
     u.renderTemplate(

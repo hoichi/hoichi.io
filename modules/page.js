@@ -112,8 +112,8 @@ function pageFabric() {
 
         // some post-meta logic
         if (!_p.excerpt) {
-            [, _p.excerpt] = /<p>(.*)?<\/p>/.exec(_p.content);
-            _p.excerpt = _p.excerpt.replace(/<(.|\n)*?>/g, '')
+            _p.excerpt = /<p>(.*)?<\/p>/.exec(_p.content)[1];
+            _p.excerpt = _p.excerpt.replace(/<(.|\n)*?>/g, '');
             // $TODO: take it from non-parsed markdown? maybe?
             // $TODO: look up all those excerpts, teasers and other page anatomy
         }
