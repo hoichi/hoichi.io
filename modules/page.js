@@ -124,6 +124,10 @@ function pageFabric() {
             _p.content = ''; _p.description = ''; _p.excerpt = '';
         }
 
+        if (!!_p.listed !== _p.listed) {
+            _p.listed = _p.published;
+        }
+
         return getApi();
     }
 

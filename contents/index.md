@@ -6,11 +6,11 @@ path: ./
 slug: ''
 ---
 
-Hi there.
+My name is Sergey Samokhov and I’m a living flotsam. Half of my life I’ve been shunning developer’s path, refusing my call. Yet here I am, washed up on a shore and humbled flat, nowhere to go but inside™.
 
-Name's Hoichi. More like Sergey Samokhov IRL, but who needs RL anyway.
+Could be a worse shore, I guess. Could be mr. Jones’ locker. Could lose my life, not just [my ears](https://en.wikipedia.org/wiki/Hoichi_the_Earless).
 
-I'm probably the world's oldest aspiring JavaScript developer and [here is my blog](/blog/). Which, as you might have noticed, is kind of a glorified `Hello world` so far.
+Still, so much time wasted. So much to learn.
 
-A self-referential `Hello world` too: what I'm mostly building these days (besides my dayjob with [Timepad](https://welcome.timepad.ru)) is this very site. I’m even taking part in that trendy [100 Days of Code](https://medium.freecodecamp.com/join-the-100daysofcode-556ddb4579e4#.pht91268n) movement, because I’m on top of things. [Here’s what’s up](/100/) (TL/DR: not much).
+Well, here’s my [100 Days of Code blog](/100/), for starters.
 

@@ -3,6 +3,7 @@ title: Day 3
 date: 2016-07-29
 path: '100'
 slug: day_3
+listed: false
 ---
 
 The upside of my blog engine project is that I’m gonna have to learn all this data flow: streams, events, observables maybe. Lazy evaluation, too.

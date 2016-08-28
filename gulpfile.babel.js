@@ -95,8 +95,10 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
             // $FIXME: de-hardcode, de-heuristicize
             // $TODO: blog pagination
             posts: _(site.posts).filter({'path': 'blog'}).slice(0, 10).value(),
-            site,
-            cfg
+            category: 'blog',
+            cfg,
+            short_desc: '',
+            site
         },
         [cfg.rootDir, `build/blog/index.html`]
     );
@@ -106,9 +108,11 @@ gulp.task('scatter', [/*'loadCfg',*/ 'loadJade', 'gather'], function gtScatter(c
         {
             // $FIXME: de-hardcode, de-heuristicize
             // $TODO: blog pagination
-            posts: _(site.posts).filter({'path': '100'}).slice(0, 10).value(),
-            site,
-            cfg
+            posts: _(site.posts).filter(({path, listed}) => path === '100' && listed).value(),
+            category: '100 days of code',
+            cfg,
+            short_desc: 'I’m taking part in the <a href="https://medium.freecodecamp.com/join-the-100daysofcode-556ddb4579e4">100 days of code</a> flashmob (TL;DR: you have to code every day, outside of your dayjob). The twist I’ve added is I don’t have a twitter (which is <a href="http://calnewport.com/blog/2013/10/03/why-im-still-not-going-to-join-facebook-four-arguments-that-failed-to-convince-me/">by design</a>), hence I blog about it here.',
+            site
         },
         [cfg.rootDir, `build/100/index.html`]
     );

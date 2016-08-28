@@ -1,11 +1,17 @@
 extends ./page/page.jade
 //-
+block h__title
+    title= 'i.i / '+category
 block header
     .b-Masthead__breadcrumbs
         a(href='/') hoichi.io
         = ' / '
-    h1 blog
 block content
+    h1= category
+
+    if short_desc
+        p.b-desc!= short_desc
+
     each post in posts
         .b-post
             header.b-post__header
