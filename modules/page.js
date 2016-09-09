@@ -38,6 +38,7 @@ function pageFabric() {
             get description()   {return ifReady(_p.description)},
             get excerpt()       {return ifReady(_p.excerpt)},
             get href()          {return ifReady(`/${_p.path}/${_p.slug}/`)},
+            get listed()        {return ifReady(_p.listed)},
             get published()     {return ifReady(_p.published)},
             get path()          {return ifReady(_p.path)},
             get slug()          {return ifReady(_p.slug)},
