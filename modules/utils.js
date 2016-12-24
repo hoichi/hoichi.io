@@ -63,9 +63,15 @@ function dateFormatter(locale = 'en_US', options) {
     return dtf.format.bind(dtf);
 }
 
+function extract1stHtmlParagraph(html) {
+    let excerpt = /<p>(.*)?<\/p>/.exec(html)[1];
+    return excerpt.replace(/<(.|\n)*?>/g, '');
+}
+
 //noinspection SpellCheckingInspection
 module.exports = {
     dateFormatter,
+    extract1stHtmlParagraph,
     makePathSync,
     renderTemplate,
     slugify,

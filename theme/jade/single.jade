@@ -1,13 +1,13 @@
 extends ./page/page.jade
 //-
 block h__title
-    title= `i.i / ${page.category.title} / ${page.title}`
+    title= 'i.i / ' + page.category +'/ ' + page.title
 
 block header
     .b-Masthead__breadcrumbs
         a(href='/') hoichi.io
         = ' / '
-        a(href='/' + page.category.slug + '/')= page.category.title
+        a(href='/' + page.category + '/')= page.category
         = ' / '
     h1= page.title
 block content
