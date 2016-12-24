@@ -1,7 +1,7 @@
 ---
 title: Day 3
 date: 2016-07-29
-path: '100'
+category: '100'
 slug: day_3
 listed: false
 ---

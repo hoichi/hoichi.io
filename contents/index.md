@@ -2,7 +2,6 @@
 permalink: false
 title: Behind The Frontend 
 template: home
-path: ./
 slug: ''
 ---
 

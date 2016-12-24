@@ -92,3 +92,4 @@ build/
 
 ### incoming stuff dir ###
 .in/
+/yarn.lock
