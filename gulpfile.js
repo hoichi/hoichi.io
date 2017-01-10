@@ -11,7 +11,12 @@ const _           = require('lodash'),
       fs          = require('fs'),
       gulp        = require('gulp'),
       jade        = require('jade'),
-      md          = require('markdown-it')(),
+      md          = require('markdown-it')({
+          breaks: true,
+          html: true,
+          typographer: true,
+          quotes: '«»„“'
+      }),
       modRw       = require('connect-modrewrite'),
       Path        = require('path'),
       sass        = require('gulp-sass'),
@@ -134,7 +139,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
             url: Path.join(
                 page.url || Path.join(
                     page.category || page.path['dir'],
-                    page.slug
+                    page.slug == null ? page.path['name'] : page.slug.toString()
                 ),
                 'index.html'
             ).replace(/\\/g, '/') || 'untitled/index.html'

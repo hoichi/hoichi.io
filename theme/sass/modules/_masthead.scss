@@ -1,8 +1,9 @@
 .b-Masthead {
   text-align: left;
-  margin-top: $line-height*4;
+  //margin-top: $line-height*4;
   margin-bottom: $line-height;
 
+  /* links */
   & a {
     color: $color-primary-3;
   }
@@ -12,8 +13,26 @@
   & a:focus {
     color: $color-primary-0;
   }
+
+  /* breadcrumbs & navigation */
+  &__breadcrumbs {
+    color: $color-primary-4;
+  }
+
+  &__topNav {
+    margin-bottom: $line-height*2;
+
+    ul {
+      list-style: none;
+
+      li {
+        display: inline-block;
+      }
+
+      li+li::before {
+          content: " | "
+      }
+    }
+  }
 }
 
-.b-Masthead__breadcrumbs {
-  color: $color-primary-4;
-}
