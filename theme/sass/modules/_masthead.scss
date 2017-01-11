@@ -6,13 +6,14 @@
   /* links */
   & a {
     color: $color-primary-3;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: $color-primary-0;
+    }
   }
 
-  & a:hover,
-  & a:active,
-  & a:focus {
-    color: $color-primary-0;
-  }
 
   /* breadcrumbs & navigation */
   &__breadcrumbs {

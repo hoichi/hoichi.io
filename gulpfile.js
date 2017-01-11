@@ -33,6 +33,27 @@ function l(val, desc) {
     return val;
 }
 
+function pageUrlPlusFile(page) {
+    let url = page.url;
+
+    if (!url) {
+        let slug = page.slug;
+        if (slug == null) {
+            slug = (name => name === 'index' ? '' : name)(page.path['name']);
+        }
+
+        url = Path.join(
+            page.category || page.path['dir'],
+            slug
+        );
+    }
+
+    return Path.join(
+        url,
+        'index.html'
+    ).replace(/\\/g, '/') || 'untitled/index.html'
+}
+
 const cfg = {
         layouts: {},
         sources: {
@@ -136,13 +157,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
         }))
         /* destination url */
         .convert(page =>    Object.assign({}, page, {
-            url: Path.join(
-                page.url || Path.join(
-                    page.category || page.path['dir'],
-                    page.slug == null ? page.path['name'] : page.slug.toString()
-                ),
-                'index.html'
-            ).replace(/\\/g, '/') || 'untitled/index.html'
+            url: pageUrlPlusFile(page)
         }))
         .collect(collections['blog'])
         .collect(collections['100'])
