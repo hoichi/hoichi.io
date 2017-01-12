@@ -2,6 +2,7 @@
 title: Self-assessment v. 2017.1
 slug: the-fuck-i-know
 date: 2017-01-08
+template: single
 ---
 This self-assessment circa Jan ’17 is mostly based upon [Eric Elliott’s list](https://medium.com/javascript-scene/top-javascript-frameworks-topics-to-learn-in-2017-700a397b711#.19gg46ezb) and [Superhero.js](http://superherojs.com/). I should probably clean it up, add some sources, or maybe put them all elsewhere, but here’s a first draft.
 

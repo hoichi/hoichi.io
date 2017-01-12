@@ -1,7 +1,7 @@
 extends ./page/page.jade
 //-
 block h__title
-    title= 'i.i / ' + page.category +'/ ' + page.title
+title= 'i.i / ' + page.category + '/ ' + page.title
 
 block header
     .b-Masthead__breadcrumbs
@@ -15,6 +15,4 @@ block content
         article
             != page.content
     block content__footer
-        footer.b-Content__meta
-            .b-Content__meta-date= cfg.date_short(page.date)
 

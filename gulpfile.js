@@ -162,7 +162,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
         .collect(collections['blog'])
         .collect(collections['100'])
         .collect(collections['rss'])
-        .render(templates, page => page.template || 'single')
+        .render(templates, page => page.template || 'post')
         .write(Path.join(cfg.rootDir, 'build'))
     ;
 });
