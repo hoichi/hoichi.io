@@ -10,12 +10,14 @@ This self-assessment circa Jan ’17 is mostly based upon [Eric Elliott’s list
 
 ### JS Basics
 
-- [x] **Builtin methods** (especially arrays, objects, strings, and numbers). 
-    - _Well, I’m at least acquainted with what I’ve been using. Know almost nothing of numbers, but then saw no need for it either. Maybe should brush up on the object methods, but all in all, it doesn’t bother me._
-- [x] **Functions & pure functions**.<br> _Check, I guess._
-- [ ] **Closures**. <br>_Still forget sometimes what’s referenced, and what’s used as a value. Calls for a post._
+- [x] **Builtin methods** (especially arrays, objects, strings, and numbers).
+_Well, I’m at least acquainted with what I’ve been using. Know almost nothing of numbers, but then saw no need for it either. Maybe should brush up on the object methods, but all in all, it doesn’t bother me._
+- [x] **Functions & pure functions**.<br>_Check, I guess._
+- [ ] **Closures**.
+_Still forget sometimes what’s referenced, and what’s used as a value. Calls for a post._
     - [ ] Read YDKJS: Scope and closures
     - [ ] Write a post, at least
+
 - [x] **Callbacks**.<br> _Check._
 
 ### Practical stuff
