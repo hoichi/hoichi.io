@@ -61,10 +61,9 @@ function pageUrlPlusFile(page) {
         );
     }
 
-    return Path.join(
-        url,
-        'index.html'
-    ).replace(/\\/g, '/') || 'untitled/index.html'
+    return  Path.join(url, 'index.html')
+                .replace(/\\/g, '/')
+            || 'untitled/index.html'
 }
 
 const cfg = {
@@ -113,10 +112,10 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
                 })
                 .filter(page => page.path && (page.path.dir === 'blog'))
                 .patchCollection(() => ({
-                    url: 'blog/index.html',
+                    url: 'index.html',
                     category: 'blog'
                 }))
-                .render(templates, 'blog')
+                .render(templates, 'home')
                 .write(Path.join(cfg.rootDir, 'build')),
         '100': Chops.collection({
                     by: p => (p.date || new Date())
@@ -162,8 +161,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
         })
         /* markdown conversion */
         .convert(page =>    Object.assign({}, page, {
-            // content: md.render(page.content)
-            content: marked(page.content)
+            content: md.render(page.content)
         }))
         /* excerpts */
         .convert(page => Object.assign({}, page, {

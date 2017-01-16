@@ -4,6 +4,26 @@ block h__title
     title i.i
 
 block header
-    h1= page.title
+    hgroup
+        h1.b-Masthead__title Behind The Frontend
+        p.b-Masthead__subTitle a learner’s blog by Sergey Samokhov
+
+block content
+    if page.short_desc
+        p.b-desc!= page.short_desc
+
+    each post in page.posts
+        .b-post
+            header.b-post__header
+                span.b-post__date= cfg.date_short(post.date)
+                h2.b-post__title
+                    a.b-post__header-link(href=post.url)= post.title
+            .b-post-meta
+            .b-post__body
+                p
+                    a.b-post__more(href=post.url)
+                        | !{post.excerpt}
+                        br
+                        | ...
 
 block content__footer

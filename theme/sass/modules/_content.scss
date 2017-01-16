@@ -46,6 +46,65 @@
   }
 }
 
+.Content {
+  p, pre, ul, ol {
+    margin-bottom: $line-height;
+  }
+
+  ul {
+    list-style-type: none;
+
+    li {
+      &::before {
+        content: '- ';
+      }
+
+      text-indent: -2ch;
+
+      ul {
+        margin-left: 4ch;
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+article {
+  @mixin hashed-header($level) {
+    // prepend the header text with $level*hash signs (plus one space)
+    $prefix: ' ';
+    @for $i from 1 through $level {
+      $prefix: '##{$prefix}'
+    }
+    &::before {
+      content: $prefix;
+    }
+
+    // _and_ move it left so the header text is aligned with the paragraphs
+    margin-left: -#{$level+1}ch;
+  }
+
+  @mixin hashed-header($level) {
+    // prepend the header text with $level*hash signs (plus one space)
+    $prefix: ' ';
+    @for $i from 1 through $level {
+      $prefix: '##{$prefix}'
+    }
+    &::before {
+      content: $prefix;
+    }
+
+    // _and_ move it left so the header text is aligned with the paragraphs
+    margin-left: -#{$level+1}ch;
+  }
+
+  @for $i from 2 through 6 {
+    h#{$i} {
+      @include hashed-header($i)
+    }
+  }
+}
+
 .b-Content__meta-date {
   text-align: right;
   color: $page-meta-color;

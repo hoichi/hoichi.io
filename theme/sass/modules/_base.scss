@@ -22,10 +22,6 @@ html, body {
   color: $root-color;
 }
 
-p, pre, ul, ol {
-  margin-bottom: $line-height;
-}
-
 h1, h2, h3, h4, h5, h6 {
   color: $hdr-color;
   font-weight: bold;
@@ -51,6 +47,16 @@ h1 {
   line-height: 48px;
   margin: 0 0 $line-height 0;
   text-transform: uppercase;
+}
+
+hgroup {
+  margin: 0 0 $line-height 0;
+
+  h1 {margin: 0;}
+}
+
+h2, h3, h4, h5, h6 {
+  margin-top: $line-height;
 }
 
 a,
