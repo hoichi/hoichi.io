@@ -5,19 +5,37 @@ const   /*mPage = require('./modules/page.js'),
         init = mSite.init,*/
         Chops = require('chops');
 
-const _           = require('lodash'),
-      bSync       = require('browser-sync').create(),
-      fm          = require('front-matter'),
-      fs          = require('fs'),
-      gulp        = require('gulp'),
-      jade        = require('jade'),
-      md          = require('markdown-it')(),
-      modRw       = require('connect-modrewrite'),
-      Path        = require('path'),
-      sass        = require('gulp-sass'),
-      sourcemaps  = require('gulp-sourcemaps'),
-      u           = require('./modules/utils.js'),
-      yaml        = require('js-yaml');
+const   _           = require('lodash'),
+        bSync       = require('browser-sync').create(),
+        fm          = require('front-matter'),
+        fs          = require('fs'),
+        gulp        = require('gulp'),
+        jade        = require('jade'),
+        md          = require('markdown-it')({
+            breaks: true,
+            html: true,
+            typographer: true,
+            quotes: '«»„“'
+        }),
+        marked = require('marked'),
+        modRw       = require('connect-modrewrite'),
+        Path        = require('path'),
+        sass        = require('gulp-sass'),
+        sourcemaps  = require('gulp-sourcemaps'),
+        u           = require('./modules/utils.js'),
+        yaml        = require('js-yaml');
+
+marked.setOptions({
+    renderer: new marked.Renderer(),
+    gfm: true,
+    tables: false,
+    breaks: true,
+    pedantic: false,
+    sanitize: false,
+    smartLists: true,
+    smartypants: true
+});
+
 
 function l(val, desc) {
     if (desc)
@@ -26,6 +44,26 @@ function l(val, desc) {
         console.log(val);
 
     return val;
+}
+
+function pageUrlPlusFile(page) {
+    let url = page.url;
+
+    if (!url) {
+        let slug = page.slug;
+        if (slug == null) {
+            slug = (name => name === 'index' ? '' : name)(page.path['name']);
+        }
+
+        url = Path.join(
+            page.category || page.path['dir'],
+            slug
+        );
+    }
+
+    return  Path.join(url, 'index.html')
+                .replace(/\\/g, '/')
+            || 'untitled/index.html'
 }
 
 const cfg = {
@@ -74,10 +112,10 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
                 })
                 .filter(page => page.path && (page.path.dir === 'blog'))
                 .patchCollection(() => ({
-                    url: 'blog/index.html',
+                    url: 'index.html',
                     category: 'blog'
                 }))
-                .render(templates, 'blog')
+                .render(templates, 'home')
                 .write(Path.join(cfg.rootDir, 'build')),
         '100': Chops.collection({
                     by: p => (p.date || new Date())
@@ -131,18 +169,12 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
         }))
         /* destination url */
         .convert(page =>    Object.assign({}, page, {
-            url: Path.join(
-                page.url || Path.join(
-                    page.category || page.path['dir'],
-                    page.slug
-                ),
-                'index.html'
-            ).replace(/\\/g, '/') || 'untitled/index.html'
+            url: pageUrlPlusFile(page)
         }))
         .collect(collections['blog'])
         .collect(collections['100'])
         .collect(collections['rss'])
-        .render(templates, page => page.template || 'single')
+        .render(templates, page => page.template || 'post')
         .write(Path.join(cfg.rootDir, 'build'))
     ;
 });

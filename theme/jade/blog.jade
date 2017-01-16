@@ -6,9 +6,9 @@ block header
     .b-Masthead__breadcrumbs
         a(href='/') hoichi.io
         = ' / '
-block content
     h1= page.category
 
+block content
     if page.short_desc
         p.b-desc!= page.short_desc
 
@@ -21,7 +21,7 @@ block content
             .b-post-meta
             .b-post__body
                 p
-                    a.b-post__more(href=post.url)
+                    a.b-post__more(href= '/'+post.url)
                         | !{post.excerpt}
                         br
                         | ...
