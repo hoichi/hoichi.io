@@ -7,8 +7,9 @@ block header
     .b-Masthead__breadcrumbs
         a(href='/') hoichi.io
         = ' / '
-        a(href='/' + page.category + '/')= page.category
-        = ' / '
+        if (page.category)
+            a(href='/' + page.category + '/')= page.category
+            = ' / '
     h1= page.title
 block content
     block content__article

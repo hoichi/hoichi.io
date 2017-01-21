@@ -149,7 +149,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
         /* category defaults to folder */
         .convert(page =>    Object.assign({}, page, {
             category:   page.category
-                        || page.path && page.path.dir
+                        || page.path && (page.path.dir)
                         || ''
         }))
         /* processing yfm */
