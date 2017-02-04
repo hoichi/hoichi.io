@@ -8,7 +8,7 @@ block header
         a(href='/') hoichi.io
         = ' / '
         if (page.category)
-            a(href='/' + page.category + '/')= page.category
+            a( href='/' + (page.category === 'blog' ? '' : page.category+'/') )= page.category
             = ' / '
     h1= page.title
 block content

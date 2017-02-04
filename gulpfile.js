@@ -46,7 +46,7 @@ function l(val, desc) {
     return val;
 }
 
-function pageUrlPlusFile(page) {
+function constuctPageUrl(page) {
     let url = page.url;
 
     if (!url) {
@@ -61,9 +61,8 @@ function pageUrlPlusFile(page) {
         );
     }
 
-    return  Path.join(url, 'index.html')
-                .replace(/\\/g, '/')
-            || 'untitled/index.html'
+    return  url.replace(/\\/g, '/')
+            || 'untitled/'
 }
 
 const cfg = {
@@ -108,21 +107,22 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
 
     let collections = {
         'blog': Chops.collection({
-                    by: p => (p.date || new Date())
+                    sortBy: p => (new Date(1970, 0, 1) - (p.date || new Date())),
+                    indexBy: p => p.id
                 })
                 .filter(page => page.path && (page.path.dir === 'blog'))
                 .patchCollection(() => ({
-                    url: 'index.html',
+                    url: '',
                     category: 'blog'
                 }))
                 .render(templates, 'home')
                 .write(Path.join(cfg.rootDir, 'build')),
         '100': Chops.collection({
-                    by: p => (p.date || new Date())
+                    sortBy: p => (p.date || new Date())
                 })
                 .filter(page => page.path && (page.path.dir === '100'))
                 .patchCollection(() => ({
-                    url: '100/index.html',
+                    url: '100/',
                     category: '100 days of code',
                     short_desc: 'I’m taking part in the <a href="https://medium.freecodecamp.com/join-the-100daysofcode-556ddb4579e4">100 days of code</a> flashmob (TL;DR: you have to code every day, outside of your dayjob). The twist I’ve added is I don’t have a twitter (which is <a href="http://calnewport.com/blog/2013/10/03/why-im-still-not-going-to-join-facebook-four-arguments-that-failed-to-convince-me/">by design</a>), hence I blog about it here.<br>Oh, and don’t read it yet, but <a href="https://github.com/hoichi/chops">here’s the repo</a>.'
                 }))
@@ -169,7 +169,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
         }))
         /* destination url */
         .convert(page =>    Object.assign({}, page, {
-            url: pageUrlPlusFile(page)
+            url: constuctPageUrl(page)
         }))
         .collect(collections['blog'])
         .collect(collections['100'])
