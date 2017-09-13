@@ -152,25 +152,35 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
                         || page.path && (page.path.dir)
                         || ''
         }))
-        /* processing yfm */
-        .convert(page =>    {
+        /* process yfm */
+        .convert(page => {
             const yfm = fm(page.content);
+
             return yfm.body
-                ? Object.assign({}, page, yfm.attributes, {content: yfm.body})
-                : page;
+                ?   { ...page
+                    , ...yfm.attributes
+                    , content: yfm.body
+                }
+                :   page
         })
-        /* markdown conversion */
-        .convert(page =>    Object.assign({}, page, {
-            content: md.render(page.content)
-        }))
+        /* convert markdown */
+        .convert(
+            page => ({...page,
+                content: md.render(page.content)
+            })
+        )
         /* excerpts */
-        .convert(page => Object.assign({}, page, {
-            excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
-        }))
+        .convert(
+            page => ({  ...page,
+                excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
+            })
+        )
         /* destination url */
-        .convert(page =>    Object.assign({}, page, {
-            url: constuctPageUrl(page)
-        }))
+        .convert(
+            page => ({  ...page,
+                url: constuctPageUrl(page)
+            })
+        )
         .collect(collections['blog'])
         .collect(collections['100'])
         .collect(collections['rss'])
@@ -200,7 +210,12 @@ gulp.task('static-redirects', function gtStaticRw () {
         .pipe(gulp.dest('./build/ z'));  // rewrite rules for netlify. for browserSync, see below.
 });
 
-gulp.task('static', ['static-js', 'static-redirects']);
+gulp.task('static-img', () => {
+   gulp.src('./files/img/**/*')
+       .pipe(gulp.dest('./build/img/'));
+});
+
+gulp.task('static', ['static-js', 'static-redirects', 'static-img']);
 
 gulp.task('sass:watch', function gtSassWatch () {
     gulp.watch('./theme/sass/**/*.scss', ['sass']);
