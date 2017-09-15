@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "es2015",
+    "target": "es2015",
+    "sourceMap": true,
+    "outDir" : "./"
+  },
+  "include" : [
+    "src/"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

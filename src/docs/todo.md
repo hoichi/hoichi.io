@@ -1,15 +1,7 @@
 ## Build
 
 - [ ] Build the builder
-    We have
-        - build
-        - contents
-        - docs
-        - modules
-        - theme
-    Should add
-        - modules src
-    - [ ] So how ’bout
+    - [x] Folder structure
         - build ←
             - scripts
             - public
@@ -18,9 +10,11 @@
             - docs
             - scripts
             - theme
-    - [ ] install TS
-    - [ ] clean up (babel &c)
-    - [ ] TS task
+    - [x] install TS
+    - [x] clean up (babel &c)
+    - [x] TS task (in package.json)
+        - [x] write tsconfig
+    - [ ] move gulp helpers outta gulpfile
     - [ ] update other destinations
     - [ ] update modules/scripts source
 

@@ -87,9 +87,14 @@ coverage
 ### the static build ###
 build/
 
+### generated scripts ###
+/gulpfile.js.map
+/gulpfile.js
+
+`
 ### Dolphin ###
 .directory
 
 ### incoming stuff dir ###
 .in/
-/yarn.lock
+

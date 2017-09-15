@@ -1,3 +1,4 @@
+///<reference path="../node_modules/@types/node/index.d.ts" />
 'use strict';
 
 const   /*mPage = require('./modules/page.js'),
@@ -5,25 +6,26 @@ const   /*mPage = require('./modules/page.js'),
         init = mSite.init,*/
         Chops = require('chops');
 
-const   _           = require('lodash'),
-        bSync       = require('browser-sync').create(),
-        fm          = require('front-matter'),
-        fs          = require('fs'),
-        gulp        = require('gulp'),
-        jade        = require('jade'),
-        md          = require('markdown-it')({
-            breaks: true,
-            html: true,
-            typographer: true,
-            quotes: '«»„“'
-        }),
-        marked = require('marked'),
-        modRw       = require('connect-modrewrite'),
-        Path        = require('path'),
-        sass        = require('gulp-sass'),
-        sourcemaps  = require('gulp-sourcemaps'),
-        u           = require('./modules/utils.js'),
-        yaml        = require('js-yaml');
+const
+    _           = require('lodash'),
+    bSync       = require('browser-sync').create(),
+    fm          = require('front-matter'),
+    fs          = require('fs'),
+    gulp        = require('gulp'),
+    jade        = require('jade'),
+    md          = require('markdown-it')({
+        breaks: true,
+        html: true,
+        typographer: true,
+        quotes: '«»„“'
+    }),
+    marked      = require('marked'),
+    modRw       = require('connect-modrewrite'),
+    Path        = require('path'),
+    sass        = require('gulp-sass'),
+    sourcemaps  = require('gulp-sourcemaps'),
+    u           = require('./src/scripts/utils.js'),
+    yaml        = require('js-yaml');
 
 marked.setOptions({
     renderer: new marked.Renderer(),
