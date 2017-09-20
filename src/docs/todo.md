@@ -1,6 +1,6 @@
 ## Build
 
-- [ ] Build the builder
+- [x] Build the builder
     - [x] Folder structure
         - build ←
             - scripts
@@ -14,15 +14,16 @@
     - [x] clean up (babel &c)
     - [x] TS task (in package.json)
         - [x] write tsconfig
-    - [ ] move gulp helpers outta gulpfile
-    - [ ] update other destinations
-    - [ ] update modules/scripts source
-
-
+    - [x] ssh git origin
+    - [x] move gulp helpers outta gulpfile
 - [ ] Write a file watcher
+    - [x] install graceful-chokidar
+    - [ ] start writing a test
+        - [x] install mock-fs
+        - [ ] write a test that at least runs `fsSrc`
+        - [ ] see what fromSource sees
 - [ ] Test a file watcher (mock fs with simple texts — maybe even with fuzzy stuff — and check those are the texts that are emitted)
 
-## Build the builder
 
 
 

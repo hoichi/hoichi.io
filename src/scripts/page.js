@@ -134,7 +134,7 @@ function pageFabric() {
 
     function ifReadyCb(cb) {
         if (!_p.isReady) {
-            throw new Error('Object Page should be properly filled before you can consume it\'s data. Use `fromSource` or something.');
+            throw new Error('Object SourceFile should be properly filled before you can consume it\'s data. Use `fromSource` or something.');
         } else {
             return cb();
         }

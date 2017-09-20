@@ -3,8 +3,8 @@
  */
 'use strict';
 
-var fs      = require('fs'),
-    path    = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
 
 function slugify(s) {
     if (typeof s !== 'string') {
@@ -19,7 +19,7 @@ function slugify(s) {
 }
 
 function tplToPath(meta, template) {
-    var re = /\$\((\w+)\)/g;
+    const re = /\$\((\w+)\)/g;
 
     return template.replace(
         re,
@@ -27,9 +27,9 @@ function tplToPath(meta, template) {
     );
 }
 
-function makePathSync(sPath, options = {}) {
+function makePathSync(sPath, {baseDir = null} = {}) {
     const p = path.parse(sPath);
-    let dir = options.baseDir || p.root;
+    let dir = baseDir || p.root;
 
     // $TODO:   throw on empty baseDir
     //          (or require full paths, for that matter)
@@ -37,7 +37,7 @@ function makePathSync(sPath, options = {}) {
     p.dir.split(path.sep).forEach((el, idx, arr) => {
         dir = path.resolve(dir, el);
         try {
-            fs.accessSync(dir, fs.F_OK);
+            fs.accessSync(dir, fs.constants.F_OK);
         }
         catch (err) {
             if (err.code !== 'ENOENT') {
@@ -68,6 +68,34 @@ function extract1stHtmlParagraph(html) {
     return excerpt.replace(/<(.|\n)*?>/g, '');
 }
 
+function l(val, desc) {
+    if (desc)
+        console.log(desc, val);
+    else
+        console.log(val);
+
+    return val;
+}
+
+function constructPageUrl(page) {
+    let url = page.url;
+
+    if (!url) {
+        let slug = page.slug;
+        if (slug == null) {
+            slug = (name => name === 'index' ? '' : name)(page.path['name']);
+        }
+
+        url = Path.join(
+            page.category || page.path['dir'],
+            slug
+        );
+    }
+
+    return  url.replace(/\\/g, '/')
+        || 'untitled/'
+}
+
 //noinspection SpellCheckingInspection
 module.exports = {
     dateFormatter,
@@ -75,5 +103,7 @@ module.exports = {
     makePathSync,
     renderTemplate,
     slugify,
-    tplToPath
+    tplToPath,
+    constructPageUrl,
+    l,
 };

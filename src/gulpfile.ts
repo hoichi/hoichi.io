@@ -19,53 +19,12 @@ const
         typographer: true,
         quotes: '«»„“'
     }),
-    marked      = require('marked'),
     modRw       = require('connect-modrewrite'),
     Path        = require('path'),
     sass        = require('gulp-sass'),
     sourcemaps  = require('gulp-sourcemaps'),
-    u           = require('./src/scripts/utils.js'),
+    u           = require('./scripts/utils.js'),
     yaml        = require('js-yaml');
-
-marked.setOptions({
-    renderer: new marked.Renderer(),
-    gfm: true,
-    tables: false,
-    breaks: true,
-    pedantic: false,
-    sanitize: false,
-    smartLists: true,
-    smartypants: true
-});
-
-
-function l(val, desc) {
-    if (desc)
-        console.log(desc, val);
-    else
-        console.log(val);
-
-    return val;
-}
-
-function constuctPageUrl(page) {
-    let url = page.url;
-
-    if (!url) {
-        let slug = page.slug;
-        if (slug == null) {
-            slug = (name => name === 'index' ? '' : name)(page.path['name']);
-        }
-
-        url = Path.join(
-            page.category || page.path['dir'],
-            slug
-        );
-    }
-
-    return  url.replace(/\\/g, '/')
-            || 'untitled/'
-}
 
 const cfg = {
         layouts: {},
@@ -97,19 +56,22 @@ gulp.task('loadCfg', function gt_loadCfg(cb) {
 gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
     let templates = Chops
             .templates
-            .src(   Path.join(cfg.sources.templates, '*.jade')
-                ,   {ignored: '!_*.jade'})
-            .convert( tpl =>    Object.assign({}, {
+            .src( Path.join(cfg.sources.templates, '*.jade')
+                , {ignored: '!_*.jade'} )
+            .convert( tpl => ({
                 id: tpl.path.name,
-                render: jade.compile(tpl.content, {
-                    pretty: '\t',
-                    filename: tpl.path.path})
+                render: jade.compile(tpl.content,
+                    {
+                        pretty: '\t',
+                        filename: tpl.path.path
+                    }
+                )
             }) )
         ;
 
     let collections = {
         'blog': Chops.collection({
-                    sortBy: p => (new Date(1970, 0, 1) - (p.date || new Date())),
+                    sortBy: p => - (p.date || Date.now()),
                     indexBy: p => p.id
                 })
                 .filter(page => page.path && (page.path.dir === 'blog'))
@@ -119,6 +81,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
                 }))
                 .render(templates, 'home')
                 .write(Path.join(cfg.rootDir, 'build')),
+
         '100': Chops.collection({
                     sortBy: p => (p.date || new Date())
                 })
@@ -130,6 +93,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
                 }))
                 .render(templates, 'blog')
                 .write(Path.join(cfg.rootDir, 'build')),
+
         'rss': Chops.collection({
                     by: p => (p.date || new Date())
                 })
@@ -180,7 +144,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
         /* destination url */
         .convert(
             page => ({  ...page,
-                url: constuctPageUrl(page)
+                url: u.constructPageUrl(page)
             })
         )
         .collect(collections['blog'])
