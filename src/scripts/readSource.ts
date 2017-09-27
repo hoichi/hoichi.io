@@ -4,26 +4,36 @@ import * as Path from 'path';
 import { fromEvent } from 'most';
 import { FilePath, SourceFile } from './model/page';
 
-function observeSource(globs, options) {
+function observeSource(globs, options = {}) {
+    console.log('cwd = %s', process.cwd());
+
     const watcher = chokidar.watch(globs, options);   // that's not lazy
 
+/*
+    watcher.on('all', (type, path) =>
+        console.dir(`${type}:  ${path}`)
+    );
+*/
+
+    fromEvent<[string, object]>('add', watcher)
+        .map( ([path]) => readSourceFile('.', path) )
+        .observe(e => console.log(e));
+
     return fromEvent('all', watcher)
+        .map(e => (console.dir(e), e))
         .filter(
             ({type}) => type === 'add' || type === 'change'
         )
-        .map(console.dir)
     ;
-        // .map(readSourceFile);
 }
 
 /**
- *
  * @param event
  * @param path
  * @param {string} cwd
  * @returns {SourceFile}
  */
-function readSourceFile(event, path, cwd = '.'): SourceFile | null {
+function readSourceFile(cwd = '.', path: string): SourceFile | null {
     const
         parsedPath = parsePath(path),
         page: SourceFile = {
@@ -31,21 +41,19 @@ function readSourceFile(event, path, cwd = '.'): SourceFile | null {
             content: '',
         };
 
-    if (event === 'add' || event === 'change') {
-        const xCwd = process.cwd();
+    const
+        xCwd = process.cwd(),
+        changeDirs = (xCwd !== cwd);
 
-        try {
-            process.chdir(cwd);
-            // fixme: always pass _some_ encoding here, but don’t hardcode it
-            page.content = fs.readFileSync(path, 'utf-8');
-        } finally {
-            process.chdir(xCwd);
-        }
-
-        return page;
+    try {
+        changeDirs && process.chdir(cwd);
+        // fixme: always pass _some_ encoding here, but don’t hardcode it
+        page.content = fs.readFileSync(path, 'utf-8');
+    } finally {
+        changeDirs && process.chdir(xCwd);
     }
 
-    return null;
+    return page;
 }
 
 function parsePath(path: string): FilePath {

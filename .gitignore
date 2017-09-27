@@ -90,6 +90,7 @@ build/
 ### generated scripts ###
 /gulpfile.js.map
 /gulpfile.js
+/scripts
 
 ### Dolphin ###
 .directory

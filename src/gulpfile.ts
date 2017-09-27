@@ -1,10 +1,7 @@
 ///<reference path="../node_modules/@types/node/index.d.ts" />
 'use strict';
 
-const   /*mPage = require('./modules/page.js'),
-        mSite = require('./modules/site.js'),
-        init = mSite.init,*/
-        Chops = require('chops');
+import { observeSource } from './scripts/readSource';
 
 const
     _           = require('lodash'),
@@ -54,6 +51,11 @@ gulp.task('loadCfg', function gt_loadCfg(cb) {
 });
 
 gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
+    observeSource(
+        'contents/',
+        {cwd: '.'},
+    );
+/*
     let templates = Chops
             .templates
             .src( Path.join(cfg.sources.templates, '*.jade')
@@ -105,20 +107,20 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
                 .write(Path.join(cfg.rootDir, 'build')),
     };
 
-    Chops.src('**/*', {cwd: Path.join(cfg.rootDir, cfg.sources.contents.path)})
-        /* necessary defaults */
+    Chops.src('**!/!*', {cwd: Path.join(cfg.rootDir, cfg.sources.contents.path)})
+        /!* necessary defaults *!/
         .convert(page =>    Object.assign({
                                 date: new Date(),
                                 published: true,
                                 title: 'Untitled'
                             }, page))
-        /* category defaults to folder */
+        /!* category defaults to folder *!/
         .convert(page =>    Object.assign({}, page, {
             category:   page.category
                         || page.path && (page.path.dir)
                         || ''
         }))
-        /* process yfm */
+        /!* process yfm *!/
         .convert(page => {
             const yfm = fm(page.content);
 
@@ -129,19 +131,19 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
                 }
                 :   page
         })
-        /* convert markdown */
+        /!* convert markdown *!/
         .convert(
             page => ({...page,
                 content: md.render(page.content)
             })
         )
-        /* excerpts */
+        /!* excerpts *!/
         .convert(
             page => ({  ...page,
                 excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
             })
         )
-        /* destination url */
+        /!* destination url *!/
         .convert(
             page => ({  ...page,
                 url: u.constructPageUrl(page)
@@ -153,6 +155,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
         .render(templates, page => page.template || 'post')
         .write(Path.join(cfg.rootDir, 'build'))
     ;
+*/
 });
 
 gulp.task('sass', function gtSass () {

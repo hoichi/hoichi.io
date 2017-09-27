@@ -18,11 +18,7 @@
     - [x] move gulp helpers outta gulpfile
 - [ ] Write a file watcher
     - [x] install graceful-chokidar
-    - [ ] start writing a test
-        - [x] install mock-fs
-        - [ ] write a test that at least runs `fsSrc`
-        - [ ] see what fromSource sees
-- [ ] Test a file watcher (mock fs with simple texts — maybe even with fuzzy stuff — and check those are the texts that are emitted)
+    - [x] on more try to figure out `fromEvent`
 
 
 
@@ -41,12 +37,6 @@
     - assets->assets
     - js?
     - in fact, start with that first one _and make it work in gulp_. or in any npm script
-    - [ ] async
-        - [ ] read on getify
-            - [ ] [Part 1: Concurrency, Async, Parallelism](http://blog.getify.com/concurrently-javascript-1/)
-            - [ ] [Part 2: Reactive Programming (Observables)](http://blog.getify.com/concurrently-javascript-2/)
-            - [ ] [Part 3: CSP (Communicating Sequential Processes)](http://blog.getify.com/concurrently-javascript-3/)
-        - [ ] see https://promisesaplus.com/implementations
 
 ## Modularity and publishing
 

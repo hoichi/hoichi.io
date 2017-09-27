@@ -26,7 +26,7 @@
     "mock-fs": "^4.4.1"
   },
   "scripts": {
-    "test": "ava modules/_tests/**/*.js",
+    "test": "ava **/*.spec.js",
     "debug-gulp": "iron-node node_modules/gulp/bin/gulp.js"
   }
 }
