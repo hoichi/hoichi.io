@@ -65,12 +65,10 @@ build/
 ### generated scripts ###
 /gulpfile.js.map
 /gulpfile.js
-/scripts
+scripts/
 
 ### Dolphin ###
 .directory
 
 ### incoming stuff dir ###
 .in/
-
-/scripts/
