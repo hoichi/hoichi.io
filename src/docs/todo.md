@@ -16,12 +16,15 @@
         - [x] write tsconfig
     - [x] ssh git origin
     - [x] move gulp helpers outta gulpfile
-- [ ] Write a file watcher
+- [x] Write a file watcher
     - [x] install graceful-chokidar
     - [x] on more try to figure out `fromEvent`
-
-
-
+- [x] Substitute `.map` for `.convert`
+    - [x] For contents
+    - [x] For templates
+- [ ] Collect
+- [ ] Render
+- [ ] Write files
 
 ## Improve
 

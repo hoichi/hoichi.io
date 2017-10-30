@@ -5,30 +5,16 @@ import { fromEvent } from 'most';
 import { FilePath, SourceFile } from './model/page';
 
 function observeSource(globs, options = {}) {
-    console.log('cwd = %s', process.cwd());
+    // console.log('cwd = %s', process.cwd());
+    const watcher = chokidar.watch(globs, options);
 
-    const watcher = chokidar.watch(globs, options);   // that's not lazy
-
-/*
-    watcher.on('all', (type, path) =>
-        console.dir(`${type}:  ${path}`)
-    );
-*/
-
-    fromEvent<[string, object]>('add', watcher)
-        .map( ([path]) => readSourceFile('.', path) )
-        .observe(e => console.log(e));
-
-    return fromEvent('all', watcher)
-        .map(e => (console.dir(e), e))
-        .filter(
-            ({type}) => type === 'add' || type === 'change'
-        )
-    ;
+    return fromEvent<[string, object]>('add', watcher)
+        .map(
+            ([path]) => readSourceFile('.', path)
+        );
 }
 
 /**
- * @param event
  * @param path
  * @param {string} cwd
  * @returns {SourceFile}

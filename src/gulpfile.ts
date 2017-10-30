@@ -51,10 +51,72 @@ gulp.task('loadCfg', function gt_loadCfg(cb) {
 });
 
 gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
-    observeSource(
-        'contents/',
-        {cwd: '.'},
-    );
+    console.log('observing source');
+    observeSource( 'contents/', {cwd: '.'} )
+        .map(
+            page => ({
+                date: new Date(),
+                published: true,
+                title: 'Untitled',
+                ...page
+            })
+        )
+        /* category defaults to folder */
+        .map(
+            page => ({ ...page,
+                category: ( page.path && (page.path.dir)) || ''
+            })
+        )
+        /* process yfm */
+        .map(page => {
+            const yfm = fm(page.content);
+
+            return yfm.body
+                ?   { ...page
+                    , ...yfm.attributes
+                    , content: yfm.body
+                    }
+                :   page
+        })
+        /* convert markdown */
+        .map(
+            page => ({...page,
+                content: md.render(page.content)
+            })
+        )
+        /* excerpts */
+        .map(
+            page => ({  ...page,
+                excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
+            })
+        )
+        /* destination url */
+        .map(
+            page => ({  ...page,
+                url: u.constructPageUrl(page)
+            })
+        )
+        .map(page => page.title)    // fixme when done debugging
+        // todo: collect
+        .loop(
+            (coll, page) => {
+                const sortedList = coll.concat(page);
+
+                return {
+                    seed: sortedList,
+                    value: {
+                        sortedList,
+                        page // todo: mutate the page
+                    },
+                };
+            },
+            [],
+        )
+        // todo: render
+        .observe( e => console.log(e) );
+
+        // todo: observeSource
+        // todo: map (compile)
 /*
     let templates = Chops
             .templates
@@ -91,7 +153,7 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
                 .patchCollection(() => ({
                     url: '100/',
                     category: '100 days of code',
-                    short_desc: 'I’m taking part in the <a href="https://medium.freecodecamp.com/join-the-100daysofcode-556ddb4579e4">100 days of code</a> flashmob (TL;DR: you have to code every day, outside of your dayjob). The twist I’ve added is I don’t have a twitter (which is <a href="http://calnewport.com/blog/2013/10/03/why-im-still-not-going-to-join-facebook-four-arguments-that-failed-to-convince-me/">by design</a>), hence I blog about it here.<br>Oh, and don’t read it yet, but <a href="https://github.com/hoichi/chops">here’s the repo</a>.'
+                    short_desc: 'I’m taking part in the <a href="https://medium.freecodecamp.com/join-the-100daysofcode-556ddb4579e4">100 days of code</a> flashmob (TL;DR: you have to code every day, outside of your day job). The twist I’ve added is I don’t have a twitter (which is <a href="http://calnewport.com/blog/2013/10/03/why-im-still-not-going-to-join-facebook-four-arguments-that-failed-to-convince-me/">by design</a>), hence I blog about it here.<br>Oh, and don’t read it yet, but <a href="https://github.com/hoichi/chops">here’s the repo</a>.'
                 }))
                 .render(templates, 'blog')
                 .write(Path.join(cfg.rootDir, 'build')),
@@ -108,47 +170,6 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
     };
 
     Chops.src('**!/!*', {cwd: Path.join(cfg.rootDir, cfg.sources.contents.path)})
-        /!* necessary defaults *!/
-        .convert(page =>    Object.assign({
-                                date: new Date(),
-                                published: true,
-                                title: 'Untitled'
-                            }, page))
-        /!* category defaults to folder *!/
-        .convert(page =>    Object.assign({}, page, {
-            category:   page.category
-                        || page.path && (page.path.dir)
-                        || ''
-        }))
-        /!* process yfm *!/
-        .convert(page => {
-            const yfm = fm(page.content);
-
-            return yfm.body
-                ?   { ...page
-                    , ...yfm.attributes
-                    , content: yfm.body
-                }
-                :   page
-        })
-        /!* convert markdown *!/
-        .convert(
-            page => ({...page,
-                content: md.render(page.content)
-            })
-        )
-        /!* excerpts *!/
-        .convert(
-            page => ({  ...page,
-                excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
-            })
-        )
-        /!* destination url *!/
-        .convert(
-            page => ({  ...page,
-                url: u.constructPageUrl(page)
-            })
-        )
         .collect(collections['blog'])
         .collect(collections['100'])
         .collect(collections['rss'])

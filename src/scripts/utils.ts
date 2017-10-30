@@ -86,7 +86,7 @@ function constructPageUrl(page) {
             slug = (name => name === 'index' ? '' : name)(page.path['name']);
         }
 
-        url = Path.join(
+        url = path.join(
             page.category || page.path['dir'],
             slug
         );
