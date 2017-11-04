@@ -645,7 +645,7 @@ character-parser@1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/character-parser/-/character-parser-1.2.1.tgz#c0dde4ab182713b919b970959a123ecc1a30fcd6"
 
-chokidar@^1.0.5:
+chokidar@^1.0.5, chokidar@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-1.7.0.tgz#798e689778151c8076b4b360e5edd28cda2bb468"
   dependencies:
@@ -1709,19 +1709,11 @@ got@^3.2.0:
     read-all-stream "^3.0.0"
     timed-out "^2.0.0"
 
-graceful-chokidar@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/graceful-chokidar/-/graceful-chokidar-0.1.0.tgz#414510b5567dc609476a72dda95c405e0842b016"
-  dependencies:
-    graceful-fs "~3.0.2"
-  optionalDependencies:
-    recursive-readdir "0.0.2"
-
 graceful-fs@4.X, graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.4, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
-graceful-fs@^3.0.0, graceful-fs@~3.0.2:
+graceful-fs@^3.0.0:
   version "3.0.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-3.0.11.tgz#7613c778a1afea62f25c630a086d7f3acbbdd818"
   dependencies:
@@ -3470,10 +3462,6 @@ rechoir@^0.6.2:
   resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
   dependencies:
     resolve "^1.1.6"
-
-recursive-readdir@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/recursive-readdir/-/recursive-readdir-0.0.2.tgz#0bc47dc4838e646dccfba0507b5e57ffbff35f7c"
 
 redent@^1.0.0:
   version "1.0.0"

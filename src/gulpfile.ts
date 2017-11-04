@@ -2,45 +2,49 @@
 'use strict';
 
 import { observeSource } from './scripts/readSource';
+import { multicast } from 'most';
 
-const
-    _           = require('lodash'),
-    bSync       = require('browser-sync').create(),
-    fm          = require('front-matter'),
-    fs          = require('fs'),
-    gulp        = require('gulp'),
-    jade        = require('jade'),
-    md          = require('markdown-it')({
+const _ = require('lodash'),
+    bSync = require('browser-sync').create(),
+    fm = require('front-matter'),
+    fs = require('fs'),
+    gulp = require('gulp'),
+    jade = require('jade'),
+    md = require('markdown-it')({
         breaks: true,
         html: true,
         typographer: true,
         quotes: '«»„“'
     }),
-    modRw       = require('connect-modrewrite'),
-    Path        = require('path'),
-    sass        = require('gulp-sass'),
-    sourcemaps  = require('gulp-sourcemaps'),
-    u           = require('./scripts/utils.js'),
-    yaml        = require('js-yaml');
+    modRw = require('connect-modrewrite'),
+    Path = require('path'),
+    sass = require('gulp-sass'),
+    sourcemaps = require('gulp-sourcemaps'),
+    u = require('./scripts/utils.js'),
+    yaml = require('js-yaml');
 
 const cfg = {
-        layouts: {},
-        sources: {
-            contents: {
-                path: 'contents',
-                encoding: 'UTF-8',
-                extensions: 'md|mdown|markdown'
-            },
-            templates: 'theme/jade',
-            styles: 'theme/sass'
+    layouts: {},
+    sources: {
+        contents: {
+            path: 'contents',
+            encoding: 'UTF-8',
+            extensions: 'md|mdown|markdown'
         },
-        rootDir: __dirname,
-        date_short: u.dateFormatter('en-US', {year: 'numeric', month: 'short', day: 'numeric'})
-    };
+        templates: 'theme/jade',
+        styles: 'theme/sass'
+    },
+    rootDir: __dirname,
+    date_short: u.dateFormatter('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    })
+};
 
 const site = {
     title: 'Behind The Frontend',
-    domain: 'hoichi.io',
+    domain: 'hoichi.io'
 };
 
 gulp.task('loadCfg', function gt_loadCfg(cb) {
@@ -50,79 +54,107 @@ gulp.task('loadCfg', function gt_loadCfg(cb) {
     cb();
 });
 
-gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
-    console.log('observing source');
-    observeSource( 'contents/', {cwd: '.'} )
-        .map(
-            page => ({
+gulp.task(
+    'scatter',
+    [
+        /*'loadCfg',*/
+    ],
+    function gtScatter(cb_t) {
+        console.log('observing source');
+        const { fromAdd$, fromReady$ } = observeSource('contents/', {cwd: '.'});
+
+        const pages$ = fromAdd$
+            .map(page => ({
                 date: new Date(),
                 published: true,
                 title: 'Untitled',
                 ...page
-            })
-        )
-        /* category defaults to folder */
-        .map(
-            page => ({ ...page,
-                category: ( page.path && (page.path.dir)) || ''
-            })
-        )
-        /* process yfm */
-        .map(page => {
-            const yfm = fm(page.content);
+            }))
+            /* category defaults to folder */
+            .map(page => ({
+                ...page,
+                category: (page.path && page.path.dir) || ''
+            }))
+            /* process yfm */
+            .map(page => {
+                const yfm = fm(page.content);
 
-            return yfm.body
-                ?   { ...page
-                    , ...yfm.attributes
-                    , content: yfm.body
+                return yfm.body
+                    ? {
+                        ...page,
+                        ...yfm.attributes,
+                        content: yfm.body
                     }
-                :   page
-        })
-        /* convert markdown */
-        .map(
-            page => ({...page,
+                    : page;
+            })
+            /* convert markdown */
+            .map(page => ({
+                ...page,
                 content: md.render(page.content)
-            })
-        )
-        /* excerpts */
-        .map(
-            page => ({  ...page,
+            }))
+            /* excerpts */
+            .map(page => ({
+                ...page,
                 excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
-            })
-        )
-        /* destination url */
-        .map(
-            page => ({  ...page,
+            }))
+            /* destination url */
+            .map(page => ({
+                ...page,
                 url: u.constructPageUrl(page)
-            })
-        )
-        .map(page => page.title)    // fixme when done debugging
-        // todo: collect
-        .loop(
-            (coll, page) => {
-                const sortedList = coll.concat(page);
+            }))
+        ;
+
+        const sortedList$ = pages$
+            .loop((coll, page) => {
+                const sortedList = coll.concat(page);   // todo: actually sort
 
                 return {
                     seed: sortedList,
                     value: {
                         sortedList,
                         page // todo: mutate the page
-                    },
+                    }
                 };
-            },
-            [],
-        )
-        // todo: render
-        .observe( e => console.log(e) );
+            }, [])
+            .until(fromReady$)  // todo: move it someplace better
+            .multicast()        // todo: and maybe multicast earlier
+        ;
+
+        const collectedPages$ = sortedList$
+            .map(val => val.page)
+            // todo:
+            //  - (blocked) [ ] render
+            //  - [ ] output path
+            //  - [ ] write
+            .map(page => page.title) // fixme when done debugging
+            // .observe(console.log)
+            // .then(() => console.log('BAM!'))
+        ;
+
+        const feed$ = sortedList$
+            .map(val => val.sortedList)
+            .reduce((_, list) => list, undefined)
+            // todo:
+            //  - [ ] wait for `ready` or stream close
+            //  - [ ] slice & dice
+            //  - (blocked) [ ] render
+            //
+            //  - [ ] output path
+            //  - [ ] write
+            .then((list) => {
+                console.log('\n\n=== DONE! ===\n');
+                console.log(list.map(p => p.title));
+                console.log('\n=== /DONE ===\n');
+            })
+        ;
+
+
 
         // todo: observeSource
         // todo: map (compile)
-/*
-    let templates = Chops
-            .templates
-            .src( Path.join(cfg.sources.templates, '*.jade')
-                , {ignored: '!_*.jade'} )
-            .convert( tpl => ({
+        const templates$ =
+            observeSource('src/theme/jade/*.jade', {cwd: '.'}).fromAdd$
+            .map(tpl => ({
                 id: tpl.path.name,
                 render: jade.compile(tpl.content,
                     {
@@ -130,97 +162,112 @@ gulp.task('scatter', [/*'loadCfg',*/], function gtScatter(cb_t) {
                         filename: tpl.path.path
                     }
                 )
-            }) )
-        ;
-
-    let collections = {
-        'blog': Chops.collection({
-                    sortBy: p => - (p.date || Date.now()),
-                    indexBy: p => p.id
-                })
-                .filter(page => page.path && (page.path.dir === 'blog'))
-                .patchCollection(() => ({
-                    url: '',
-                    category: 'blog'
-                }))
-                .render(templates, 'home')
-                .write(Path.join(cfg.rootDir, 'build')),
-
-        '100': Chops.collection({
-                    sortBy: p => (p.date || new Date())
-                })
-                .filter(page => page.path && (page.path.dir === '100'))
-                .patchCollection(() => ({
-                    url: '100/',
-                    category: '100 days of code',
-                    short_desc: 'I’m taking part in the <a href="https://medium.freecodecamp.com/join-the-100daysofcode-556ddb4579e4">100 days of code</a> flashmob (TL;DR: you have to code every day, outside of your day job). The twist I’ve added is I don’t have a twitter (which is <a href="http://calnewport.com/blog/2013/10/03/why-im-still-not-going-to-join-facebook-four-arguments-that-failed-to-convince-me/">by design</a>), hence I blog about it here.<br>Oh, and don’t read it yet, but <a href="https://github.com/hoichi/chops">here’s the repo</a>.'
-                }))
-                .render(templates, 'blog')
-                .write(Path.join(cfg.rootDir, 'build')),
-
-        'rss': Chops.collection({
-                    by: p => (p.date || new Date())
-                })
-                .filter(page => page.path && (page.path.dir === 'blog'))
-                .patchCollection(() => ({
-                    url: 'feed.xml',
-                }))
-                .render(templates, 'rss', {site})
-                .write(Path.join(cfg.rootDir, 'build')),
-    };
-
-    Chops.src('**!/!*', {cwd: Path.join(cfg.rootDir, cfg.sources.contents.path)})
-        .collect(collections['blog'])
-        .collect(collections['100'])
-        .collect(collections['rss'])
-        .render(templates, page => page.template || 'post')
-        .write(Path.join(cfg.rootDir, 'build'))
-    ;
-*/
-});
-
-gulp.task('sass', function gtSass () {
-    gulp.src('./theme/sass/**/*.scss')
-        .pipe(sourcemaps.init())
-            .pipe(
-                sass({outputStyle: 'compressed'})
-                    .on('error', sass.logError)
+            }))
+            .scan(
+                (hash, tpl) => ({...hash, [tpl.id]: tpl.render}),
+                [],
             )
+            .forEach(console.log)
+        /*
+        let templates = Chops
+                .templates
+                .src( Path.join(cfg.sources.templates, '*.jade')
+                    , {ignored: '!_*.jade'} )
+                .convert( tpl => ({
+                    id: tpl.path.name,
+                    render: jade.compile(tpl.content,
+                        {
+                            pretty: '\t',
+                            filename: tpl.path.path
+                        }
+                    )
+                }) )
+            ;
+
+        let collections = {
+            'blog': Chops.collection({
+                        sortBy: p => - (p.date || Date.now()),
+                        indexBy: p => p.id
+                    })
+                    .filter(page => page.path && (page.path.dir === 'blog'))
+                    .patchCollection(() => ({
+                        url: '',
+                        category: 'blog'
+                    }))
+                    .render(templates, 'home')
+                    .write(Path.join(cfg.rootDir, 'build')),
+
+            '100': Chops.collection({
+                        sortBy: p => (p.date || new Date())
+                    })
+                    .filter(page => page.path && (page.path.dir === '100'))
+                    .patchCollection(() => ({
+                        url: '100/',
+                        category: '100 days of code',
+                        short_desc: 'I’m taking part in the <a href="https://medium.freecodecamp.com/join-the-100daysofcode-556ddb4579e4">100 days of code</a> flashmob (TL;DR: you have to code every day, outside of your day job). The twist I’ve added is I don’t have a twitter (which is <a href="http://calnewport.com/blog/2013/10/03/why-im-still-not-going-to-join-facebook-four-arguments-that-failed-to-convince-me/">by design</a>), hence I blog about it here.<br>Oh, and don’t read it yet, but <a href="https://github.com/hoichi/chops">here’s the repo</a>.'
+                    }))
+                    .render(templates, 'blog')
+                    .write(Path.join(cfg.rootDir, 'build')),
+
+            'rss': Chops.collection({
+                        by: p => (p.date || new Date())
+                    })
+                    .filter(page => page.path && (page.path.dir === 'blog'))
+                    .patchCollection(() => ({
+                        url: 'feed.xml',
+                    }))
+                    .render(templates, 'rss', {site})
+                    .write(Path.join(cfg.rootDir, 'build')),
+        };
+
+        Chops.src('**!/!*', {cwd: Path.join(cfg.rootDir, cfg.sources.contents.path)})
+            .collect(collections['blog'])
+            .collect(collections['100'])
+            .collect(collections['rss'])
+            .render(templates, page => page.template || 'post')
+            .write(Path.join(cfg.rootDir, 'build'))
+        ;
+    */
+    }
+);
+
+gulp.task('sass', function gtSass() {
+    gulp
+        .src('./theme/sass/**/*.scss')
+        .pipe(sourcemaps.init())
+        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
         .pipe(sourcemaps.write('./maps'))
         .pipe(gulp.dest('./build/css'));
 });
 
-gulp.task('static-js', function gtStaticJS () {
-    gulp.src('./theme/js/lib/*.js')
-        .pipe(gulp.dest('./build/js/'));
+gulp.task('static-js', function gtStaticJS() {
+    gulp.src('./theme/js/lib/*.js').pipe(gulp.dest('./build/js/'));
 });
 
-gulp.task('static-redirects', function gtStaticRw () {
-    gulp.src('./theme/_redirects')
-        .pipe(gulp.dest('./build/ z'));  // rewrite rules for netlify. for browserSync, see below.
+gulp.task('static-redirects', function gtStaticRw() {
+    gulp.src('./theme/_redirects').pipe(gulp.dest('./build/ z')); // rewrite rules for netlify. for browserSync, see below.
 });
 
 gulp.task('static-img', () => {
-   gulp.src('./files/img/**/*')
-       .pipe(gulp.dest('./build/img/'));
+    gulp.src('./files/img/**/*').pipe(gulp.dest('./build/img/'));
 });
 
 gulp.task('static', ['static-js', 'static-redirects', 'static-img']);
 
-gulp.task('sass:watch', function gtSassWatch () {
+gulp.task('sass:watch', function gtSassWatch() {
     gulp.watch('./theme/sass/**/*.scss', ['sass']);
 });
 
 gulp.task('watch', ['sass:watch']);
 
-gulp.task('serve', ['watch'], function gtServe () {
+gulp.task('serve', ['watch'], function gtServe() {
     bSync.init({
         server: {
-            baseDir: "./build/"
+            baseDir: './build/'
         },
         middleware: [
             modRw([
-                '^/feed/??$ /feed.xml [L]'  // see _redirects for production redirects (https://www.netlify.com/docs/redirects)
+                '^/feed/??$ /feed.xml [L]' // see _redirects for production redirects (https://www.netlify.com/docs/redirects)
             ])
         ]
     });

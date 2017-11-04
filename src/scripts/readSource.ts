@@ -1,4 +1,4 @@
-import * as chokidar from 'graceful-chokidar';
+import * as chokidar from 'chokidar';
 import * as fs from 'graceful-fs';
 import * as Path from 'path';
 import { fromEvent } from 'most';
@@ -6,12 +6,15 @@ import { FilePath, SourceFile } from './model/page';
 
 function observeSource(globs, options = {}) {
     // console.log('cwd = %s', process.cwd());
-    const watcher = chokidar.watch(globs, options);
+    const watcher = chokidar.watch(globs, {...options, persistent: false});
 
-    return fromEvent<[string, object]>('add', watcher)
-        .map(
-            ([path]) => readSourceFile('.', path)
-        );
+    const fromAdd$ = fromEvent<[string, object]>('add', watcher)
+        .map( ([path]) => readSourceFile('.', path) );
+
+    return {
+        fromAdd$,
+        fromReady$: fromEvent<[string, void]>('ready', watcher),
+    };
 }
 
 /**
