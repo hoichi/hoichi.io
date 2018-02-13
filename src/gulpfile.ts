@@ -63,6 +63,7 @@ gulp.task(
         console.log('observing source');
         const { fromAdd$, fromReady$ } = observeSource('contents/', {cwd: '.'});
 
+/*
         const pages$ = fromAdd$
             .map(page => ({
                 date: new Date(),
@@ -70,12 +71,12 @@ gulp.task(
                 title: 'Untitled',
                 ...page
             }))
-            /* category defaults to folder */
+            /!* category defaults to folder *!/
             .map(page => ({
                 ...page,
                 category: (page.path && page.path.dir) || ''
             }))
-            /* process yfm */
+            /!* process yfm *!/
             .map(page => {
                 const yfm = fm(page.content);
 
@@ -87,23 +88,25 @@ gulp.task(
                     }
                     : page;
             })
-            /* convert markdown */
+            /!* convert markdown *!/
             .map(page => ({
                 ...page,
                 content: md.render(page.content)
             }))
-            /* excerpts */
+            /!* excerpts *!/
             .map(page => ({
                 ...page,
                 excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
             }))
-            /* destination url */
+            /!* destination url *!/
             .map(page => ({
                 ...page,
                 url: u.constructPageUrl(page)
             }))
         ;
+*/
 
+/*
         const sortedList$ = pages$
             .loop((coll, page) => {
                 const sortedList = coll.concat(page);   // todo: actually sort
@@ -119,7 +122,9 @@ gulp.task(
             .until(fromReady$)  // todo: move it someplace better
             .multicast()        // todo: and maybe multicast earlier
         ;
+*/
 
+/*
         const collectedPages$ = sortedList$
             .map(val => val.page)
             // todo:
@@ -130,7 +135,9 @@ gulp.task(
             // .observe(console.log)
             // .then(() => console.log('BAM!'))
         ;
+*/
 
+/*
         const feed$ = sortedList$
             .map(val => val.sortedList)
             .reduce((_, list) => list, undefined)
@@ -147,13 +154,15 @@ gulp.task(
                 console.log('\n=== /DONE ===\n');
             })
         ;
+*/
 
 
 
         // todo: observeSource
         // todo: map (compile)
+/*
         const templates$ =
-            observeSource('src/theme/jade/*.jade', {cwd: '.'}).fromAdd$
+            observeSource('src/theme/jade/!*.jade', {cwd: '.'}).fromAdd$
             .map(tpl => ({
                 id: tpl.path.name,
                 render: jade.compile(tpl.content,
@@ -163,11 +172,12 @@ gulp.task(
                     }
                 )
             }))
-            .scan(
-                (hash, tpl) => ({...hash, [tpl.id]: tpl.render}),
-                [],
-            )
-            .forEach(console.log)
+*/
+            // .scan(
+            //     (hash, tpl) => ({...hash, [tpl.id]: tpl.render}),
+            //     [],
+            // )
+            // .forEach(console.log)
         /*
         let templates = Chops
                 .templates

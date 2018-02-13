@@ -1,19 +1,36 @@
 import * as chokidar from 'chokidar';
 import * as fs from 'graceful-fs';
 import * as Path from 'path';
-import { fromEvent } from 'most';
+import { map, runEffects } from '@most/core';
+import { domEvent as fromEvent } from '@most/dom-event';
+import { newDefaultScheduler } from '@most/scheduler';
 import { FilePath, SourceFile } from './model/page';
 
 function observeSource(globs, options = {}) {
-    // console.log('cwd = %s', process.cwd());
+    console.log('cwd = %s', process.cwd());
     const watcher = chokidar.watch(globs, {...options, persistent: false});
 
-    const fromAdd$ = fromEvent<[string, object]>('add', watcher)
-        .map( ([path]) => readSourceFile('.', path) );
+    // watcher.on('add', event => console.log(event));
+
+    const fromAdd$ = fromEvent('add', watcher);
+    const fromAddWithLog$ = map(
+      event => {console.log(event); return event},
+      fromAdd$,
+    );
+    runEffects(fromAddWithLog$, newDefaultScheduler())
+      .then(() => console.log('My job here is done'))
+      .catch((err) => console.log(err));
+
+/*
+    const fromAddWithRead$ = map(
+        ([path]) => readSourceFile('.', path),
+        fromAdd$,
+    );
+*/
 
     return {
-        fromAdd$,
-        fromReady$: fromEvent<[string, void]>('ready', watcher),
+        fromAdd$/*: fromAddWithRead$*/,
+        fromReady$: fromEvent('ready', watcher),
     };
 }
 

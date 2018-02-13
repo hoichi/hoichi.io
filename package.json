@@ -2,6 +2,10 @@
   "name": "hoichi.io",
   "private": true,
   "dependencies": {
+    "@most/core": "^1.0.1",
+    "@most/dom-event": "^2.0.0",
+    "@most/hold": "^3.0.0",
+    "@most/scheduler": "^1.1.0",
     "@types/mock-fs": "^3.6.30",
     "@types/node": "^8.0.28",
     "chokidar": "^1.7.0",
@@ -15,7 +19,6 @@
     "lodash": "^4.0.0",
     "markdown-it": "^8.4.0",
     "marked": "^0.3.6",
-    "most": "^1.7.1",
     "path": "^0.12.7",
     "typescript": "^2.5.2"
   },
