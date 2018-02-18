@@ -14,7 +14,7 @@ export interface FilePath {
     dirs: string[];
     ext: string;
     name: string;
-    path: string;
+    full: string;
 }
 
 /*

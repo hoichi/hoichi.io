@@ -1,112 +1,122 @@
 ///<reference path="../node_modules/@types/node/index.d.ts" />
 'use strict';
 
+import { map, runEffects } from '@most/core';
+import { newDefaultScheduler } from '@most/scheduler';
+import { pipe } from 'ramda';
+
 import { observeSource } from './scripts/readSource';
-import { multicast } from 'most';
 
 const _ = require('lodash'),
-    bSync = require('browser-sync').create(),
-    fm = require('front-matter'),
-    fs = require('fs'),
-    gulp = require('gulp'),
-    jade = require('jade'),
-    md = require('markdown-it')({
-        breaks: true,
-        html: true,
-        typographer: true,
-        quotes: '«»„“'
-    }),
-    modRw = require('connect-modrewrite'),
-    Path = require('path'),
-    sass = require('gulp-sass'),
-    sourcemaps = require('gulp-sourcemaps'),
-    u = require('./scripts/utils.js'),
-    yaml = require('js-yaml');
+  bSync = require('browser-sync').create(),
+  fm = require('front-matter'),
+  fs = require('fs'),
+  gulp = require('gulp'),
+  jade = require('jade'),
+  md = require('markdown-it')({
+    breaks: true,
+    html: true,
+    typographer: true,
+    quotes: '«»„“',
+  }),
+  modRw = require('connect-modrewrite'),
+  Path = require('path'),
+  sass = require('gulp-sass'),
+  sourcemaps = require('gulp-sourcemaps'),
+  u = require('./scripts/utils.js'),
+  yaml = require('js-yaml');
 
 const cfg = {
-    layouts: {},
-    sources: {
-        contents: {
-            path: 'contents',
-            encoding: 'UTF-8',
-            extensions: 'md|mdown|markdown'
-        },
-        templates: 'theme/jade',
-        styles: 'theme/sass'
+  layouts: {},
+  sources: {
+    contents: {
+      path: 'contents',
+      encoding: 'UTF-8',
+      extensions: 'md|mdown|markdown',
     },
-    rootDir: __dirname,
-    date_short: u.dateFormatter('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    })
+    templates: 'theme/jade',
+    styles: 'theme/sass',
+  },
+  rootDir: __dirname,
+  date_short: u.dateFormatter('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }),
 };
 
 const site = {
-    title: 'Behind The Frontend',
-    domain: 'hoichi.io'
+  title: 'Behind The Frontend',
+  domain: 'hoichi.io',
 };
 
 gulp.task('loadCfg', function gt_loadCfg(cb) {
-    // just start with loading global stuff
-    let rootCfg = yaml.safeLoad(fs.readFileSync('config.yaml', 'utf8'));
-    _.merge(cfg, rootCfg);
-    cb();
+  // just start with loading global stuff
+  let rootCfg = yaml.safeLoad(fs.readFileSync('config.yaml', 'utf8'));
+  _.merge(cfg, rootCfg);
+  cb();
 });
 
 gulp.task(
-    'scatter',
-    [
-        /*'loadCfg',*/
-    ],
-    function gtScatter(cb_t) {
-        console.log('observing source');
-        const { fromAdd$, fromReady$ } = observeSource('contents/', {cwd: '.'});
+  'scatter',
+  [
+    /*'loadCfg',*/
+  ],
+  function gtScatter(cb_t) {
+    console.log('observing source');
+    const { fromAdd$ } = observeSource('contents/', { cwd: '.' });
 
-/*
-        const pages$ = fromAdd$
-            .map(page => ({
-                date: new Date(),
-                published: true,
-                title: 'Untitled',
-                ...page
-            }))
-            /!* category defaults to folder *!/
-            .map(page => ({
-                ...page,
-                category: (page.path && page.path.dir) || ''
-            }))
-            /!* process yfm *!/
-            .map(page => {
-                const yfm = fm(page.content);
+    const pages$ = pipe(
+      map(page => ({
+        /* defaults */
+        date: new Date(),
+        published: true,
+        title: 'Untitled',
+        /* category defaults to folder */
+        category: ((page as any).path && (page as any).path.dir) || '',
+        ...page,
+      })),
+      map(page => (console.log((page as any).path), page)),
+    )(fromAdd$);
 
-                return yfm.body
-                    ? {
-                        ...page,
-                        ...yfm.attributes,
-                        content: yfm.body
-                    }
-                    : page;
-            })
-            /!* convert markdown *!/
-            .map(page => ({
-                ...page,
-                content: md.render(page.content)
-            }))
-            /!* excerpts *!/
-            .map(page => ({
-                ...page,
-                excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
-            }))
-            /!* destination url *!/
-            .map(page => ({
-                ...page,
-                url: u.constructPageUrl(page)
-            }))
-        ;
-*/
+    console.log('runnin’ fx');
+    runEffects(pages$, newDefaultScheduler())
+      .then(() => console.log('My job here is всё'))
+      .catch(err => console.log(err));
 
-/*
+    /*
+              const pages$ = fromAdd$
+                  /!* process yfm *!/
+                  .map(page => {
+                      const yfm = fm(page.content);
+
+                      return yfm.body
+                          ? {
+                              ...page,
+                              ...yfm.attributes,
+                              content: yfm.body
+                          }
+                          : page;
+                  })
+                  /!* convert markdown *!/
+                  .map(page => ({
+                      ...page,
+                      content: md.render(page.content)
+                  }))
+                  /!* excerpts *!/
+                  .map(page => ({
+                      ...page,
+                      excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
+                  }))
+                  /!* destination url *!/
+                  .map(page => ({
+                      ...page,
+                      url: u.constructPageUrl(page)
+                  }))
+              ;
+      */
+
+    /*
         const sortedList$ = pages$
             .loop((coll, page) => {
                 const sortedList = coll.concat(page);   // todo: actually sort
@@ -124,7 +134,7 @@ gulp.task(
         ;
 */
 
-/*
+    /*
         const collectedPages$ = sortedList$
             .map(val => val.page)
             // todo:
@@ -137,7 +147,7 @@ gulp.task(
         ;
 */
 
-/*
+    /*
         const feed$ = sortedList$
             .map(val => val.sortedList)
             .reduce((_, list) => list, undefined)
@@ -156,11 +166,9 @@ gulp.task(
         ;
 */
 
-
-
-        // todo: observeSource
-        // todo: map (compile)
-/*
+    // todo: observeSource
+    // todo: map (compile)
+    /*
         const templates$ =
             observeSource('src/theme/jade/!*.jade', {cwd: '.'}).fromAdd$
             .map(tpl => ({
@@ -173,12 +181,12 @@ gulp.task(
                 )
             }))
 */
-            // .scan(
-            //     (hash, tpl) => ({...hash, [tpl.id]: tpl.render}),
-            //     [],
-            // )
-            // .forEach(console.log)
-        /*
+    // .scan(
+    //     (hash, tpl) => ({...hash, [tpl.id]: tpl.render}),
+    //     [],
+    // )
+    // .forEach(console.log)
+    /*
         let templates = Chops
                 .templates
                 .src( Path.join(cfg.sources.templates, '*.jade')
@@ -238,49 +246,49 @@ gulp.task(
             .write(Path.join(cfg.rootDir, 'build'))
         ;
     */
-    }
+  },
 );
 
 gulp.task('sass', function gtSass() {
-    gulp
-        .src('./theme/sass/**/*.scss')
-        .pipe(sourcemaps.init())
-        .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-        .pipe(sourcemaps.write('./maps'))
-        .pipe(gulp.dest('./build/css'));
+  gulp
+    .src('./theme/sass/**/*.scss')
+    .pipe(sourcemaps.init())
+    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
+    .pipe(sourcemaps.write('./maps'))
+    .pipe(gulp.dest('./build/css'));
 });
 
 gulp.task('static-js', function gtStaticJS() {
-    gulp.src('./theme/js/lib/*.js').pipe(gulp.dest('./build/js/'));
+  gulp.src('./theme/js/lib/*.js').pipe(gulp.dest('./build/js/'));
 });
 
 gulp.task('static-redirects', function gtStaticRw() {
-    gulp.src('./theme/_redirects').pipe(gulp.dest('./build/ z')); // rewrite rules for netlify. for browserSync, see below.
+  gulp.src('./theme/_redirects').pipe(gulp.dest('./build/ z')); // rewrite rules for netlify. for browserSync, see below.
 });
 
 gulp.task('static-img', () => {
-    gulp.src('./files/img/**/*').pipe(gulp.dest('./build/img/'));
+  gulp.src('./files/img/**/*').pipe(gulp.dest('./build/img/'));
 });
 
 gulp.task('static', ['static-js', 'static-redirects', 'static-img']);
 
 gulp.task('sass:watch', function gtSassWatch() {
-    gulp.watch('./theme/sass/**/*.scss', ['sass']);
+  gulp.watch('./theme/sass/**/*.scss', ['sass']);
 });
 
 gulp.task('watch', ['sass:watch']);
 
 gulp.task('serve', ['watch'], function gtServe() {
-    bSync.init({
-        server: {
-            baseDir: './build/'
-        },
-        middleware: [
-            modRw([
-                '^/feed/??$ /feed.xml [L]' // see _redirects for production redirects (https://www.netlify.com/docs/redirects)
-            ])
-        ]
-    });
+  bSync.init({
+    server: {
+      baseDir: './build/',
+    },
+    middleware: [
+      modRw([
+        '^/feed/??$ /feed.xml [L]', // see _redirects for production redirects (https://www.netlify.com/docs/redirects)
+      ]),
+    ],
+  });
 });
 
 gulp.task('default', [/*'scatter',*/ 'static', 'sass']);

@@ -21,9 +21,11 @@
     "marked": "^0.3.6",
     "path": "^0.12.7",
     "prettier": "^1.10.2",
+    "ramda": "^0.25.0",
     "typescript": "^2.5.2"
   },
   "devDependencies": {
+    "@types/ramda": "^0.25.18",
     "ava": "^0.4.2",
     "browser-sync": "2.10.0",
     "connect-modrewrite": "^0.8.2",

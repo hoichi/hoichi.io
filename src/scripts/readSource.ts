@@ -1,55 +1,59 @@
 import * as chokidar from 'chokidar';
 import * as fs from 'graceful-fs';
 import * as Path from 'path';
-// import { map, runEffects } from '@most/core';
-import { /*newDefaultScheduler, */ currentTime } from '@most/scheduler';
+import { map, runEffects } from '@most/core';
+import { newDefaultScheduler,  currentTime } from '@most/scheduler';
+import { fromEvent } from '@most/from-event';
 import { FilePath, SourceFile } from './model/page';
 
 function observeSource(globs, options = {}) {
+/*
   console.log('cwd = %s', process.cwd());
   const watcher = chokidar.watch(globs, { ...options, persistent: false });
+*/
 
-  const fromAdd$ = fromEvent('add', watcher);
+  // be careful to create all the chain synchronously, cause the watcher
+  // won’t wait by default
+  const fromAdd$ = fromGlob('add', globs, options);
 
-/*
   const fromAddWithLog$ = map(event => {
     console.log(event);
     return event;
   }, fromAdd$);
 
-  runEffects(fromAddWithLog$, newDefaultScheduler())
-    .then(() => console.log('My job here is done'))
-    .catch(err => console.log(err));
-*/
-
   return {
     fromAdd$,
-    fromReady$: fromEvent('ready', watcher),
+    // fromReady$: fromEvent('ready', watcher),
   };
 }
 
 // fromEvent :: (EventTarget t, Event e) =>
 // String -> t -> boolean=false -> Stream e
-const fromEvent = (event, node, capture = false) =>
-  new FromEvent(event, node, capture);
+function fromGlob(event, globs, options) {
+  return new FromEvent(event, globs, options);
+}
 
 class FromEvent {
   constructor(
     private event: string,
-    private node: Record<string, any>,
-    private capture: boolean = false,
+    private globs: string | string[],
+    private options = {},
   ) {}
 
   run(sink, scheduler) {
+    console.log('`run` is running');
+    const watcher = chokidar.watch(
+      this.globs,
+      { ...this.options, persistent: false },
+    );
     const send = e => tryEvent(currentTime(scheduler), e, sink);
 
-    this.node.addListener &&
-      this.node.addListener(this.event, send, this.capture);
+    watcher.addListener(this.event, send);
 
     return {
       dispose: () =>
-        this.node.removeListener &&
-        this.node.removeListener(this.event, send, this.capture),
+        watcher.removeListener &&
+        watcher.removeListener(this.event, send),
       // todo: watcher.close() ?
     };
   }
@@ -99,7 +103,7 @@ function parsePath(path: string): FilePath {
     dirs,
     ext,
     name,
-    path,
+    full: path,
   };
 }
 
