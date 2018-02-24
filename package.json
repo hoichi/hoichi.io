@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "@most/core": "^1.0.1",
+    "@most/create": "^2.0.1",
     "@most/dom-event": "^2.0.0",
     "@most/hold": "^3.0.0",
     "@most/scheduler": "^1.1.0",
@@ -19,12 +20,14 @@
     "lodash": "^4.0.0",
     "markdown-it": "^8.4.0",
     "marked": "^0.3.6",
+    "most-from-event": "^1.0.0",
     "path": "^0.12.7",
     "prettier": "^1.10.2",
     "ramda": "^0.25.0",
     "typescript": "^2.5.2"
   },
   "devDependencies": {
+    "@most/types": "^1.0.0",
     "@types/ramda": "^0.25.18",
     "ava": "^0.4.2",
     "browser-sync": "2.10.0",

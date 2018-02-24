@@ -6,6 +6,8 @@ import { newDefaultScheduler } from '@most/scheduler';
 import { pipe } from 'ramda';
 
 import { observeSource } from './scripts/readSource';
+import { SourceFile } from './scripts/model/page';
+import { Stream } from '@most/types';
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
@@ -64,57 +66,67 @@ gulp.task(
   ],
   function gtScatter(cb_t) {
     console.log('observing source');
-    const { fromAdd$ } = observeSource('contents/', { cwd: '.' });
+    const { fromAdd } = observeSource('contents/', { cwd: '.' });
 
-    const pages$ = pipe(
-      map(page => ({
+    const pages = pipe (
+      map((page: SourceFile) => ({
         /* defaults */
         date: new Date(),
         published: true,
         title: 'Untitled',
         /* category defaults to folder */
-        category: ((page as any).path && (page as any).path.dir) || '',
+        category: (page.path && page.path.dir) || '',
         ...page,
       })),
-      map(page => (console.log((page as any).path), page)),
-    )(fromAdd$);
+      map(page => {
+        // yaml front matter
+        const { body: content, attributes } = fm(page.content);
 
-    console.log('runnin’ fx');
-    runEffects(pages$, newDefaultScheduler())
+        return content
+          ? {
+            ...page,
+            ...attributes,
+            content
+          }
+          : page;
+      }),
+      map(page => ({
+        ...page,
+        // markdown
+        content: md.render(page.content)
+      })),
+      patch(({excerpt, content}) => ({
+        // excerpts
+        excerpt: excerpt || u.extract1stHtmlParagraph(content)
+      })),
+      // todo: either pass types to patch
+      // or separate those things into properly typed functions
+      // either way we need more types
+      patch(page => ({
+        url: u.constructPageUrl(page)
+      })),
+/*
+      map(page => ({
+        ...page,
+        // excerpts
+        excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
+      })),
+      map(page => ({
+        ...page,
+        url: u.constructPageUrl(page)
+      })),
+*/
+      map(page => (console.log(`${page.url}: ${page.title}`), page)),
+    )(fromAdd);
+
+
+    function patch<A extends {}, B extends A>(f: (a: A) => B): (s: Stream<A>) => Stream<B> {
+      return map( (obj: A) => Object.assign({}, obj, f(obj)) );
+    }
+
+    runEffects(pages, newDefaultScheduler())
       .then(() => console.log('My job here is всё'))
       .catch(err => console.log(err));
-
-    /*
-              const pages$ = fromAdd$
-                  /!* process yfm *!/
-                  .map(page => {
-                      const yfm = fm(page.content);
-
-                      return yfm.body
-                          ? {
-                              ...page,
-                              ...yfm.attributes,
-                              content: yfm.body
-                          }
-                          : page;
-                  })
-                  /!* convert markdown *!/
-                  .map(page => ({
-                      ...page,
-                      content: md.render(page.content)
-                  }))
-                  /!* excerpts *!/
-                  .map(page => ({
-                      ...page,
-                      excerpt: page.excerpt || u.extract1stHtmlParagraph(page.content)
-                  }))
-                  /!* destination url *!/
-                  .map(page => ({
-                      ...page,
-                      url: u.constructPageUrl(page)
-                  }))
-              ;
-      */
 
     /*
         const sortedList$ = pages$

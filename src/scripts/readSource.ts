@@ -1,34 +1,38 @@
 import * as chokidar from 'chokidar';
 import * as fs from 'graceful-fs';
 import * as Path from 'path';
+import { Stream } from '@most/types';
 import { map, runEffects } from '@most/core';
 import { newDefaultScheduler,  currentTime } from '@most/scheduler';
-import { fromEvent } from '@most/from-event';
+import { fromEvent } from 'most-from-event';
+
 import { FilePath, SourceFile } from './model/page';
 
-function observeSource(globs, options = {}) {
+function observeSource(globs, options = {}): {fromAdd: Stream<SourceFile>} {
 /*
   console.log('cwd = %s', process.cwd());
-  const watcher = chokidar.watch(globs, { ...options, persistent: false });
 */
+  const watcher = chokidar.watch(globs, { ...options, persistent: false });
 
   // be careful to create all the chain synchronously, cause the watcher
   // won’t wait by default
-  const fromAdd$ = fromGlob('add', globs, options);
+  const fromAdd = map(
+    readSourceFile,
+    fromEvent('add', watcher)
+  );
+  // const fromAdd = fromGlob('add', globs, options);
 
   const fromAddWithLog$ = map(event => {
     console.log(event);
     return event;
-  }, fromAdd$);
+  }, fromAdd);
 
   return {
-    fromAdd$,
+    fromAdd,
     // fromReady$: fromEvent('ready', watcher),
   };
 }
 
-// fromEvent :: (EventTarget t, Event e) =>
-// String -> t -> boolean=false -> Stream e
 function fromGlob(event, globs, options) {
   return new FromEvent(event, globs, options);
 }
@@ -72,7 +76,7 @@ function tryEvent(t, x, sink) {
  * @param {string} cwd
  * @returns {SourceFile}
  */
-function readSourceFile(cwd = '.', path: string): SourceFile | null {
+function readSourceFile(path: string, cwd = '.', ): SourceFile | null {
   const parsedPath = parsePath(path),
     page: SourceFile = {
       path: parsedPath,
