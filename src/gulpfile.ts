@@ -120,7 +120,7 @@ gulp.task(
     )(fromAdd);
 
 
-    function patch<A extends {}, B extends A>(f: (a: A) => B): (s: Stream<A>) => Stream<B> {
+    function patch<A extends {}, B extends A>(f: (a: A) => Partial<B>): (s: Stream<A>) => Stream<B> {
       return map( (obj: A) => Object.assign({}, obj, f(obj)) );
     }
 

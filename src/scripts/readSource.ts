@@ -34,10 +34,10 @@ function observeSource(globs, options = {}): {fromAdd: Stream<SourceFile>} {
 }
 
 function fromGlob(event, globs, options) {
-  return new FromEvent(event, globs, options);
+  return new FromGlob(event, globs, options);
 }
 
-class FromEvent {
+class FromGlob {
   constructor(
     private event: string,
     private globs: string | string[],

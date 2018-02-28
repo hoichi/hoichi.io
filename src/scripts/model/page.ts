@@ -1,15 +1,29 @@
 /**
- * An abstract source file. Might be a content file, might be, say, a template.
+ * Full-blown page, with metadata and content probably converted to html
  */
-export interface SourceFile {
+interface Page extends SourceFile, PageMeta {}
+
+/**
+ * What the blob observer emits. Might be a page, might be a template
+ */
+interface SourceFile {
     path: FilePath;
     content: string;
 }
 
+/**
+ * What the file writer writes
+ */
+
+interface DestinationFile {
+    path: string;
+    content: string;
+}
+
 /*
- * Source file path, parsed and ready for any reducing user might request
+ * Source file path, parsed and ready for any reductions
  * */
-export interface FilePath {
+interface FilePath {
     dir: string;
     dirs: string[];
     ext: string;
@@ -17,10 +31,15 @@ export interface FilePath {
     full: string;
 }
 
-/*
- * Takes a path (and a working dir)
- * returns an object with:
- * - file base (sans extension)
- * - an arr of parent dirs
- * */
+type PageMeta<T extends {} = {}> = T & {
+    title: string;
+    date: Date;
+    content: string;
+    url: string;    // relative to site root
+    [k: string]: any;
+}
 
+export {
+    SourceFile,
+    Page,
+}
