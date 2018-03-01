@@ -1,14 +1,16 @@
 /**
- * Full-blown page, with metadata and content probably converted to html
- */
-interface Page extends SourceFile, PageMeta {}
-
-/**
  * What the blob observer emits. Might be a page, might be a template
  */
 interface SourceFile {
-    path: FilePath;
-    content: string;
+  path: FilePath;
+  rawContent: string;
+}
+
+/**
+ * Full-blown page, with metadata and content probably converted to html
+ */
+interface Page extends PageMeta {
+  source?: SourceFile;
 }
 
 /**
@@ -16,30 +18,33 @@ interface SourceFile {
  */
 
 interface DestinationFile {
-    path: string;
-    content: string;
+  path: string;
+  content: string;
 }
 
 /*
  * Source file path, parsed and ready for any reductions
  * */
 interface FilePath {
-    dir: string;
-    dirs: string[];
-    ext: string;
-    name: string;
-    full: string;
+  dir: string;
+  dirs: string[];
+  ext: string;
+  name: string;
+  full: string;
 }
 
 type PageMeta<T extends {} = {}> = T & {
-    title: string;
-    date: Date;
-    content: string;
-    url: string;    // relative to site root
-    [k: string]: any;
-}
+  title: string;
+  date: Date;
 
-export {
-    SourceFile,
-    Page,
-}
+  published: boolean;
+  category: string;
+  tags: string[];
+
+  content: string;
+  excerpt: string;
+  url: string; // relative to site root
+  // [k: string]: any;
+};
+
+export { SourceFile, Page, FilePath };

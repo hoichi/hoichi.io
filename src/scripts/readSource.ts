@@ -22,11 +22,6 @@ function observeSource(globs, options = {}): {fromAdd: Stream<SourceFile>} {
   );
   // const fromAdd = fromGlob('add', globs, options);
 
-  const fromAddWithLog$ = map(event => {
-    console.log(event);
-    return event;
-  }, fromAdd);
-
   return {
     fromAdd,
     // fromReady$: fromEvent('ready', watcher),
@@ -80,7 +75,7 @@ function readSourceFile(path: string, cwd = '.', ): SourceFile | null {
   const parsedPath = parsePath(path),
     page: SourceFile = {
       path: parsedPath,
-      content: '',
+      rawContent: '',
     };
 
   const xCwd = process.cwd(),
@@ -89,7 +84,7 @@ function readSourceFile(path: string, cwd = '.', ): SourceFile | null {
   try {
     changeDirs && process.chdir(cwd);
     // fixme: always pass _some_ encoding here, but don’t hardcode it
-    page.content = fs.readFileSync(path, 'utf-8');
+    page.rawContent = fs.readFileSync(path, 'utf-8');
   } finally {
     changeDirs && process.chdir(xCwd);
   }

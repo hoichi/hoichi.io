@@ -88,7 +88,7 @@ function constructPageUrl(page) {
 }
 
 //noinspection SpellCheckingInspection
-module.exports = {
+export {
   dateFormatter,
   extract1stHtmlParagraph,
   makePathSync,
