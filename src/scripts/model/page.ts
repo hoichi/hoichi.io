@@ -43,6 +43,7 @@ type PageMeta<T extends {} = {}> = T & {
 
   content: string;
   excerpt: string;
+  template?: string;
   url: string; // relative to site root
   // [k: string]: any;
 };

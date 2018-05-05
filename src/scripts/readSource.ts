@@ -1,95 +1,47 @@
-import * as chokidar from 'chokidar';
+import { watch, WatchOptions } from 'chokidar';
 import * as fs from 'graceful-fs';
 import * as Path from 'path';
 import { Stream } from '@most/types';
-import { map, runEffects } from '@most/core';
-import { newDefaultScheduler,  currentTime } from '@most/scheduler';
+import { map, until } from '@most/core';
 import { fromEvent } from 'most-from-event';
 
 import { FilePath, SourceFile } from './model/page';
 
-function observeSource(globs, options = {}): {fromAdd: Stream<SourceFile>} {
+function observeSource(globs, options: WatchOptions = {}): Stream<SourceFile> {
 /*
   console.log('cwd = %s', process.cwd());
 */
-  const watcher = chokidar.watch(globs, { ...options, persistent: false });
+  const watcher = watch(globs, { ...options, persistent: false });
 
   // be careful to create all the chain synchronously, cause the watcher
   // won’t wait by default
-  const fromAdd = map(
-    readSourceFile,
-    fromEvent('add', watcher)
+  return until(
+    fromEvent('ready', watcher),
+    map(readFileInCwd(options.cwd), fromEvent('add', watcher)),
   );
-  // const fromAdd = fromGlob('add', globs, options);
-
-  return {
-    fromAdd,
-    // fromReady$: fromEvent('ready', watcher),
-  };
 }
 
-function fromGlob(event, globs, options) {
-  return new FromGlob(event, globs, options);
-}
+function readFileInCwd(cwd = '.') {
+  return function readSourceFile(path: string): SourceFile | null {
+    const parsedPath = parsePath(path),
+      page: SourceFile = {
+        path: parsedPath,
+        rawContent: '',
+      };
 
-class FromGlob {
-  constructor(
-    private event: string,
-    private globs: string | string[],
-    private options = {},
-  ) {}
+    const xCwd = process.cwd(),
+      changeDirs = xCwd !== cwd;
 
-  run(sink, scheduler) {
-    console.log('`run` is running');
-    const watcher = chokidar.watch(
-      this.globs,
-      { ...this.options, persistent: false },
-    );
-    const send = e => tryEvent(currentTime(scheduler), e, sink);
+    try {
+      changeDirs && process.chdir(cwd);
+      // fixme: always pass _some_ encoding here, but don’t hardcode it
+      page.rawContent = fs.readFileSync(path, 'utf-8');
+    } finally {
+      changeDirs && process.chdir(xCwd);
+    }
 
-    watcher.addListener(this.event, send);
-
-    return {
-      dispose: () =>
-        watcher.removeListener &&
-        watcher.removeListener(this.event, send),
-      // todo: watcher.close() ?
-    };
+    return page;
   }
-}
-
-function tryEvent(t, x, sink) {
-  try {
-    sink.event(t, x);
-  } catch (e) {
-    sink.error(t, e);
-  }
-}
-
-/**
- * @param path
- * @param {string} cwd
- * @returns {SourceFile}
- */
-function readSourceFile(path: string, cwd = '.', ): SourceFile | null {
-  const parsedPath = parsePath(path),
-    page: SourceFile = {
-      path: parsedPath,
-      rawContent: '',
-    };
-
-  const xCwd = process.cwd(),
-    changeDirs = xCwd !== cwd;
-
-  try {
-    changeDirs && process.chdir(cwd);
-    // fixme: always pass _some_ encoding here, but don’t hardcode it
-    page.rawContent = fs.readFileSync(path, 'utf-8');
-  } finally {
-    changeDirs && process.chdir(xCwd);
-  }
-
-  return page;
 }
 
 function parsePath(path: string): FilePath {

@@ -2,20 +2,22 @@
 'use strict';
 
 import { Stream } from '@most/types';
-import { map, runEffects, tap } from '@most/core';
+import { map, runEffects, scan, take, tap } from '@most/core';
 import { newDefaultScheduler } from '@most/scheduler';
+import { last } from 'most-last';
 import { pipe } from 'ramda';
-
 
 import { observeSource } from './scripts/readSource';
 import { SourceFile } from './scripts/model/page';
 import { parsePage } from './scripts/parsePage';
+import { compileTemplates, renderPages } from './scripts/templates';
+
+import { write } from './scripts/writeToDest';
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
   fs = require('fs'),
   gulp = require('gulp'),
-  jade = require('jade'),
   modRw = require('connect-modrewrite'),
   Path = require('path'),
   sass = require('gulp-sass'),
@@ -57,106 +59,39 @@ gulp.task('loadCfg', function gt_loadCfg(cb) {
 gulp.task(
   'scatter',
   [
-    /*'loadCfg',*/
+    /*'loadCfg'*/
   ],
   function gtScatter(cb_t) {
-    console.log('observing source');
-    const { fromAdd } = observeSource('contents/', { cwd: '.' });
+    const tplCfg = {
+      default: 'single',
+      date_short: u.dateFormatter(
+        // fixme: so hardcode
+        'en-US',
+        { year: 'numeric', month: 'short', day: 'numeric' },
+      ),
+    };
 
-    const pages = map(parsePage, fromAdd);
+    console.log('Reading templates');
+    compileTemplates(observeSource('src/theme/jade/*.jade', { cwd: '.' }))
+      .then(tplDic => {
+        console.log(`Templates are successfully compiled`);
 
-    // const pagesWithLog = tap(page => console.log(page.title), pages);
+        const pages = map(
+          // fixme: this `map` is the only whiff of most in the whole file
+          pipe(parsePage, renderPages(tplDic, tplCfg)),
+          observeSource('**/*', { cwd: Path.join(__dirname, 'contents') }),
+        );
 
-    runEffects(pages, newDefaultScheduler())
-      .then(() => console.log('My job here is всё'))
-      .catch(err => console.log(err));
-
-    /*
-        const sortedList$ = pages$
-            .loop((coll, page) => {
-                const sortedList = coll.concat(page);   // todo: actually sort
-
-                return {
-                    seed: sortedList,
-                    value: {
-                        sortedList,
-                        page // todo: mutate the page
-                    }
-                };
-            }, [])
-            .until(fromReady$)  // todo: move it someplace better
-            .multicast()        // todo: and maybe multicast earlier
-        ;
-*/
-
-    /*
-        const collectedPages$ = sortedList$
-            .map(val => val.page)
-            // todo:
-            //  - (blocked) [ ] render
-            //  - [ ] output path
-            //  - [ ] write
-            .map(page => page.title) // fixme when done debugging
-            // .observe(console.log)
-            // .then(() => console.log('BAM!'))
-        ;
-*/
+        write('build/public', pages);
+      })
+      .catch(err => {
+        console.log(err);
+        throw new Error(
+          'Something went wrong while reading and compiling templates',
+        );
+      });
 
     /*
-        const feed$ = sortedList$
-            .map(val => val.sortedList)
-            .reduce((_, list) => list, undefined)
-            // todo:
-            //  - [ ] wait for `ready` or stream close
-            //  - [ ] slice & dice
-            //  - (blocked) [ ] render
-            //
-            //  - [ ] output path
-            //  - [ ] write
-            .then((list) => {
-                console.log('\n\n=== DONE! ===\n');
-                console.log(list.map(p => p.title));
-                console.log('\n=== /DONE ===\n');
-            })
-        ;
-*/
-
-    // todo: observeSource
-    // todo: map (compile)
-    /*
-        const templates$ =
-            observeSource('src/theme/jade/!*.jade', {cwd: '.'}).fromAdd$
-            .map(tpl => ({
-                id: tpl.path.name,
-                render: jade.compile(tpl.content,
-                    {
-                        pretty: '\t',
-                        filename: tpl.path.path
-                    }
-                )
-            }))
-*/
-    // .scan(
-    //     (hash, tpl) => ({...hash, [tpl.id]: tpl.render}),
-    //     [],
-    // )
-    // .forEach(console.log)
-    /*
-        let templates = Chops
-                .templates
-                .src( Path.join(cfg.sources.templates, '*.jade')
-                    , {ignored: '!_*.jade'} )
-                .convert( tpl => ({
-                    id: tpl.path.name,
-                    render: jade.compile(tpl.content,
-                        {
-                            pretty: '\t',
-                            filename: tpl.path.path
-                        }
-                    )
-                }) )
-            ;
-
         let collections = {
             'blog': Chops.collection({
                         sortBy: p => - (p.date || Date.now()),

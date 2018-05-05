@@ -1,11 +1,7 @@
 # Created by https://www.gitignore.io/api/webstorm,node,sass
 
-## Directory-based project format:
+## Project files
 .idea/
-
-## File-based project format:
-*.ipr
-*.iws
 
 ### Node ###
 # Logs
@@ -30,10 +26,7 @@ build/
 ### generated scripts ###
 /gulpfile.js.map
 /gulpfile.js
-scripts/
-
-### Dolphin ###
-.directory
+/scripts/
 
 ### incoming stuff dir ###
 .in/
