@@ -25,8 +25,7 @@ async function compileTemplates(sources: Stream<SourceFile>) {
 
   const templates = pipe(
     map(compileTemplate),
-    tap(tpl => (tplDic[tpl.id] = tpl.render)),
-  )(sources);
+    tap(tpl => (tplDic[tpl.id] = tpl.render)),  )(sources);
 
   await runEffects(templates, newDefaultScheduler());
 

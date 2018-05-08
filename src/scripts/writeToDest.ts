@@ -14,7 +14,7 @@ function write(dir: string, pages: Stream<Page>) {
   console.log(`write()`);
 
   runEffects(
-    tap(page => (console.log(page.url), writeToFile(path.resolve(dir, page.url), page.content)), pages),
+    tap(page => writeToFile(path.resolve(dir, page.url), page.content), pages),
     newDefaultScheduler(),
   ).then(() => console.log('Aaand written.'));
 
@@ -22,7 +22,6 @@ function write(dir: string, pages: Stream<Page>) {
 }
 
 function writeToFile(destPath: string, content: string): void {
-  console.log(`writeAPage()`);
   if (!/.+\.\w+$/i.test(destPath)) {
     destPath = path.resolve(destPath, 'index.html');
   }

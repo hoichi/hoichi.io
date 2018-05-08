@@ -2,7 +2,7 @@
 'use strict';
 
 import { Stream } from '@most/types';
-import { map, runEffects, scan, take, tap } from '@most/core';
+import {map, multicast, runEffects, scan, skip, take, tap} from '@most/core'
 import { newDefaultScheduler } from '@most/scheduler';
 import { last } from 'most-last';
 import { pipe } from 'ramda';
@@ -13,6 +13,7 @@ import { parsePage } from './scripts/parsePage';
 import { compileTemplates, renderPages } from './scripts/templates';
 
 import { write } from './scripts/writeToDest';
+import { slurpWith } from './scripts/helpers';
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
@@ -24,6 +25,8 @@ const _ = require('lodash'),
   sourcemaps = require('gulp-sourcemaps'),
   u = require('./scripts/utils.js'),
   yaml = require('js-yaml');
+
+const l = console.log;
 
 const cfg = {
   layouts: {},
@@ -61,35 +64,68 @@ gulp.task(
   [
     /*'loadCfg'*/
   ],
-  function gtScatter(cb_t) {
+  async function gtScatter(cb_t) {
     const tplCfg = {
+      // todo: centralise config
       default: 'single',
       date_short: u.dateFormatter(
+        // todo: use moment.js?
         // fixme: so hardcode
         'en-US',
         { year: 'numeric', month: 'short', day: 'numeric' },
       ),
     };
 
-    console.log('Reading templates');
-    compileTemplates(observeSource('src/theme/jade/*.jade', { cwd: '.' }))
-      .then(tplDic => {
-        console.log(`Templates are successfully compiled`);
+    try {
+      l('Reading templates');
+      const tplDic = await compileTemplates(
+        observeSource('src/theme/jade/*.jade', { cwd: '.' }),
+      );
+      l(`Templates are successfully compiled`);
 
-        const pages = map(
-          // fixme: this `map` is the only whiff of most in the whole file
-          pipe(parsePage, renderPages(tplDic, tplCfg)),
-          observeSource('**/*', { cwd: Path.join(__dirname, 'contents') }),
-        );
+      l(`Parsing pages`);
+      const pages = map(
+        parsePage,
+        observeSource('**/*', { cwd: Path.join(__dirname, 'contents') }),
+      );
+      l(`Done parsing pages`);
 
-        write('build/public', pages);
-      })
-      .catch(err => {
-        console.log(err);
-        throw new Error(
-          'Something went wrong while reading and compiling templates',
-        );
-      });
+      l(`Collecting`);
+      // Is multicast beforehand always necessary?
+      // Maybe `collect()` should either return a mutated stream or an
+      // original stream.
+      // todo: port insertSorted &c
+      // todo: and mutate pages
+      // todo: type for collectionState stuff
+      const collectionState = multicast(skip(1, scan(
+        (coll, page) => ({
+          collection: [...coll['collection'], page],
+          page,
+        }),
+        { collection: [], page: null },
+        pages,
+      )));
+
+      const collection = map(({ collection }) => collection, collectionState);
+      const pagesCollected = map(({ page }) => page, collectionState);
+
+      slurpWith(
+        (collection) => `[${collection.length}]`,
+        collection,
+      );
+      l(`(NOT) Done collecting`);
+
+      const pagesRendered = map(renderPages(tplDic, tplCfg), pagesCollected);
+
+      l(`Writing`);
+      write('build/public', pagesRendered);
+      l(`Done writing`);
+    } catch (err) {
+      console.log(err);
+      throw new Error(
+        'Something went wrong while reading and compiling templates',
+      );
+    }
 
     /*
         let collections = {
