@@ -2,17 +2,31 @@
 'use strict';
 
 import { Stream } from '@most/types';
-import {map, multicast, runEffects, scan, skip, take, tap} from '@most/core'
+import {
+  chain,
+  filter,
+  map,
+  merge,
+  mergeArray,
+  multicast,
+  now,
+  runEffects,
+  scan,
+  skip,
+  take,
+  tap,
+} from '@most/core';
+import { curry2 } from '@most/prelude';
 import { newDefaultScheduler } from '@most/scheduler';
 import { last } from 'most-last';
 import { pipe } from 'ramda';
 
 import { observeSource } from './scripts/readSource';
-import { SourceFile } from './scripts/model/page';
+import { Page, SourceFile } from './scripts/model/page';
 import { parsePage } from './scripts/parsePage';
 import { compileTemplates, renderPages } from './scripts/templates';
-
 import { write } from './scripts/writeToDest';
+import { SortedList } from './scripts/sortedList';
 import { slurpWith } from './scripts/helpers';
 
 const _ = require('lodash'),
@@ -94,32 +108,63 @@ gulp.task(
       // Is multicast beforehand always necessary?
       // Maybe `collect()` should either return a mutated stream or an
       // original stream.
-      // todo: port insertSorted &c
-      // todo: and mutate pages
       // todo: type for collectionState stuff
-      const collectionState = multicast(skip(1, scan(
-        (coll, page) => ({
-          collection: [...coll['collection'], page],
-          page,
-        }),
-        { collection: [], page: null },
-        pages,
-      )));
 
-      const collection = map(({ collection }) => collection, collectionState);
-      const pagesCollected = map(({ page }) => page, collectionState);
+      const list = SortedList<Page>({
+        sortBy: p => -(p.date || Date.now()),
+        indexBy: p => p.id,
+      }); // hack
 
-      slurpWith(
-        (collection) => `[${collection.length}]`,
-        collection,
+      list.sort();
+
+      const addPage = curry2((list: SortedList<Page>, page: Page) => {
+        const pages = list.add(page);
+
+        return {
+          pages,
+          collection: list.all,
+        };
+      });
+
+      function fromArray<T>(array: T[]): Stream<T> {
+        return mergeArray(array.map(el => now(el)));
+      }
+
+      const pagesToFilter = multicast(pages);
+      const pagesToCollect = filter(
+        (p: Page) => p.category === 'blog',
+        pagesToFilter,
       );
-      l(`(NOT) Done collecting`);
+      const pagesIgnored = filter(
+        (p: Page) => p.category !== 'blog',
+        pagesToFilter,
+      );
 
-      const pagesRendered = map(renderPages(tplDic, tplCfg), pagesCollected);
+      const collectionState = multicast(map(addPage(list), pagesToCollect));
 
-      l(`Writing`);
-      write('build/public', pagesRendered);
-      l(`Done writing`);
+      const pagesCollected = pipe(
+        map(({ pages }) => pages),
+        chain(fromArray),
+      )(collectionState);
+
+      const allPages = merge(pagesCollected, pagesIgnored);
+
+      // render & write pages
+      pipe(map(renderPages(tplDic, tplCfg)), write('build/public'))(allPages);
+
+      const blogFeed = pipe(
+        map(({ collection: posts }) => ({
+          category: 'blog',
+          template: 'blog',
+          short_desc: 'You won’t believe what this developer didn’t know',
+          url: '',
+          posts,
+        })),
+        map(renderPages(tplDic, tplCfg)),
+        write('build/public'),
+      )(collectionState);
+
+      l(`Ready to roll`);
     } catch (err) {
       console.log(err);
       throw new Error(

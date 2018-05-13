@@ -7,6 +7,7 @@ import { newDefaultScheduler } from '@most/scheduler';
 import { Stream } from '@most/types';
 
 import { Page } from './model/page';
+import {curry2} from "@most/prelude"
 
 // todo: more generic pages (all we need is content & some path/slug info)
 
@@ -46,4 +47,6 @@ function writeToFile(destPath: string, content: string): void {
   }
 }
 
-export { write };
+const writeCurried = curry2(write);
+
+export { writeCurried as write };
