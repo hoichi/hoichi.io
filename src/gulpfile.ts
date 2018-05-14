@@ -142,27 +142,25 @@ gulp.task(
 
       const collectionState = multicast(map(addPage(list), pagesToCollect));
 
-      const pagesCollected = pipe(
-        map(({ pages }) => pages),
-        chain(fromArray),
-      )(collectionState);
+      const pagesCollected = pipe(map(({ pages }) => pages), chain(fromArray))(
+        collectionState,
+      );
 
-      const allPages = merge(pagesCollected, pagesIgnored);
-
-      // render & write pages
-      pipe(map(renderPages(tplDic, tplCfg)), write('build/public'))(allPages);
-
-      const blogFeed = pipe(
-        map(({ collection: posts }) => ({
+      const blogFeed = map(
+        ({ collection: posts }) => ({
           category: 'blog',
           template: 'blog',
           short_desc: 'You won’t believe what this developer didn’t know',
           url: '',
           posts,
-        })),
-        map(renderPages(tplDic, tplCfg)),
-        write('build/public'),
-      )(collectionState);
+        }),
+        collectionState,
+      );
+
+      const allPages = mergeArray([pagesCollected, pagesIgnored, blogFeed]);
+
+      // render & write pages
+      pipe(map(renderPages(tplDic, tplCfg)), write('build/public'))(allPages);
 
       l(`Ready to roll`);
     } catch (err) {
