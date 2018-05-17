@@ -1,7 +1,11 @@
 import { newDefaultScheduler } from '@most/scheduler';
-import { runEffects, tap } from '@most/core';
+import {mergeArray, now, runEffects, tap} from '@most/core'
 import { Stream } from '@most/types';
 import { pipe, identity } from 'ramda';
+
+function fromArray<T>(array: T[]): Stream<T> {
+  return mergeArray(array.map(now));
+}
 
 function slurpWith(f: (s: any) => string, s: Stream<any>) {
   return runEffects(tap(pipe(f, console.log), s), newDefaultScheduler());
@@ -9,4 +13,4 @@ function slurpWith(f: (s: any) => string, s: Stream<any>) {
 
 const slurp = slurpWith.bind(null, identity);
 
-export { slurp, slurpWith };
+export { fromArray, slurp, slurpWith };

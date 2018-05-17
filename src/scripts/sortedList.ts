@@ -141,7 +141,7 @@ export function SortedList<T>(options: SLOptions<T> = {}): SortedList<T> {
   }
 
   /**
-   * Sorts and returns the whole all.
+   * Sorts and returns the whole `all`.
    * @returns {ReadonlyArray<T>}
    */
   function sort() {

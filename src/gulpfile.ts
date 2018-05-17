@@ -24,10 +24,11 @@ import { pipe } from 'ramda';
 import { observeSource } from './scripts/readSource';
 import { Page, SourceFile } from './scripts/model/page';
 import { parsePage } from './scripts/parsePage';
-import { compileTemplates, renderPages } from './scripts/templates';
+import { compileTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
 import { SortedList } from './scripts/sortedList';
 import { slurpWith } from './scripts/helpers';
+import { collect } from './scripts/collection';
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
@@ -97,70 +98,18 @@ gulp.task(
       );
       l(`Templates are successfully compiled`);
 
-      l(`Parsing pages`);
+      l(`Setting up pages`);
       const pages = map(
         parsePage,
         observeSource('**/*', { cwd: Path.join(__dirname, 'contents') }),
       );
-      l(`Done parsing pages`);
 
-      l(`Collecting`);
-      // Is multicast beforehand always necessary?
-      // Maybe `collect()` should either return a mutated stream or an
-      // original stream.
-      // todo: type for collectionState stuff
-
-      const list = SortedList<Page>({
-        sortBy: p => -(p.date || Date.now()),
-        indexBy: p => p.id,
-      }); // hack
-
-      list.sort();
-
-      const addPage = curry2((list: SortedList<Page>, page: Page) => {
-        const pages = list.add(page);
-
-        return {
-          pages,
-          collection: list.all,
-        };
-      });
-
-      function fromArray<T>(array: T[]): Stream<T> {
-        return mergeArray(array.map(el => now(el)));
-      }
-
-      const pagesToFilter = multicast(pages);
-      const pagesToCollect = filter(
-        (p: Page) => p.category === 'blog',
-        pagesToFilter,
-      );
-      const pagesIgnored = filter(
-        (p: Page) => p.category !== 'blog',
-        pagesToFilter,
-      );
-
-      const collectionState = multicast(map(addPage(list), pagesToCollect));
-
-      const pagesCollected = pipe(map(({ pages }) => pages), chain(fromArray))(
-        collectionState,
-      );
-
-      const blogFeed = map(
-        ({ collection: posts }) => ({
-          category: 'blog',
-          template: 'blog',
-          short_desc: 'You won’t believe what this developer didn’t know',
-          url: '',
-          posts,
-        }),
-        collectionState,
-      );
-
-      const allPages = mergeArray([pagesCollected, pagesIgnored, blogFeed]);
-
-      // render & write pages
-      pipe(map(renderPages(tplDic, tplCfg)), write('build/public'))(allPages);
+      // collect, render & write pages
+      pipe(
+        collect({}),
+        map(renderPage(tplDic, tplCfg)),
+        write('build/public'),
+      )(pages);
 
       l(`Ready to roll`);
     } catch (err) {

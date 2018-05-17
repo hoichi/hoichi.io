@@ -32,7 +32,7 @@ async function compileTemplates(sources: Stream<SourceFile>) {
   return tplDic;
 }
 
-const renderPages = (dic: TplDic, cfg: TplCfg) => page => {
+const renderPage = (dic: TplDic, cfg: TplCfg) => page => {
   const renderFn = dic[page.template || cfg.default] || dic[cfg.default];
 
   return {
@@ -51,4 +51,4 @@ function compileTemplate({ path, rawContent }: SourceFile): Template {
   };
 }
 
-export { compileTemplates, renderPages };
+export { compileTemplates, renderPage };
