@@ -1,3 +1,6 @@
+// built into TypeScript 2.9
+type PropertyKey = string | number | symbol;
+
 /**
  * What the blob observer emits. Might be a page, might be a template
  */
@@ -10,6 +13,7 @@ interface SourceFile {
  * Full-blown page, with metadata and content probably converted to html
  */
 interface Page extends PageMeta {
+  id: PropertyKey;
   source?: SourceFile;
 }
 

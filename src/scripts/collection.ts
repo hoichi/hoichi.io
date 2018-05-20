@@ -1,43 +1,63 @@
-import {Stream} from "@most/types"
-import {Page} from "./model/page"
-import { SortedList, SortIteratee } from "./sortedList"
-import {chain, filter, map, mergeArray, multicast, now} from "@most/core"
-import {curry2} from "@most/prelude"
-import {pipe} from "ramda"
-import {fromArray} from "./helpers"
+import { Stream } from '@most/types';
+import { Page } from './model/page';
+import { SortedList, SortIteratee } from './sortedList';
+import {
+  chain,
+  filter,
+  map,
+  mergeArray,
+  multicast,
+  now,
+  tap,
+} from '@most/core';
+import { curry2 } from '@most/prelude';
+import { complement, pipe } from 'ramda';
+import { fromArray } from './helpers';
 
 interface CollectionOptions {
-  sortBy?: SortIteratee;
-  indexBy?: SortIteratee;
+  content?: string;
+  filter?: (p: Page) => boolean;
+  limit?: number;
+  sortBy?: SortIteratee; // todo: generic
+  template: string;
+  uniqueBy?: SortIteratee;
+  url: string;
+  [metaKey: string]: any;
 }
 
-function collect(options: {/* todo */}, pages: Stream<Page>): Stream<Page> {
-  const list = SortedList<Page>({ // todo: to options
-    sortBy: p => -(p.date || Date.now()),
-    indexBy: p => p.id,
-  }); // hack
+function collect(
+  options: CollectionOptions,
+  pages: Stream<Page>,
+): Stream<Page> {
+  const {
+    content = '',
+    filter: filterBy = () => true,
+    limit,
+    sortBy = p => -(p.date || Date.now()),
+    template,
+    uniqueBy = p => p.id,
+    url,
+    ...meta
+  } = options;
 
-  list.sort();
+  const list = SortedList<Page>({
+    sortBy,
+    uniqueBy,
+  }); // hack
 
   const addPage = curry2((list: SortedList<Page>, page: Page) => {
     const pages = list.add(page);
 
     return {
       pages,
-      collection: list.all,
+      collection: limit ? list.all.slice(0, limit) : list.all,
     };
   });
 
   // todo: extract to helpers
   const pagesToFilter = multicast(pages);
-  const pagesToCollect = filter(
-    (p: Page) => p.category === 'blog', // todo: to options
-    pagesToFilter,
-  );
-  const pagesIgnored = filter(
-    (p: Page) => p.category !== 'blog', // todo: to options
-    pagesToFilter,
-  );
+  const pagesToCollect = filter(filterBy, pagesToFilter);
+  const pagesIgnored = filter(complement(filterBy), pagesToFilter);
 
   const collectionState = multicast(map(addPage(list), pagesToCollect));
 
@@ -45,21 +65,19 @@ function collect(options: {/* todo */}, pages: Stream<Page>): Stream<Page> {
     collectionState,
   );
 
-  const blogFeed = map(
+  const feed = map(
     ({ collection: posts }) => ({
-      // todo: to options
-      category: 'blog',
-      template: 'blog',
-      short_desc: 'You won’t believe what this developer didn’t know',
-      url: '',
+      template,
+      url,
       posts,
+      ...meta,
     }),
     collectionState,
   );
 
-  return mergeArray([pagesCollected, pagesIgnored, blogFeed]);
+  return mergeArray([pagesCollected, pagesIgnored, feed]);
 }
 
 const collectCurried = curry2(collect);
 
-export { collectCurried as collect }
+export { collectCurried as collect };

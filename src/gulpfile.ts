@@ -62,7 +62,7 @@ const cfg = {
   }),
 };
 
-const site = {
+const siteMeta = {
   title: 'Behind The Frontend',
   domain: 'hoichi.io',
 };
@@ -75,13 +75,10 @@ gulp.task('loadCfg', function gt_loadCfg(cb) {
 });
 
 gulp.task(
-  'scatter',
-  [
-    /*'loadCfg'*/
-  ],
-  async function gtScatter(cb_t) {
+  'contents',
+  async function gtContents(cb_t) {
     const tplCfg = {
-      // todo: centralise config
+      // todo: centralize config
       default: 'single',
       date_short: u.dateFormatter(
         // todo: use moment.js?
@@ -89,6 +86,11 @@ gulp.task(
         'en-US',
         { year: 'numeric', month: 'short', day: 'numeric' },
       ),
+    };
+
+    const siteMeta: SiteMeta = {
+      title: 'Code Churn',
+      domain: 'hoichi.io',
     };
 
     try {
@@ -106,8 +108,36 @@ gulp.task(
 
       // collect, render & write pages
       pipe(
-        collect({}),
-        map(renderPage(tplDic, tplCfg)),
+        collect({
+          filter: ({ category }) => category === 'blog',
+          template: 'blog',
+          uniqueBy: ({ id }) => id,
+          url: '',
+          // meta
+          content: 'You won’t believe what this developer didn’t know',
+          title: 'blog',
+        }),
+        collect({
+          filter: ({ category }) => category === 'blog',
+          template: 'rss',
+          uniqueBy: ({ id }) => id,
+          url: 'feed.xml',
+          limit: 10,
+          // meta ?
+        }),
+        collect({
+          filter: ({ category }) => category === '100',
+          template: 'blog',
+          uniqueBy: ({ id }) => id,
+          url: '100/',
+          // limit: 10,
+          // meta ?
+          title: '100 days of code',
+          content:
+            'Never mind, I dropped that flashmob thingie. Not' +
+            ' that it stopped me from coding.',
+        }),
+        map(renderPage(tplDic, tplCfg, siteMeta)),
         write('build/public'),
       )(pages);
 
@@ -118,58 +148,12 @@ gulp.task(
         'Something went wrong while reading and compiling templates',
       );
     }
-
-    /*
-        let collections = {
-            'blog': Chops.collection({
-                        sortBy: p => - (p.date || Date.now()),
-                        indexBy: p => p.id
-                    })
-                    .filter(page => page.path && (page.path.dir === 'blog'))
-                    .patchCollection(() => ({
-                        url: '',
-                        category: 'blog'
-                    }))
-                    .render(templates, 'home')
-                    .write(Path.join(cfg.rootDir, 'build')),
-
-            '100': Chops.collection({
-                        sortBy: p => (p.date || new Date())
-                    })
-                    .filter(page => page.path && (page.path.dir === '100'))
-                    .patchCollection(() => ({
-                        url: '100/',
-                        category: '100 days of code',
-                        short_desc: 'I’m taking part in the <a href="https://medium.freecodecamp.com/join-the-100daysofcode-556ddb4579e4">100 days of code</a> flashmob (TL;DR: you have to code every day, outside of your day job). The twist I’ve added is I don’t have a twitter (which is <a href="http://calnewport.com/blog/2013/10/03/why-im-still-not-going-to-join-facebook-four-arguments-that-failed-to-convince-me/">by design</a>), hence I blog about it here.<br>Oh, and don’t read it yet, but <a href="https://github.com/hoichi/chops">here’s the repo</a>.'
-                    }))
-                    .render(templates, 'blog')
-                    .write(Path.join(cfg.rootDir, 'build')),
-
-            'rss': Chops.collection({
-                        by: p => (p.date || new Date())
-                    })
-                    .filter(page => page.path && (page.path.dir === 'blog'))
-                    .patchCollection(() => ({
-                        url: 'feed.xml',
-                    }))
-                    .render(templates, 'rss', {site})
-                    .write(Path.join(cfg.rootDir, 'build')),
-        };
-
-        Chops.src('**!/!*', {cwd: Path.join(cfg.rootDir, cfg.sources.contents.path)})
-            .collect(collections['blog'])
-            .collect(collections['100'])
-            .collect(collections['rss'])
-            .render(templates, page => page.template || 'post')
-            .write(Path.join(cfg.rootDir, 'build'))
-        ;
-    */
   },
 );
 
 gulp.task('sass', function gtSass() {
   gulp
-    .src('./theme/sass/**/*.scss')
+    .src('./src/theme/sass/**/*.scss')
     .pipe(sourcemaps.init())
     .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
     .pipe(sourcemaps.write('./maps'))
@@ -177,11 +161,12 @@ gulp.task('sass', function gtSass() {
 });
 
 gulp.task('static-js', function gtStaticJS() {
-  gulp.src('./theme/js/lib/*.js').pipe(gulp.dest('./build/js/'));
+  gulp.src('./src/theme/js/lib/*.js').pipe(gulp.dest('./build/js/'));
 });
 
 gulp.task('static-redirects', function gtStaticRw() {
-  gulp.src('./theme/_redirects').pipe(gulp.dest('./build/ z')); // rewrite rules for netlify. for browserSync, see below.
+  gulp.src('./src/theme/_redirects').pipe(gulp.dest('./build/ z')); // rewrite
+  // rules for netlify. for browserSync, see below.
 });
 
 gulp.task('static-img', () => {
@@ -191,7 +176,7 @@ gulp.task('static-img', () => {
 gulp.task('static', ['static-js', 'static-redirects', 'static-img']);
 
 gulp.task('sass:watch', function gtSassWatch() {
-  gulp.watch('./theme/sass/**/*.scss', ['sass']);
+  gulp.watch('./src/theme/sass/**/*.scss', ['sass']);
 });
 
 gulp.task('watch', ['sass:watch']);
@@ -199,7 +184,7 @@ gulp.task('watch', ['sass:watch']);
 gulp.task('serve', ['watch'], function gtServe() {
   bSync.init({
     server: {
-      baseDir: './build/',
+      baseDir: './build/public',
     },
     middleware: [
       modRw([
@@ -209,4 +194,4 @@ gulp.task('serve', ['watch'], function gtServe() {
   });
 });
 
-gulp.task('default', [/*'scatter',*/ 'static', 'sass']);
+gulp.task('default', ['static', 'sass', 'contents']);

@@ -19,6 +19,8 @@ function parsePage(page: SourceFile): Page {
   const content = md.render(body);
 
   return {
+    // id is crucial
+    id: path.full,
     // here’s some defaults
     title: 'Untitled',
     date: new Date(),

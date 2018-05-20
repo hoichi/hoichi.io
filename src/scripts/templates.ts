@@ -1,10 +1,11 @@
 import * as jade from 'jade';
-import { Stream } from '@most/types';
-import { map, runEffects, tap } from '@most/core';
 import { pipe } from 'ramda';
 
-import { SourceFile } from './model/page';
+import { Stream } from '@most/types';
+import { map, runEffects, tap } from '@most/core';
 import { newDefaultScheduler } from '@most/scheduler';
+
+import { SourceFile } from './model/page';
 
 type RenderFn = Function; // todo
 
@@ -32,12 +33,12 @@ async function compileTemplates(sources: Stream<SourceFile>) {
   return tplDic;
 }
 
-const renderPage = (dic: TplDic, cfg: TplCfg) => page => {
+const renderPage = (dic: TplDic, cfg: TplCfg, site?: SiteMeta) => page => {
   const renderFn = dic[page.template || cfg.default] || dic[cfg.default];
 
   return {
     ...page,
-    content: renderFn({ cfg, page }),
+    content: renderFn({ cfg, page, site }), // todo: de-hardcode meta structure?
   };
 };
 

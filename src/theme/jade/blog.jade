@@ -1,16 +1,16 @@
 extends ./page/page.jade
 //-
 block h__title
-    title= 'i.i / '+page.category
+    title= 'i.i / '+page.title
 block header
     .b-Masthead__breadcrumbs
         a(href='/') hoichi.io
         = ' / '
-    h1= page.category
+    h1= page.title
 
 block content
-    if page.short_desc
-        p.b-desc!= page.short_desc
+    if page.content
+        p.b-desc!= page.content
 
     each post in page.posts
         .b-post
