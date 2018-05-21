@@ -1,33 +1,15 @@
 ///<reference path="../node_modules/@types/node/index.d.ts" />
 'use strict';
 
-import { Stream } from '@most/types';
 import {
-  chain,
-  filter,
   map,
-  merge,
-  mergeArray,
-  multicast,
-  now,
-  runEffects,
-  scan,
-  skip,
-  take,
-  tap,
 } from '@most/core';
-import { curry2 } from '@most/prelude';
-import { newDefaultScheduler } from '@most/scheduler';
-import { last } from 'most-last';
 import { pipe } from 'ramda';
 
 import { observeSource } from './scripts/readSource';
-import { Page, SourceFile } from './scripts/model/page';
 import { parsePage } from './scripts/parsePage';
 import { compileTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
-import { SortedList } from './scripts/sortedList';
-import { slurpWith } from './scripts/helpers';
 import { collect } from './scripts/collection';
 
 const _ = require('lodash'),
@@ -60,11 +42,6 @@ const cfg = {
     month: 'short',
     day: 'numeric',
   }),
-};
-
-const siteMeta = {
-  title: 'Behind The Frontend',
-  domain: 'hoichi.io',
 };
 
 gulp.task('loadCfg', function gt_loadCfg(cb) {
@@ -138,7 +115,7 @@ gulp.task(
             ' that it stopped me from coding.',
         }),
         map(renderPage(tplDic, tplCfg, siteMeta)),
-        write('build/public'),
+        write('build'),
       )(pages);
 
       l(`Ready to roll`);
@@ -184,7 +161,7 @@ gulp.task('watch', ['sass:watch']);
 gulp.task('serve', ['watch'], function gtServe() {
   bSync.init({
     server: {
-      baseDir: './build/public',
+      baseDir: './build',
     },
     middleware: [
       modRw([

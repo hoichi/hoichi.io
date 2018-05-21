@@ -18,7 +18,7 @@ function parsePage(page: SourceFile): Page {
 
   const content = md.render(body);
 
-  return {
+  const result = {
     // id is crucial
     id: path.full,
     // here’s some defaults
@@ -31,12 +31,17 @@ function parsePage(page: SourceFile): Page {
     //
     content,
     excerpt: extract1stHtmlParagraph(content),
-    //
-    url: constructPageUrl(page),
 
     // and here we override them with the yfm data
     // not too lazy, yes
     ...attributes,
+  };
+
+  return {
+    ...result,
+    // we need meta for constructPageUrl
+    // fixme: it’s all hacky and brittle
+    url: result['url'] || constructPageUrl({...page, ...result}),
   };
 }
 
