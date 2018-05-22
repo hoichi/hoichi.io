@@ -12,7 +12,7 @@ import {
 } from '@most/core';
 import { curry2 } from '@most/prelude';
 import { complement, pipe } from 'ramda';
-import { fromArray } from './helpers';
+import { fromArray, split } from './helpers';
 
 interface CollectionOptions {
   content?: string;
@@ -54,10 +54,10 @@ function collect(
     };
   });
 
-  // todo: extract to helpers
-  const pagesToFilter = multicast(pages);
-  const pagesToCollect = filter(filterBy, pagesToFilter);
-  const pagesIgnored = filter(complement(filterBy), pagesToFilter);
+  const [ pagesToCollect, pagesIgnored ] = split(
+    filterBy,
+    pages,
+  );
 
   const collectionState = multicast(map(addPage(list), pagesToCollect));
 
@@ -67,6 +67,7 @@ function collect(
 
   const feed = map(
     ({ collection: posts }) => ({
+      content,
       template,
       url,
       posts,
