@@ -26,8 +26,7 @@
     "most-last": "^2.1.0",
     "path": "^0.12.7",
     "prettier": "^1.10.2",
-    "ramda": "^0.25.0",
-    "typescript": "^2.5.2"
+    "ramda": "^0.25.0"
   },
   "devDependencies": {
     "@most/types": "^1.0.0",
@@ -37,7 +36,8 @@
     "ava": "^0.4.2",
     "browser-sync": "2.10.0",
     "connect-modrewrite": "^0.8.2",
-    "mock-fs": "^4.4.1"
+    "mock-fs": "^4.4.1",
+    "typescript": "^2.8.3"
   },
   "scripts": {
     "build": "tsc && gulp",
