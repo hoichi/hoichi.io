@@ -11,8 +11,11 @@ import {
   tap,
 } from '@most/core';
 import { curry2 } from '@most/prelude';
-import { complement, pipe } from 'ramda';
-import { fromArray, split } from './helpers';
+import { pipe } from 'ramda';
+import { fromArray } from 'most-from-array';
+
+import { split } from './helpers';
+
 
 interface CollectionOptions {
   content?: string;
