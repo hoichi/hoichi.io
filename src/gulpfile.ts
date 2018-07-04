@@ -11,6 +11,7 @@ import { parsePage } from './scripts/parsePage';
 import { compileTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
 import { collect } from './scripts/collection';
+import {SiteMeta} from "./scripts/model"
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),

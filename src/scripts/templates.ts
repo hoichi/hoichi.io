@@ -5,7 +5,7 @@ import { Stream } from '@most/types';
 import { map, runEffects, tap } from '@most/core';
 import { newDefaultScheduler } from '@most/scheduler';
 
-import { SourceFile } from './model/page';
+import { SourceFile, SiteMeta } from './model';
 
 type RenderFn = Function; // todo
 

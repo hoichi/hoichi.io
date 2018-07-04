@@ -1,14 +1,11 @@
 import { Stream } from '@most/types';
-import { Page } from './model/page';
+import { Page } from './model';
 import { SortedList, SortIteratee } from './sortedList';
 import {
   chain,
-  filter,
   map,
   mergeArray,
   multicast,
-  now,
-  tap,
 } from '@most/core';
 import { curry2 } from '@most/prelude';
 import { pipe } from 'ramda';

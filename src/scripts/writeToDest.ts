@@ -11,7 +11,9 @@ import {curry2} from "@most/prelude"
 
 // todo: more generic pages (all we need is content & some path/slug info)
 
-function write(dir: string, pages: Stream<Page>) {
+import { DestinationFile } from './model';
+
+function write(dir: string, pages: Stream<DestinationFile>) {
   console.log(`write()`);
 
   runEffects(

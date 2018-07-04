@@ -1,7 +1,7 @@
 import * as fm from 'front-matter';
 import * as markdownIt from 'markdown-it';
 
-import { Page, SourceFile } from './model/page';
+import { Page, SourceFile } from './model';
 import { extract1stHtmlParagraph, constructPageUrl } from './utils';
 
 const md = markdownIt({

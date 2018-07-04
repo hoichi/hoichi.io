@@ -5,7 +5,7 @@ import { Stream } from '@most/types';
 import { map, until } from '@most/core';
 import { fromEvent } from 'most-from-event';
 
-import { FilePath, SourceFile } from './model/page';
+import { FilePath, SourceFile } from './model';
 
 function observeSource(globs, options: WatchOptions = {}): Stream<SourceFile> {
 /*
