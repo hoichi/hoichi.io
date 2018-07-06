@@ -8,7 +8,7 @@ excerpt: Here’s your brain on drugs.
 
 Here’s ~~your brain on drugs~~ what the thick of the `Collector` class in [my little yet-to-be born static build engine](https://github.com/hoichi/chops) looked like just a few days ago:
 
-```ts
+```typescript
 while ((event = yield take(chIn)) !== csp.CLOSED) {
     let {action} = event;
 
@@ -58,7 +58,7 @@ while ((event = yield take(chIn)) !== csp.CLOSED) {
 
 Let’s not go into _all_ the scary details. What matters now is that the class had too much concerns: data flow, data conversion &c. And this is what the same cycle looks today:
 
-```ts
+```typescript
 while ((event = yield take(chIn)) !== csp.CLOSED) {
     let {action, data: page} = event,
         pages: ChopEvent<any>[] = [];
