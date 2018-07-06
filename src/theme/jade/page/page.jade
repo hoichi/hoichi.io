@@ -21,9 +21,10 @@ html.no-js(lang='en')
         <![endif]-->
         // Add your site or application content here
         script.
-            Prism.highlightAll(false, function () {
-                console.log('#');
-            });
+            Prism.languages.ts = Prism.languages.ts
+                || Prism.languages.typescript
+                || Prism.languages.javascript
+            Prism.highlightAll(false, function () {})
         header.b-Masthead.u-centered(role='banner')
             include ../partials/_topnav
             block header
