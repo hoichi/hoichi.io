@@ -1,15 +1,18 @@
 import * as fm from 'front-matter';
 import * as markdownIt from 'markdown-it';
+import * as prism from 'markdown-it-prism';
 
 import { Page, SourceFile } from './model';
 import { extract1stHtmlParagraph, constructPageUrl } from './utils';
 
+// init markdown-it
 const md = markdownIt({
   breaks: true,
   html: true,
   typographer: true,
   quotes: '«»„“',
 });
+md.use(prism, () => void 0);
 
 function parsePage(page: SourceFile): Page {
   const { path, rawContent } = page;

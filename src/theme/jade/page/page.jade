@@ -14,17 +14,10 @@ html.no-js(lang='en')
         link(rel='stylesheet', href='/css/style.css')
         link(rel='alternate' type='application/rss+xml' href='/feed.xml')
         script(src='/js/vendor/modernizr-2.8.3.min.js')
-        script(src='/js/prism.js')
     body
         <!--[if lt IE 8]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        // Add your site or application content here
-        script.
-            Prism.languages.ts = Prism.languages.ts
-                || Prism.languages.typescript
-                || Prism.languages.javascript
-            Prism.highlightAll(false, function () {})
         header.b-Masthead.u-centered(role='banner')
             include ../partials/_topnav
             block header
