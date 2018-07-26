@@ -4335,6 +4335,10 @@ tryor@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/tryor/-/tryor-0.1.2.tgz#8145e4ca7caff40acde3ccf946e8b8bb75b4172b"
 
+ts-exhaustive-check@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ts-exhaustive-check/-/ts-exhaustive-check-1.0.0.tgz#8048c81eccd3b4da45ebd10f01529ad0be7924c7"
+
 tunnel-agent@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/tunnel-agent/-/tunnel-agent-0.6.0.tgz#27a5dea06b36b04a0a9966774b290868f0fc40fd"

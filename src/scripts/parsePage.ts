@@ -41,6 +41,7 @@ function parsePage(page: SourceFile): Page {
   };
 
   return {
+    kind: 'post',
     ...result,
     // we need meta for constructPageUrl
     // fixme: it’s all hacky and brittle

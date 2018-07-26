@@ -1,5 +1,5 @@
 import { Stream } from '@most/types';
-import { Page } from './model';
+import { Collection, Page, Post } from './model'
 import { SortedList, SortIteratee } from './sortedList';
 import {
   chain,
@@ -8,15 +8,16 @@ import {
   multicast,
 } from '@most/core';
 import { curry2 } from '@most/prelude';
-import { pipe } from 'ramda';
 import { fromArray } from 'most-from-array';
+import { pipe } from 'ramda';
+import {exhaustiveCheck} from "ts-exhaustive-check"
 
 import { split } from './helpers';
 
 
 interface CollectionOptions {
   content?: string;
-  filter?: (p: Page) => boolean;
+  filter?: (p: Post) => boolean;
   limit?: number;
   sortBy?: SortIteratee; // todo: generic
   template: string;
@@ -40,12 +41,12 @@ function collect(
     ...meta
   } = options;
 
-  const list = SortedList<Page>({
+  const list = SortedList<Post>({
     sortBy,
     uniqueBy,
   }); // hack
 
-  const addPage = curry2((list: SortedList<Page>, page: Page) => {
+  const addPage = curry2((list: SortedList<Post>, page: Post) => {
     const pages = list.add(page);
 
     return {
@@ -54,8 +55,25 @@ function collect(
     };
   });
 
-  const [ pagesToCollect, pagesIgnored ] = split(
-    filterBy,
+  /** (Post -> boolean) -> (Page -> Boolean)
+   * turns a function that validates Posts into a function that validates
+   * pages (and return false for non-collectables)
+   */
+  const withCollectablesOnly = (f: (p: Post) => boolean): ((p: Page) => boolean) =>
+    (p: Page) => {
+
+      switch (p.kind) {
+        case 'collection':
+          return false;
+        case 'post':
+          return f(p as Post);
+        default:
+          return exhaustiveCheck(p);
+      }
+    }
+
+  const [ pagesToCollect, pagesIgnored ] = split<Page, Post, Collection>(
+    withCollectablesOnly(filterBy),
     pages,
   );
 
@@ -66,11 +84,14 @@ function collect(
   );
 
   const feed = map(
-    ({ collection: posts }) => ({
+    ({ collection }: { collection: ReadonlyArray<Post> }): Collection => ({
+      kind: 'collection',
+      key: meta.title,
+      title: 'no-title',
       content,
       template,
       url,
-      posts,
+      posts: collection,
       ...meta,
     }),
     collectionState,

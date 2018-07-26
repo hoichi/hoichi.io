@@ -28,7 +28,8 @@
     "most-last": "^2.1.0",
     "path": "^0.12.7",
     "prettier": "^1.10.2",
-    "ramda": "^0.25.0"
+    "ramda": "^0.25.0",
+    "ts-exhaustive-check": "^1.0.0"
   },
   "devDependencies": {
     "@most/types": "^1.0.0",

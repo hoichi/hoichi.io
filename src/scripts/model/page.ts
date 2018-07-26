@@ -1,18 +1,19 @@
 // built into TypeScript 2.9
 import {SourceFile} from "./file"
 
-type PropertyKey = string | number | symbol;
+
+type Page = Post | Collection;
 
 /**
  * Full-blown page, with metadata and content probably converted to html
  */
-interface Page extends PageMeta {
+interface Post extends PostMeta {
+  kind: 'post';
   id: PropertyKey;
   source?: SourceFile;
 }
 
-
-interface PageMeta {
+interface PostMeta {
   title: string;
   date: Date;
 
@@ -27,4 +28,18 @@ interface PageMeta {
   // [k: string]: any;
 }
 
-export { Page };
+type PropertyKey = string | number | symbol;
+
+interface Collection {
+  kind: 'collection';
+  key: string;
+  title: string;
+  posts: ReadonlyArray<Post>;
+  // published: boolean; // todo: set it
+
+  content: string;
+  template?: string;
+  url: string; // relative to site root
+}
+
+export { Page, Post, Collection };
