@@ -34,16 +34,35 @@
   "devDependencies": {
     "@most/types": "^1.0.0",
     "@types/chokidar": "^1.7.5",
+    "@types/core-js": "^2.5.0",
+    "@types/jest": "^23.3.1",
     "@types/mkpath": "^0.1.29",
     "@types/ramda": "^0.25.18",
-    "ava": "^0.4.2",
     "browser-sync": "2.10.0",
     "connect-modrewrite": "^0.8.2",
+    "jest": "^23.4.2",
     "mock-fs": "^4.4.1",
+    "ts-jest": "^23.0.1",
+    "ts-node": "^7.0.0",
     "typescript": "^2.8.3"
   },
   "scripts": {
     "build": "tsc && gulp",
     "test": "ava **/*.spec.js"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testURL": "http://localhost",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }
