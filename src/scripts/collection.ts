@@ -1,28 +1,24 @@
 import { Stream } from '@most/types';
-import { Collection, Page, Post } from './model'
-import { SortedList, SortIteratee } from './sortedList';
-import {
-  chain,
-  map,
-  mergeArray,
-  multicast,
-} from '@most/core';
+import { Collection, Page, Post } from './model';
+import { SortedList } from './sortedList';
+import { chain, map, mergeArray, multicast } from '@most/core';
 import { curry2 } from '@most/prelude';
 import { fromArray } from 'most-from-array';
-import { pipe } from 'ramda';
-import {exhaustiveCheck} from "ts-exhaustive-check"
+import { always, pipe } from 'ramda';
+import { exhaustiveCheck } from 'ts-exhaustive-check';
 
 import { split } from './helpers';
 
-
 interface CollectionOptions {
+  collectBy: ((p: Post) => string[]) | string;
+  sortBy?: <T>(p: Post) => T;
+  uniqueBy?: (p: Post) => string | number | symbol;
+  prefill?: Dict<Partial<Collection>>;
   content?: string;
   filter?: (p: Post) => boolean;
   limit?: number;
-  sortBy?: SortIteratee; // todo: generic
   template: string;
-  uniqueBy?: SortIteratee;
-  url: string;
+  url: ((c: Collection) => string) | string;
   [metaKey: string]: any;
 }
 
@@ -30,74 +26,108 @@ function collect(
   options: CollectionOptions,
   pages: Stream<Page>,
 ): Stream<Page> {
-  const {
+  /**
+   * Options & conversions thereof
+   */
+  let {
+    collectBy,
+    sortBy = p => -(p.date || Date.now()),
+    uniqueBy = p => p.id,
+    prefill = {},
     content = '',
     filter: filterBy = () => true,
     limit,
-    sortBy = p => -(p.date || Date.now()),
     template,
-    uniqueBy = p => p.id,
     url,
     ...meta
   } = options;
 
-  const list = SortedList<Post>({
-    sortBy,
-    uniqueBy,
-  }); // hack
 
-  const addPage = curry2((list: SortedList<Post>, page: Post) => {
-    const pages = list.add(page);
+  const idxFn =
+    typeof collectBy === 'string'
+      ? pipe(always(collectBy), Array.of)
+      : collectBy;
 
-    return {
-      pages,
-      collection: limit ? list.all.slice(0, limit) : list.all,
-    };
-  });
 
-  /** (Post -> boolean) -> (Page -> Boolean)
-   * turns a function that validates Posts into a function that validates
-   * pages (and return false for non-collectables)
+  const urlFn = typeof url === 'string'
+    ? always(url)
+    : url;
+
+  /**
+   * Init the lists
    */
-  const withCollectablesOnly = (f: (p: Post) => boolean): ((p: Page) => boolean) =>
-    (p: Page) => {
+  const dic: Dict<[Collection, SortedList<Post>]> = {};
 
-      switch (p.kind) {
-        case 'collection':
-          return false;
-        case 'post':
-          return f(p as Post);
-        default:
-          return exhaustiveCheck(p);
-      }
-    }
-
-  const [ pagesToCollect, pagesIgnored ] = split<Page, Post, Collection>(
+  // separate pages we collect from the pages we don’t
+  const [pagesToCollectSingle, pagesIgnored] = split<Page, Post, Collection>(
     withCollectablesOnly(filterBy),
     pages,
   );
+  const pagesToCollect = multicast(pagesToCollectSingle);
 
-  const collectionState = multicast(map(addPage(list), pagesToCollect));
+  const collections = pipe(
+    map(addPage),
+    chain(fromArray),
+  )(pagesToCollect);
 
-  const pagesCollected = pipe(map(({ pages }) => pages), chain(fromArray))(
-    collectionState,
-  );
+  return mergeArray<Page>([pagesToCollect, pagesIgnored, collections]);
 
-  const feed = map(
-    ({ collection }: { collection: ReadonlyArray<Post> }): Collection => ({
-      kind: 'collection',
-      key: meta.title,
-      title: 'no-title',
-      content,
-      template,
-      url,
-      posts: collection,
-      ...meta,
-    }),
-    collectionState,
-  );
+  function addPage(post: Post): Collection[] {
+    const result: Collection[] = [];
 
-  return mergeArray([pagesCollected, pagesIgnored, feed]);
+    const idxs = idxFn(post);
+
+    console.log(idxs);
+
+    // add a new list (with prefill)
+    // or reference an old one
+
+    for (const idx of idxs) {
+      let el = dic[idx];
+      const pre = prefill[idx] || {}
+
+      if (!el) {
+        el = dic[idx] = [
+          {
+            kind: 'collection',
+            index: idx,
+            content: '',
+            posts: [],
+            template,
+            title: pre.title || idx,
+            url: '',
+            ...pre,
+          },
+          SortedList<Post>({ sort: sortBy, index: uniqueBy }),
+        ];
+      }
+
+      const [collection, list] = el;
+      collection.posts = list.add(post); // hacky hacky
+      collection.url = urlFn(collection);
+      console.log(collection.posts.map(el => el.title));
+      result.push(collection);
+    }
+
+    return result;
+  }
+}
+
+/** (Post -> boolean) -> (Page -> Boolean)
+ * turns a function that validates Posts into a function that validates
+ * pages (and return false for non-collectables)
+ */
+function withCollectablesOnly(f: (p: Post) => boolean): ((p: Page) => boolean) {
+  return (p: Page) => {
+    switch (p.kind) {
+      case 'collection':
+        return false;
+      case 'post':
+        return f(p as Post);
+      default:
+        return exhaustiveCheck(p);
+    }
+  };
 }
 
 const collectCurried = curry2(collect);

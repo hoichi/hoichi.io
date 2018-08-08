@@ -10,10 +10,6 @@ import {
 import { Stream } from '@most/types';
 import { pipe, identity, complement } from 'ramda';
 
-function fromArray<T>(array: T[]): Stream<T> {
-  return mergeArray(array.map(now));
-}
-
 function slurpWith(f: (s: any) => string, s: Stream<any>) {
   return runEffects(tap(pipe(f, console.log), s), newDefaultScheduler());
 }
@@ -34,4 +30,9 @@ function split<T, U extends T, V extends T>(
   ];
 }
 
-export { fromArray, slurp, slurpWith, split };
+function withLog<T>(val: T): T {
+  console.log(val);
+  return val;
+}
+
+export { slurp, slurpWith, split, withLog };

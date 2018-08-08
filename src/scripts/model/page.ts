@@ -32,7 +32,7 @@ type PropertyKey = string | number | symbol;
 
 interface Collection {
   kind: 'collection';
-  key: string;
+  index: string;
   title: string;
   posts: ReadonlyArray<Post>;
   // published: boolean; // todo: set it

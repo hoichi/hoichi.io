@@ -1,9 +1,7 @@
 ///<reference path="../node_modules/@types/node/index.d.ts" />
 'use strict';
 
-import {
-  map,
-} from '@most/core';
+import { map } from '@most/core';
 import { pipe } from 'ramda';
 
 import { observeSource } from './scripts/readSource';
@@ -11,7 +9,8 @@ import { parsePage } from './scripts/parsePage';
 import { compileTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
 import { collect } from './scripts/collection';
-import {SiteMeta} from "./scripts/model"
+import { SiteMeta } from './scripts/model';
+import { withLog } from './scripts/helpers';
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
@@ -52,82 +51,77 @@ gulp.task('loadCfg', function gt_loadCfg(cb) {
   cb();
 });
 
-gulp.task(
-  'contents',
-  async function gtContents(cb_t) {
-    const tplCfg = {
-      // todo: centralize config
-      default: 'single',
-      date_short: u.dateFormatter(
-        // todo: use moment.js?
-        // fixme: so hardcode
-        'en-US',
-        { year: 'numeric', month: 'short', day: 'numeric' },
-      ),
-    };
+gulp.task('contents', async function gtContents(cb_t) {
+  const tplCfg = {
+    // todo: centralize config
+    default: 'single',
+    date_short: u.dateFormatter(
+      // todo: use moment.js?
+      // fixme: so hardcode
+      'en-US',
+      { year: 'numeric', month: 'short', day: 'numeric' },
+    ),
+  };
 
-    const siteMeta: SiteMeta = {
-      title: 'Code Churn',
-      domain: 'hoichi.io',
-    };
+  const siteMeta: SiteMeta = {
+    title: 'Code Churn',
+    domain: 'hoichi.io',
+  };
 
-    try {
-      l('Reading templates');
-      const tplDic = await compileTemplates(
-        observeSource('src/theme/jade/*.jade', { cwd: '.' }),
-      );
-      l(`Templates are successfully compiled`);
+  try {
+    l('Reading templates');
+    const tplDic = await compileTemplates(
+      observeSource('src/theme/jade/*.jade', { cwd: '.' }),
+    );
+    l(`Templates are successfully compiled`);
 
-      l(`Setting up pages`);
-      const pages = map(
-        parsePage,
-        observeSource('**/*', { cwd: Path.join(__dirname, 'contents') }),
-      );
+    l(`Setting up pages`);
+    const pages = map(
+      parsePage,
+      observeSource('**/*', { cwd: Path.join(__dirname, 'contents') }),
+    );
 
-      // collect, render & write pages
-      pipe(
-        collect({
-          filter: ({ category }) => category === 'blog',
-          template: 'blog',
-          uniqueBy: ({ id }) => id,
-          url: '',
-          // meta
-          content: 'You won’t believe what this developer didn’t know',
-          title: 'blog',
-        }),
-        collect({
-          filter: ({ category }) => category === 'blog',
-          template: 'rss',
-          uniqueBy: ({ id }) => id,
-          url: 'feed.xml',
-          limit: 10,
-          // meta ?
-        }),
-        collect({
-          filter: ({ category }) => category === '100',
-          template: 'blog',
-          uniqueBy: ({ id }) => id,
-          url: '100/',
-          // limit: 10,
-          // meta ?
-          title: '100 days of code',
-          content:
-            'Never mind, I dropped that flashmob thingie. Not' +
-            ' that it stopped me from coding.',
-        }),
-        map(renderPage(tplDic, tplCfg, siteMeta)),
-        write('build'),
-      )(pages);
+    // collect, render & write pages
+    pipe(
+      collect({
+        collectBy: ({ category }) => [category],
+        filter: ({ category }) => category !== 'learning',
+        template: 'blog',
+        uniqueBy: ({ id }) => id,
+        url: ({ index }) => withLog(index === 'blog' ? '' : index),
+        // meta
+        content: 'You won’t believe what this developer didn’t know',
+        title: 'blog',
+      }),
+      collect({
+        collectBy: ({ category }) => [category],
+        filter: ({ category }) => category === 'blog',
+        template: 'rss',
+        uniqueBy: ({ id }) => id,
+        url: 'feed.xml',
+        limit: 10,
+        // meta ?
+      }),
+      collect({
+        collectBy: ({ tags }) => tags,
+        // filter: ({ category }) => category === 'blog',
+        template: 'tag',
+        uniqueBy: ({ id }) => id,
+        url: ({ index }) => `tag/${index}`,
+        // meta ?
+      }),
+      map(renderPage(tplDic, tplCfg, siteMeta)),
+      write('build'),
+    )(pages);
 
-      l(`Ready to roll`);
-    } catch (err) {
-      console.log(err);
-      throw new Error(
-        'Something went wrong while reading and compiling templates',
-      );
-    }
-  },
-);
+    l(`Ready to roll`);
+  } catch (err) {
+    console.log(err);
+    throw new Error(
+      'Something went wrong while reading and compiling templates',
+    );
+  }
+});
 
 gulp.task('sass', function gtSass() {
   gulp
