@@ -77,8 +77,6 @@ function collect(
 
     const idxs = idxFn(post);
 
-    console.log(idxs);
-
     // add a new list (with prefill)
     // or reference an old one
 
@@ -105,7 +103,6 @@ function collect(
       const [collection, list] = el;
       collection.posts = list.add(post); // hacky hacky
       collection.url = urlFn(collection);
-      console.log(collection.posts.map(el => el.title));
       result.push(collection);
     }
 

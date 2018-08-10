@@ -4,7 +4,7 @@ title: Sorting Lists, Testing Units
 date: 2016-02-04
 slug: sorting-lists-testing-units
 excerpt: Here’s your brain on drugs.
-tags: [ chops, all-i-build-is-this-blog, csp]
+tags: [ chops, all I build is this blog, csp]
 ---
 
 Here’s ~~your brain on drugs~~ what the thick of the `Collector` class in [my little yet-to-be born static build engine](https://github.com/hoichi/chops) looked like just a few days ago:

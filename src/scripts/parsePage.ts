@@ -4,6 +4,7 @@ import * as prism from 'markdown-it-prism';
 
 import { Page, SourceFile } from './model';
 import { extract1stHtmlParagraph, constructPageUrl } from './utils';
+import slugify from 'slugify';
 
 // init markdown-it
 const md = markdownIt({
@@ -30,7 +31,6 @@ function parsePage(page: SourceFile): Page {
     //
     published: true,
     category: path.dir || '',
-    tags: [],
     //
     content,
     excerpt: extract1stHtmlParagraph(content),
@@ -38,6 +38,11 @@ function parsePage(page: SourceFile): Page {
     // and here we override them with the yfm data
     // not too lazy, yes
     ...attributes,
+
+    tags: (attributes['tags'] || []).map(tag => ({
+      title: tag,
+      slug: slugify(tag),
+    })),
   };
 
   return {
@@ -45,7 +50,7 @@ function parsePage(page: SourceFile): Page {
     ...result,
     // we need meta for constructPageUrl
     // fixme: it’s all hacky and brittle
-    url: result['url'] || constructPageUrl({...page, ...result}),
+    url: result['url'] || constructPageUrl({ ...page, ...result }),
   };
 }
 

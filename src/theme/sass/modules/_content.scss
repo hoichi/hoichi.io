@@ -46,6 +46,10 @@
   }
 }
 
+.b-post__tag:not(last-of-type) {
+  margin-right: 1ch;
+}
+
 .Content {
   p, pre, ul, ol {
     margin-bottom: $line-height;
@@ -105,7 +109,25 @@ article {
   }
 }
 
+.b-Content__meta {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  margin-bottom: $line-height;
+}
+
 .b-Content__meta-date {
+  margin-right: 3ch;
+}
+
+.b-Content__meta-tags a {
   text-align: right;
   color: $page-meta-color;
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: $hdr-link-active-color;
+  }
 }

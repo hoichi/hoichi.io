@@ -18,10 +18,9 @@ block content
                 span.b-post__date= cfg.date_short(post.date)
                 h2.b-post__title
                     a.b-post__header-link(href='/'+post.url)= post.title
-            .b-post-meta
             .b-post__body
-                p
-                    a.b-post__more(href= '/'+post.url)
-                        | !{post.excerpt}
-                        br
-                        | ...
+                a.b-post__more(href= '/'+post.url)
+                    | !{post.excerpt}
+            .b-post__meta
+                each tag in post.tags
+                    a.b-post__tag(href = '/tag/' + tag.slug) ##{tag.title}

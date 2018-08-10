@@ -54,7 +54,7 @@ gulp.task('loadCfg', function gt_loadCfg(cb) {
 gulp.task('contents', async function gtContents(cb_t) {
   const tplCfg = {
     // todo: centralize config
-    default: 'single',
+    default: 'post',
     date_short: u.dateFormatter(
       // todo: use moment.js?
       // fixme: so hardcode
@@ -103,7 +103,7 @@ gulp.task('contents', async function gtContents(cb_t) {
         // meta ?
       }),
       collect({
-        collectBy: ({ tags }) => tags,
+        collectBy: ({ tags }) => tags.map(({ slug }) => slug),
         // filter: ({ category }) => category === 'blog',
         template: 'tag',
         uniqueBy: ({ id }) => id,

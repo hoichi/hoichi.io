@@ -13,23 +13,6 @@ interface Post extends PostMeta {
   source?: SourceFile;
 }
 
-interface PostMeta {
-  title: string;
-  date: Date;
-
-  published: boolean;
-  category: string;
-  tags: string[];
-
-  content: string;
-  excerpt: string;
-  template?: string;
-  url: string; // relative to site root
-  // [k: string]: any;
-}
-
-type PropertyKey = string | number | symbol;
-
 interface Collection {
   kind: 'collection';
   index: string;
@@ -40,6 +23,28 @@ interface Collection {
   content: string;
   template?: string;
   url: string; // relative to site root
+}
+
+interface PostMeta {
+  title: string;
+  date: Date;
+
+  published: boolean;
+  category: string;
+  tags: Tag[];
+
+  content: string;
+  excerpt: string;
+  template?: string;
+  url: string; // relative to site root
+  // [k: string]: any;
+}
+
+type PropertyKey = string | number | symbol;
+
+interface Tag {
+  title: string;
+  slug: string;
 }
 
 export { Page, Post, Collection };
