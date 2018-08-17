@@ -84,6 +84,7 @@ a:focus {
   margin-left: auto;
   margin-right: auto;
   text-align: left;
+
   @include media('>phone', '<=tablet') {
     width: 88%;
   }
@@ -91,3 +92,17 @@ a:focus {
     width: 94%;
   }
 }
+
+blockquote {
+  position: relative;
+
+  p {
+    padding-left: 2ch;
+    
+    &::before {
+      content: ">";
+      position: absolute;
+      left: 0;
+    }
+  }
+} 
