@@ -2,7 +2,7 @@
 import {SourceFile} from "./file"
 
 
-type Page = Post | Collection;
+type Page = Post | Collection | StaticPage;
 
 /**
  * Full-blown page, with metadata and content probably converted to html
@@ -20,6 +20,13 @@ interface Collection {
   posts: ReadonlyArray<Post>;
   // published: boolean; // todo: set it
 
+  content: string;
+  template?: string;
+  url: string; // relative to site root
+}
+
+interface StaticPage {
+  kind: 'static';
   content: string;
   template?: string;
   url: string; // relative to site root
@@ -47,4 +54,4 @@ interface Tag {
   slug: string;
 }
 
-export { Page, Post, Collection };
+export { Collection, Page, Post, StaticPage };

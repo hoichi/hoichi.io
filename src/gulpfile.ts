@@ -5,7 +5,7 @@ import { map } from '@most/core';
 import { pipe } from 'ramda';
 
 import { observeSource } from './scripts/readSource';
-import { parsePage } from './scripts/parsePage';
+import {parsePost, parseStaticPage} from './scripts/parsePage'
 import { compileTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
 import { collect } from './scripts/collection';
@@ -64,7 +64,7 @@ gulp.task('contents', async function gtContents(cb_t) {
   };
 
   const siteMeta: SiteMeta = {
-    title: 'Code Churn',
+    title: 'Sergey Samokhov',
     domain: 'hoichi.io',
   };
 
@@ -75,10 +75,10 @@ gulp.task('contents', async function gtContents(cb_t) {
     );
     l(`Templates are successfully compiled`);
 
-    l(`Setting up pages`);
-    const pages = map(
-      parsePage,
-      observeSource('**/*', { cwd: Path.join(__dirname, 'contents') }),
+    l(`Setting up posts`);
+    const posts = map(
+      parsePost,
+      observeSource(['**/*', `!me.md`], { cwd: Path.join(__dirname, 'contents') }),
     );
 
     // collect, render & write pages
@@ -110,6 +110,17 @@ gulp.task('contents', async function gtContents(cb_t) {
         url: ({ index }) => `tag/${index}`,
         // meta ?
       }),
+      map(renderPage(tplDic, tplCfg, siteMeta)),
+      write('build'),
+    )(posts);
+
+    l(`Setting up pages`);
+    const pages = map(
+      parseStaticPage,
+      observeSource('*.md', { cwd: Path.join(__dirname, 'contents') }),
+    );
+
+    pipe(
       map(renderPage(tplDic, tplCfg, siteMeta)),
       write('build'),
     )(pages);

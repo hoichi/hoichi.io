@@ -1,5 +1,7 @@
 .b-Colophon {
   margin-top: $line-height * 3;
+  margin-bottom: $line-height * 2;
+
   color: $color-secondary-1-4;
 
   a {
@@ -8,9 +10,4 @@
   a:visited {
     color: $color-secondary-1-4;
   };
-}
-
-.b-Colophon__by::before {
-  content: '___';
-  display: block;
 }
