@@ -2,7 +2,7 @@ import * as fm from 'front-matter';
 import * as markdownIt from 'markdown-it';
 import * as prism from 'markdown-it-prism';
 
-import { Page, SourceFile } from './model';
+import { Page, Post, SourceFile, StaticPage } from './model';
 import { extract1stHtmlParagraph, constructPageUrl } from './utils';
 import slugify from 'slugify';
 
@@ -15,12 +15,21 @@ const md = markdownIt({
 });
 md.use(prism, () => void 0);
 
-function parsePage(page: SourceFile): Page {
+function parseSource(page: SourceFile) {
   const { path, rawContent } = page;
 
   const { body = rawContent, attributes = {} } = fm(rawContent);
 
-  const content = md.render(body);
+  return {
+    content: md.render(body),
+    meta: attributes,
+    path
+  }
+
+}
+
+function parsePost(page: SourceFile): Post {
+  const { path, content, meta } = parseSource(page);
 
   const result = {
     // id is crucial
@@ -37,9 +46,9 @@ function parsePage(page: SourceFile): Page {
 
     // and here we override them with the yfm data
     // not too lazy, yes
-    ...attributes,
+    ...meta,
 
-    tags: (attributes['tags'] || []).map(tag => ({
+    tags: (meta['tags'] || []).map(tag => ({
       title: tag,
       slug: slugify(tag),
     })),
@@ -54,4 +63,19 @@ function parsePage(page: SourceFile): Page {
   };
 }
 
-export { parsePage };
+function parseStaticPage(page: SourceFile): StaticPage {
+  const { path, content, meta } = parseSource(page);
+
+  if (!meta['title']) throw Error(`No title found for ${path.full}`);
+
+  return {
+    kind: 'static',
+    content,
+    template: 'single',
+    ...meta,
+    url: constructPageUrl({ ...page, ...meta }),
+  }
+}
+
+
+export { parsePost, parseStaticPage };
