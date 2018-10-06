@@ -118,6 +118,7 @@ function withCollectablesOnly(f: (p: Post) => boolean): ((p: Page) => boolean) {
   return (p: Page) => {
     switch (p.kind) {
       case 'collection':
+      case 'static':
         return false;
       case 'post':
         return f(p as Post);
