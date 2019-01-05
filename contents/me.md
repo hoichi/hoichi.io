@@ -3,7 +3,7 @@ title: About me
 template: about
 ---
 
-I’m Sergey Samokhov, or hoichi for short, a maturish aspiring frontend developer from Moscow, Russia. I work with React, TS && Apollo, but am also very interested in FP, TDD, and basically all those CS foundations I lack.
+I’m Sergey Samokhov, or hoichi for short, a maturish aspiring frontend developer from Moscow, Russia. I work with React, TS & Apollo, but am also very interested in FP, TDD, and basically all those CS foundations I lack.
 
 I also love fiction, poetry, music, Masaaki Yuasa & Johhny To.
 

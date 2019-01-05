@@ -6,11 +6,11 @@ import { pipe } from 'ramda';
 
 import { observeSource } from './scripts/readSource';
 import {parsePost, parseStaticPage} from './scripts/parsePage'
-import { compileTemplates, renderPage } from './scripts/templates';
+import { getTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
 import { collect } from './scripts/collection';
 import { SiteMeta } from './scripts/model';
-import { withLog } from './scripts/helpers';
+// import { withLog } from './scripts/helpers';
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
@@ -69,11 +69,7 @@ gulp.task('contents', async function gtContents(cb_t) {
   };
 
   try {
-    l('Reading templates');
-    const tplDic = await compileTemplates(
-      observeSource('src/theme/jade/*.jade', { cwd: '.' }),
-    );
-    l(`Templates are successfully compiled`);
+    const tplDic = getTemplates();
 
     l(`Setting up posts`);
     const posts = map(

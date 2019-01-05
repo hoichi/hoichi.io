@@ -13,10 +13,9 @@
     "dedent": "^0.7.0",
     "front-matter": "^2.2.0",
     "graceful-fs": "^4.1.11",
-    "gulp": "^3.9.0",
+    "gulp": "3",
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.1",
-    "jade": "^1.11.0",
     "js-yaml": "^3.10.0",
     "lodash": "^4.0.0",
     "markdown-it": "^8.4.1",
@@ -29,6 +28,10 @@
     "path": "^0.12.7",
     "prettier": "^1.10.2",
     "ramda": "^0.25.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "reason-react": "^0.5.3",
+    "rss": "^1.2.2",
     "slugify": "^1.3.1",
     "ts-exhaustive-check": "^1.0.0"
   },
@@ -40,6 +43,7 @@
     "@types/mkpath": "^0.1.29",
     "@types/ramda": "^0.25.18",
     "browser-sync": "2.10.0",
+    "bs-platform": "^4.0.14",
     "connect-modrewrite": "^0.8.2",
     "jest": "^23.4.2",
     "mock-fs": "^4.4.1",
@@ -48,8 +52,7 @@
     "typescript": "^2.8.3"
   },
   "scripts": {
-    "build": "tsc && gulp",
-    "test": "ava **/*.spec.js"
+    "build": "tsc && bsb -make-world && gulp"
   },
   "jest": {
     "transform": {
