@@ -1,7 +1,7 @@
 ///<reference path="../node_modules/@types/node/index.d.ts" />
 'use strict';
 
-import { map } from '@most/core';
+import { map, filter } from '@most/core';
 import { pipe } from 'ramda';
 
 import { observeSource } from './scripts/readSource';
@@ -71,10 +71,14 @@ gulp.task('contents', async function gtContents(cb_t) {
     const tplDic = getTemplates();
 
     l(`Setting up posts`);
-    const posts = map(
-      parsePost,
-      observeSource(['**/*', `!me.md`], { cwd: Path.join(__dirname, 'contents') }),
-    );
+    const posts = pipe(
+      filter(({ published }) => !!published),
+      map(parsePost)
+    )(
+      observeSource(
+        ['**/*', `!me.md`],
+        { cwd: Path.join(__dirname, 'contents') }
+    ));
 
     // collect, render & write pages
     pipe(
