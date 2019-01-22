@@ -10,7 +10,6 @@ import { getTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
 import { collect } from './scripts/collection';
 import { SiteMeta } from './scripts/model';
-// import { withLog } from './scripts/helpers';
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
@@ -84,7 +83,7 @@ gulp.task('contents', async function gtContents(cb_t) {
         filter: ({ category }) => category !== 'learning',
         template: 'blog',
         uniqueBy: ({ id }) => id,
-        url: ({ index }) => withLog(index === 'blog' ? '' : index),
+        url: ({ index }) => index === 'blog' ? '' : index,
         // meta
         content: 'You won’t believe what this developer didn’t know',
         title: 'blog',
