@@ -10,6 +10,7 @@ import { getTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
 import { collect } from './scripts/collection';
 import { SiteMeta } from './scripts/model';
+import { withLog } from './scripts/helpers';
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
@@ -72,7 +73,7 @@ gulp.task('contents', async function gtContents(cb_t) {
 
     l(`Setting up posts`);
     const posts = pipe(
-      filter(({ published }) => !!published),
+      filter(({ published }) => published !== false), // hack
       map(parsePost)
     )(
       observeSource(
