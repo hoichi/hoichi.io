@@ -18,8 +18,6 @@ type tplProps('page) = {
 
 let (>>) = (f, g, x) => x->f->g;
 
-let componentToString = ReasonReact.element >> ReactDOMServerRe.renderToString;
-
 module AboutPageWrapper = {
   type pageProps = {
     .
@@ -31,35 +29,26 @@ module AboutPageWrapper = {
     "url": string,
   };
 
-  let make: (~page: pageProps, ~site: siteProps) => string =
+  let make: (~page: pageProps, ~site: siteProps) => RR.reactElement =
     (~page, ~site) =>
-      AboutPage.make(
-        ~siteTitle=site##title,
-        ~pageTitle=page##title,
-        ~category=page##category,
-        ~content=page##content,
-        [||],
-      )
-      ->componentToString;
+      <AboutPage
+        siteTitle=site##title
+        pageTitle=page##title
+        category=page##category
+        content=page##content
+      />;
 };
 
 module BlogFeedPageWrapper = {
   open Props;
   type pageProps = feedPageProps;
 
-  let make = (~h1Prefix=?, ~page, ~site as _) => {
-    /* hack: gotta be be a better way (and a better place) */
-    let pageTitle =
-      h1Prefix->Belt.Option.getWithDefault("") ++ page->titleGet;
-
-    BlogFeedPage.make(
-      ~description=page->contentGet,
-      ~pageTitle,
-      ~posts=page->postsGet,
-      [||],
-    )
-    ->componentToString;
-  };
+  let make = (~h1Prefix=?, ~page, ~site as _) =>
+    <BlogFeedPage
+      description={page->contentGet}
+      pageTitle={h1Prefix->Belt.Option.getWithDefault("") ++ page->titleGet}
+      posts={page->postsGet}
+    />;
 };
 
 module RssFeedWrapper = {
@@ -83,16 +72,18 @@ module RssFeedWrapper = {
 module PostPageWrapper = {
   type pageProps = Props.postProps;
 
-  let make = (~page, ~site as _) => {
-    PostPage.make(~post=page, [||])->componentToString;
-  };
+  let make = (~page, ~site as _) => <PostPage post=page />;
 };
 
 /*
   The templates dictionary
  */
-let withTplProps = (make, props) =>
+let wrapStringTpl = (make, props) =>
   make(~page=props->pageGet, ~site=props->siteGet);
+
+let wrapReactTpl = (make, props) =>
+  make(~page=props->pageGet, ~site=props->siteGet)
+  ->ReactDOMServerRe.renderToString;
 
 [@bs.deriving abstract]
 type make = {
@@ -105,9 +96,9 @@ type make = {
 
 let templates =
   make(
-    ~about=AboutPageWrapper.make->withTplProps,
-    ~blog=BlogFeedPageWrapper.make(~h1Prefix="")->withTplProps,
-    ~post=PostPageWrapper.make->withTplProps,
-    ~rss=RssFeedWrapper.make->withTplProps,
-    ~tag=BlogFeedPageWrapper.make(~h1Prefix="#")->withTplProps,
+    ~about=AboutPageWrapper.make->wrapReactTpl,
+    ~blog=BlogFeedPageWrapper.make(~h1Prefix="")->wrapReactTpl,
+    ~post=PostPageWrapper.make->wrapReactTpl,
+    ~rss=RssFeedWrapper.make->wrapStringTpl,
+    ~tag=BlogFeedPageWrapper.make(~h1Prefix="#")->wrapReactTpl,
   );
