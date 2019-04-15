@@ -73,8 +73,8 @@ gulp.task('contents', async function gtContents(cb_t) {
 
     l(`Setting up posts`);
     const posts = pipe(
-      filter(({ published }) => published !== false), // hack
-      map(parsePost)
+      map(parsePost),
+      filter(({ title, published }) => published !== false), // hack
     )(
       observeSource(
         ['**/*', `!me.md`],
