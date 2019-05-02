@@ -29,7 +29,7 @@ interface StaticPage {
   kind: 'static';
   content: string;
   template?: string;
-  url: string; // relative to site root
+  url?: string; // relative to site root
 }
 
 interface PostMeta {
@@ -43,7 +43,7 @@ interface PostMeta {
   content: string;
   excerpt: string;
   template?: string;
-  url: string; // relative to site root
+  url?: string; // relative to site root
   // [k: string]: any;
 }
 

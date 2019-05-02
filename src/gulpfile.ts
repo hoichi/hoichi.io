@@ -5,12 +5,13 @@ import { map, filter } from '@most/core';
 import { pipe } from 'ramda';
 
 import { observeSource } from './scripts/readSource';
-import {parsePost, parseStaticPage} from './scripts/parsePage'
+import { parsePost, parseStaticPage } from './scripts/parsePage'
 import { getTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
 import { collect } from './scripts/collection';
 import { SiteMeta } from './scripts/model';
 import { withLog } from './scripts/helpers';
+import  {setDefaultUrl } from "./scripts/utils"
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
@@ -73,7 +74,10 @@ gulp.task('contents', async function gtContents(cb_t) {
 
     l(`Setting up posts`);
     const posts = pipe(
-      map(parsePost),
+      map(pipe(
+          parsePost,
+          setDefaultUrl,
+      )),
       filter(({ title, published }) => published !== false), // hack
     )(
       observeSource(
@@ -116,7 +120,7 @@ gulp.task('contents', async function gtContents(cb_t) {
 
     l(`Setting up pages`);
     const pages = map(
-      parseStaticPage,
+      pipe(parseStaticPage, setDefaultUrl),
       observeSource('*.md', { cwd: Path.join(__dirname, 'contents') }),
     );
 

@@ -8,10 +8,16 @@
   "reason": {
     "react-jsx": 3
   },
-  "sources": {
-    "dir" : "src",
-    "subdirs" : true
-  },
+  "sources": [
+    {
+      "dir" : "src/scripts",
+      "subdirs" : true
+    },
+    {
+      "dir" : "src/__tests__",
+      "type" : "dev"
+    }
+  ],
   "package-specs": [{
     "module": "commonjs",
     "in-source": true
@@ -19,7 +25,11 @@
   "suffix": ".bs.js",
   "namespace": true,
   "bs-dependencies": [
-    "reason-react"
+    "reason-react",
+    "tablecloth-bucklescript"
+  ],
+  "bs-dev-dependencies": [
+    "@glennsl/bs-jest"
   ],
   "refmt": 3
 }

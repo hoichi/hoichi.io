@@ -1,33 +1,47 @@
-import * as fm from 'front-matter';
-import * as markdownIt from 'markdown-it';
-import * as prism from 'markdown-it-prism';
+module FrontMatter = {
+	[@bs.deriving.abstract]
+	type parseResult = {.
+		"body": string,
+		[@bs.optional] "attributes": Js.Json.t,
+	};
 
-//return require('../src/scripts/templates/templates.bs.js').templates
+	// todo: make sure that body and
+	[@bs.module] external parse : string => parseJsResult = "front-matter";
+}
 
-import { Page, Post, SourceFile, StaticPage } from './model';
+module Markdown = {
+	// hack: types
+	// Ideally, FrontMatter should return a body of SomeMarkup.t
+	[@bs.module "markdown-it"] external render : string => string = "render";
+
+	type plugin('attr) = string => 'attr => string;
+	[@bs.mobule] external prism : plugin(unit => unit) = "prism";
+	[@bs.module "markdown-it"] external use : plugin('a) => unit = "use";
+}
+
+[@bs.module] external slugify : string => string = "slugify";
+
 import { extract1stHtmlParagraph, constructPageUrl } from './utils';
-import slugify from 'slugify';
 
 // init markdown-it
 const md = markdownIt({
-  breaks: true,
-  html: true,
-  typographer: true,
-  quotes: '«»„“',
+  "breaks": true,
+  "html": true,
+  "typographer": true,
+  "quotes": '«»„“',
 });
 md.use(prism, () => void 0);
 
 function parseSource(page: SourceFile) {
   const { path, rawContent } = page;
 
-  const { body = rawContent, attributes = {} } = fm(rawContent);
+  const { body = rawContent, attributes = {} } = FrontMatter.parse(rawContent);
 
   return {
     content: md.render(body),
     meta: attributes,
     path
   }
-
 }
 
 function parsePost(page: SourceFile): Post {
@@ -61,7 +75,6 @@ function parsePost(page: SourceFile): Post {
     ...result,
     // we need meta for constructPageUrl
     // fixme: it’s all hacky and brittle
-    // url: result['url'] || constructPageUrl({ ...page, ...result }),
   };
 }
 
@@ -75,7 +88,6 @@ function parseStaticPage(page: SourceFile): StaticPage {
     content,
     template: 'single',
     ...meta,
-    // url: constructPageUrl({ ...page, ...meta }),
   }
 }
 

@@ -1,9 +1,13 @@
 /**
  * Created by hoichi on 07.11.15.
  */
+
+
 'use strict';
 
 import * as path from 'path';
+
+import { Post, StaticPage } from "./model"
 
 function dateFormatter(locale = 'en_US', options) {
 	// $TODO: something more customizable? moments.js? or?
@@ -45,5 +49,11 @@ function constructPageUrl(page) {
 	return url.replace(/\\/g, '/') || 'untitled/';
 }
 
-//noinspection SpellCheckingInspection
-export { dateFormatter, extract1stHtmlParagraph, constructPageUrl, l };
+function setDefaultUrl<P extends Post | StaticPage>(page: P): P {
+	return page.url
+		? page
+		: {...page, url: constructPageUrl(page)}
+		;
+}
+
+export { dateFormatter, extract1stHtmlParagraph, constructPageUrl, setDefaultUrl, l };
