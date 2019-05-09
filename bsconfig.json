@@ -23,8 +23,9 @@
     "in-source": true
   }],
   "suffix": ".bs.js",
-  "namespace": true,
+  "namespace": false,
   "bs-dependencies": [
+    "bs-most",
     "reason-react",
     "tablecloth-bucklescript"
   ],
