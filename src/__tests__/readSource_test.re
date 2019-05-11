@@ -1,16 +1,9 @@
 open Jest;
 
-[@bs.module] external mockFs: Js.t('a) => unit = "mock-fs";
-[@bs.module "mock-fs"] external mockFsRestore: unit => unit = "restore";
-
-module Helpers = {
-  let noOp = _ => ();
-  let combineArray = (coll, el) => Js.Array.push(el, coll) |> ignore;
-  let combineList = (collRef, el) =>
-    (collRef := [el, ...collRef^]) |> ignore;
-  let asyncExpectToEqual = (expected, actual) =>
-    Js.Promise.resolve(Expect.(expect(actual) |> toEqual(expected)));
-};
+/*
+ [@bs.module] external mockFs: Js.t('a) => unit = "mock-fs";
+ [@bs.module "mock-fs"] external mockFsRestore: unit => unit = "restore";
+ */
 
 describe("readSource", () => {
   open ReadSource;
@@ -77,12 +70,12 @@ describe("readSource", () => {
 
   testPromise("observeSource", () => {
     let result = [||];
-    let combine = Helpers.combineArray(result);
+    let combine = TestHelpers.combineArray(result);
 
     observeSource([|"."|], ())
     |> Most.observe(combine)
     |> Js.Promise.then_(() =>
-         Helpers.asyncExpectToEqual(
+         TestHelpers.asyncExpectToEqual(
            // todo: use a set and don’t depend on the order
            [|
              {

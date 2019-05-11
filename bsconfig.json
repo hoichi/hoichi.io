@@ -15,8 +15,9 @@
     },
     {
       "dir" : "src/__tests__",
+      "subdirs": true,
       "type" : "dev"
-    }
+    },
   ],
   "package-specs": [{
     "module": "commonjs",
@@ -26,6 +27,7 @@
   "namespace": false,
   "bs-dependencies": [
     "bs-most",
+    "bs-marky-markdown",
     "reason-react",
     "tablecloth-bucklescript"
   ],

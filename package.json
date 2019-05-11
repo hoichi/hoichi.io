@@ -9,6 +9,7 @@
     "@most/scheduler": "^1.1.0",
     "@types/mock-fs": "^3.6.30",
     "@types/node": "^8.0.28",
+    "bs-marky-markdown": "^2.0.4",
     "bs-most": "^1.0.0",
     "chokidar": "^3.0.0",
     "dedent": "^0.7.0",
@@ -64,7 +65,7 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testRegex": "(/__tests__/.*_(test|spec))\\.bs\\.js$",
     "testURL": "http://localhost",
     "moduleFileExtensions": [
       "ts",
