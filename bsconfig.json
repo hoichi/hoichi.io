@@ -26,6 +26,7 @@
   "suffix": ".bs.js",
   "namespace": false,
   "bs-dependencies": [
+    "@glennsl/bs-json",
     "bs-most",
     "bs-marky-markdown",
     "reason-react",

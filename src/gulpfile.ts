@@ -11,7 +11,7 @@ import { write } from './scripts/writeToDest';
 import { collect } from './scripts/collection';
 import { SiteMeta } from './scripts/model';
 import { withLog } from './scripts/helpers';
-import  {setDefaultUrl } from "./scripts/utils"
+import  {setDefaultUrl } from "./scripts/utils/utils"
 
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
@@ -21,7 +21,7 @@ const _ = require('lodash'),
   Path = require('path'),
   sass = require('gulp-sass'),
   sourcemaps = require('gulp-sourcemaps'),
-  u = require('./scripts/utils.js'),
+  u = require('./scripts/utils/utils.js'),
   yaml = require('js-yaml');
 
 const l = console.log;

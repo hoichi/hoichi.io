@@ -2,6 +2,7 @@
   "name": "hoichi.io",
   "private": true,
   "dependencies": {
+    "@glennsl/bs-json": "^3.0.0",
     "@most/core": "^1.2.3",
     "@most/dom-event": "^2.0.0",
     "@most/hold": "^3.0.0",

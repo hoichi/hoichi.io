@@ -7,7 +7,7 @@
 
 import * as path from 'path';
 
-import { Post, StaticPage } from "./model"
+import { Post, StaticPage } from "../model"
 
 function dateFormatter(locale = 'en_US', options) {
 	// $TODO: something more customizable? moments.js? or?

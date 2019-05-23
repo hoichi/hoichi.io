@@ -8,6 +8,19 @@ module Js_date =
     external toLocaleDateString :
       t -> string -> localeDateStringOptions -> string = ""[@@bs.send ]
   end
+
+module Strings = struct
+    let getFirstParagraph content =
+      [%bs.re "/(?:\\n*)([\\S\\s]+?)(?:\\n|$)/"]
+      |. Js.Re.exec_ content
+      |.
+        (function
+         | ((Some (matches))[@explicit_arity ]) ->
+             ((Js.Re.captures matches).(1)) |. Js.Nullable.toOption
+         | None  -> None
+        )
+end
+
 let dateShort t =
   let open Js_date in
     (t |. toLocaleDateString) "en-US"

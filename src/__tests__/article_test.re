@@ -16,17 +16,17 @@ bar: BAR
 Here comes the content
 |};
 
-describe("parseSource", () => {
-  let expectToEqual = (expected, received: ParsePage.articleSource) => {
-    let ParsePage.Markdown(markup) = received.rawMarkup;
+describe("ParsedSource", () => {
+  let expectToEqual = (expected, received: Article.ParsedSource.t) => {
+    let Markup.Markdown(markup) = received.rawMarkup;
     let meta = received.rawMeta;
 
     Expect.(expect((meta->Js.Json.stringify, markup)) |> toEqual(expected));
   };
 
   test("fm with a couple of props", () =>
-    ParsePage.(
-      parseSource({
+    Article.ParsedSource.(
+      fromFile({
         path: anyOldPath,
         rawContent: rawContentCoupleProps->ReadSource.RawContent,
       })
@@ -39,8 +39,8 @@ describe("parseSource", () => {
 
   test("no fm at all", () => {
     let noFmContent = "# H1\n\nWho needs the fm anyway.\n";
-    ParsePage.(
-      parseSource({
+    Article.ParsedSource.(
+      fromFile({
         path: anyOldPath,
         rawContent: noFmContent->ReadSource.RawContent,
       })
