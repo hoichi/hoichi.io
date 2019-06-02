@@ -3,7 +3,8 @@ open Tablecloth;
 module ParsedSource = {
   type t = {
     rawMeta: Js.Json.t,
-    rawMarkup: Markup.t, // not validated, hence raw. then again, how do we validate it if we don’t parse it?
+    rawMarkup: Markup.t, /* Not validated, hence raw, in theory
+                            In practice, we don’t even parse it */
     source: ReadSource.sourceFile,
   };
 
@@ -58,6 +59,7 @@ let fromSource = (sourceFile: ReadSource.sourceFile): article => {
   let {rawMarkup, rawMeta, source}: ParsedSource.t =
     ParsedSource.fromFile(sourceFile);
   let meta = Meta.parse(rawMeta);
+  let content = rawMarkup->Markup.map(~f=String.trim);
 
   {
     meta:
@@ -67,12 +69,12 @@ let fromSource = (sourceFile: ReadSource.sourceFile): article => {
         tags: meta.tags->withDefault(~default=[]),
       },
     title: meta.title,
-    content: rawMarkup,
+    content,
     excerpt:
       meta.exerpt
       ->Option.withDefault(
           ~default=
-            Markup.map(rawMarkup, ~f=s =>
+            content->Markup.map(~f=s =>
               Utils.Strings.getFirstParagraph(s)
               ->Option.withDefault(~default="")
             ),
