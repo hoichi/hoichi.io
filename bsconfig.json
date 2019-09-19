@@ -16,8 +16,7 @@
     {
       "dir" : "src/__tests__",
       "subdirs": true,
-      "type" : "dev"
-    },
+    }
   ],
   "package-specs": [{
     "module": "commonjs",
@@ -26,14 +25,12 @@
   "suffix": ".bs.js",
   "namespace": false,
   "bs-dependencies": [
+    "@glennsl/bs-jest",
     "@glennsl/bs-json",
     "bs-most",
     "bs-marky-markdown",
     "reason-react",
     "tablecloth-bucklescript"
-  ],
-  "bs-dev-dependencies": [
-    "@glennsl/bs-jest"
   ],
   "refmt": 3
 }

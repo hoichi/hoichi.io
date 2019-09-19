@@ -13,7 +13,7 @@ describe("readSource", () => {
 
   // let’s use the real fs, because mock-fs, jest, and chokidar don’t mix well
   // see https://github.com/paulmillr/chokidar/issues/845
-  beforeEach(() => Node.Process.process##chdir("./src/__tests__/__fs__"));
+  beforeEach(() => Node.Process.process##chdir("./src/__tests__/fs"));
   afterEach(() => Node.Process.process##chdir(prevCwd));
 
   test("parsePath happy path", () => {
