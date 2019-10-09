@@ -1,0 +1,1 @@
+let htmlStringFromArticle = _a => "";

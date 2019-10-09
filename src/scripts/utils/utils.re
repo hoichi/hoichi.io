@@ -1,3 +1,5 @@
+open Tablecloth;
+
 module Js_date = {
   include Js_date;
   [@bs.deriving abstract]
@@ -13,13 +15,12 @@ module Js_date = {
 
 module Strings = {
   let getFirstParagraph = content =>
-    [%bs.re "/(?:\\n*)([\\S\\s]+?)(?:\\n\\n+|$)/"]
-    ->(Js.Re.exec_(content))
-    ->(
-        fun
-        | Some(matches) => Js.Re.captures(matches)[1]->Js.Nullable.toOption
-        | None => None
-      );
+    [%bs.re "/(?:\\n*)([\\S\\s]+?)(?:\\n\\n+|$)/"]->Js.Re.exec_(content)
+    |> (
+      fun
+      | Some(result) => Js.Nullable.toOption(Js.Re.captures(result)[1])
+      | None => None
+    );
 };
 
 let dateShort = t =>
@@ -33,4 +34,6 @@ let dateShort = t =>
       ),
     )
   );
+
 let renderArray = (a, cb) => Belt.Array.map(a, cb) |> ReasonReact.array;
+let renderList = (l, cb) => Belt.Array.fromList(l)->renderArray(cb);

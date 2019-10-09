@@ -4,7 +4,7 @@ module ParsedSource = {
   type t = {
     rawMeta: Js.Json.t,
     rawMarkup: Markup.t, /* Not validated, hence raw, in theory
-                            In practice, we don’t even parse it */
+                            In practice, we don’t ever parse it so far */
     source: ReadSource.sourceFile,
   };
 
@@ -29,33 +29,32 @@ module Meta = {
     Json.Decode.{
       date:
         json
-        |> field("date", optional @@ string)
+        |> field("date", string->optional)
         |> Option.map(~f=Js.Date.fromString),
       exerpt:
         json
-        |> field("exerpt", optional @@ string)
+        |> field("exerpt", string->optional)
         |> Option.map(~f=s => Markup.Markdown(s)),
-      published: json |> field("published", optional @@ bool),
-      tags: json |> field("tags", optional @@ list(string)),
+      published: json |> field("published", bool->optional),
+      tags: json |> field("tags", list(string)->optional),
       title: json |> field("title", string),
     };
 };
 
-type articleMeta = {
-  date: Js.Date.t,
-  published: bool,
-  tags: list(string),
-};
-
-type article = {
+type t = {
   meta: articleMeta,
   title: string,
   content: Markup.t,
   excerpt: Markup.t,
   source: ReadSource.sourceFile,
+}
+and articleMeta = {
+  date: Js.Date.t,
+  published: bool,
+  tags: list(string),
 };
 
-let fromSource = (sourceFile: ReadSource.sourceFile): article => {
+let fromSource = (sourceFile: ReadSource.sourceFile): t => {
   let {rawMarkup, rawMeta, source}: ParsedSource.t =
     ParsedSource.fromFile(sourceFile);
   let meta = Meta.parse(rawMeta);
