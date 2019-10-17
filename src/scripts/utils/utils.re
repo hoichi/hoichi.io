@@ -1,5 +1,3 @@
-open Tablecloth;
-
 module Js_date = {
   include Js_date;
   [@bs.deriving abstract]
@@ -8,9 +6,11 @@ module Js_date = {
     day: string,
     year: string,
   };
+
+  // mind that any other language than English requires ICU on Node
   [@bs.send]
   external toLocaleDateString: (t, string, localeDateStringOptions) => string =
-    "";
+    "toLocaleDateString";
 };
 
 module Strings = {
@@ -18,7 +18,8 @@ module Strings = {
     [%bs.re "/(?:\\n*)([\\S\\s]+?)(?:\\n\\n+|$)/"]->Js.Re.exec_(content)
     |> (
       fun
-      | Some(result) => Js.Nullable.toOption(Js.Re.captures(result)[1])
+      | Some(result) =>
+        Js.Re.captures(result)->Js.Array2.unsafe_get(0)->Js.Nullable.toOption
       | None => None
     );
 };
@@ -36,4 +37,4 @@ let dateShort = t =>
   );
 
 let renderArray = (a, cb) => Belt.Array.map(a, cb) |> ReasonReact.array;
-let renderList = (l, cb) => Belt.Array.fromList(l)->renderArray(cb);
+let renderList = (l, cb) => Belt.List.toArray(l)->renderArray(cb);

@@ -11,7 +11,7 @@ describe("Basic article, happy path", () =>
               published: true,
               tags: ["hello", "world"],
             },
-            content: Markup.Markdown("Good day, kind sir!"),
+            content: Markup.Markdown("Good _day_, kind sir!"),
             excerpt:
               Markup.Markdown("Should we render excerpt on the post at all?"),
             title: "Hello world!",
@@ -28,7 +28,7 @@ describe("Basic article, happy path", () =>
           },
         ),
       )
-      |> toBe("")
+      |> toBe("<p>Good <em>day</em>, kind sir!</p>\n")
     )
   )
 );

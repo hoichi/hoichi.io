@@ -12,14 +12,18 @@ let make = (~article: Article.t) => {
           <aside>
             <div> {U.dateShort(article.meta.date)->RR.string} </div>
             <div>
-              {U.renderArray(article.meta.tags, tag =>
-                 <a key={tag##slug} href={"/tag/" ++ tag##slug}>
-                   {RR.string("#" ++ tag##title)}
+              {U.renderList(article.meta.tags, tag =>
+                 <a key=tag href={"/tag/" ++ tag}>
+                   {RR.string("#" ++ tag)}
                  </a>
                )}
             </div>
           </aside>
-          <div dangerouslySetInnerHTML={"__html": article.content} />
+          <div
+            dangerouslySetInnerHTML={
+              "__html": Markup.toString(article.content),
+            }
+          />
         </article>
       </main>
     </body>

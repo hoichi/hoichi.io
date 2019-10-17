@@ -28,7 +28,6 @@
     "@glennsl/bs-jest",
     "@glennsl/bs-json",
     "bs-most",
-    "bs-marky-markdown",
     "reason-react",
     "tablecloth-bucklescript"
   ],
