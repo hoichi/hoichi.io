@@ -14,12 +14,13 @@ module Js_date = {
 };
 
 module Strings = {
+  // todo: use mast since we use remark anyway
   let getFirstParagraph = content =>
-    [%bs.re "/(?:\\n*)([\\S\\s]+?)(?:\\n\\n+|$)/"]->Js.Re.exec_(content)
+    [%bs.re "/(?:\\n*)([\\S\\s]+?)(?:\\n\\n+|$)/g"]->Js.Re.exec_(content)
     |> (
       fun
       | Some(result) =>
-        Js.Re.captures(result)->Js.Array2.unsafe_get(0)->Js.Nullable.toOption
+        Js.Re.captures(result)->Js.Array2.unsafe_get(1)->Js.Nullable.toOption
       | None => None
     );
 };
