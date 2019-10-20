@@ -7,6 +7,6 @@ I’m Sergey Samokhov, or hoichi for short, a maturish aspiring frontend develop
 
 I also love fiction, poetry, music, Masaaki Yuasa & Johhny To.
 
-I’m `hoichi` on [GitHub](//github.com/hoichi) and [Medium](//medium.com/@hoichi). I’m also [hi@hoichi.io](mailto:hi@hoichi.io).
+I’m `hoichi` on [GitHub](https://github.com/hoichi) and [Medium](https://medium.com/@hoichi). I’m also [hi@hoichi.io](mailto:hi@hoichi.io).
 
 In another life, I’d probably be a novelist. Or a drummer. In this one, there’s still too much code-fu to learn.

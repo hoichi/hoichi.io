@@ -28,5 +28,11 @@ module Remark = {
   };
 };
 
-let htmlStringFromArticle = ({Article.content}) =>
-  Markup.toString(content)->Remark.toHtml;
+let reactElementFromArticle = (article: Article.t, tplFn) => {
+  let content = Markup.toString(article.content)->Remark.toHtml;
+
+  tplFn({...article, content: Markup.Markdown(content)});
+};
+
+let htmlStringFromArticle = (article, tplFn) =>
+  article->reactElementFromArticle(tplFn)->ReactDOMServerRe.renderToString;

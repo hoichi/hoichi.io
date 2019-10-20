@@ -28,6 +28,7 @@
     "@glennsl/bs-jest",
     "@glennsl/bs-json",
     "bs-most",
+    "bs-react-testing-library",
     "reason-react",
     "tablecloth-bucklescript"
   ],

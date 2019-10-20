@@ -11,6 +11,7 @@
     "@types/mock-fs": "^3.6.30",
     "@types/node": "^8.0.28",
     "bs-most": "^1.0.0",
+    "bs-react-testing-library": "^0.6.0",
     "chokidar": "^3.0.0",
     "dedent": "^0.7.0",
     "front-matter": "^2.2.0",
