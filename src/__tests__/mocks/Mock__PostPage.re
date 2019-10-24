@@ -15,11 +15,7 @@ let make = (~article: Article.t) => {
              )}
           </div>
         </aside>
-        <div
-          dangerouslySetInnerHTML={
-            "__html": Markup.toString(article.content),
-          }
-        />
+        {Markup.toString(article.content)->Remark.toReact}
       </article>
     </main>
   </>;

@@ -31,17 +31,13 @@ Object {
               </a>
             </div>
           </aside>
-          <div>
-            <p>
-              Good 
-              <em>
-                day
-              </em>
-              , kind sir!
-            </p>
-            
-
-          </div>
+          <p>
+            Good 
+            <em>
+              day
+            </em>
+            , kind sir!
+          </p>
         </article>
       </main>
     </div>
@@ -73,17 +69,13 @@ Object {
             </a>
           </div>
         </aside>
-        <div>
-          <p>
-            Good 
-            <em>
-              day
-            </em>
-            , kind sir!
-          </p>
-          
-
-        </div>
+        <p>
+          Good 
+          <em>
+            day
+          </em>
+          , kind sir!
+        </p>
       </article>
     </main>
   </div>,
