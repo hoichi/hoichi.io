@@ -15,7 +15,7 @@ let make = (~article: Article.t) => {
              )}
           </div>
         </aside>
-        {Markup.toString(article.content)->Remark.toReact}
+        {Markup.toReact(article.content)}
       </article>
     </main>
   </>;
