@@ -1,16 +1,16 @@
 type processor('out);
-type plugin('in_, 'out);
+type plugin('in_, 'out, 'cfg);
 type syntaxTree;
-
-// todo: group with other `use` options
-type codeHighlighter;
 
 [@bs.deriving {abstract: light}]
 type vFile('a) = {contents: 'a};
 
 [@bs.module] external remark: unit => processor(string) = "remark";
 [@bs.send]
-external use: (processor('a), plugin('a, 'b)) => processor('b) = "use";
+external use: (processor('a), plugin('a, 'b, 'c)) => processor('b) = "use";
+[@bs.send]
+external use2: (processor('a), plugin('a, 'b, 'cfg), 'cfg) => processor('b) =
+  "use";
 /*
   todo: full sequence be like:
   - `parse` (remark)
@@ -23,20 +23,41 @@ external use: (processor('a), plugin('a, 'b)) => processor('b) = "use";
 [@bs.send]
 external processSync: (processor('a), string) => vFile('a) = "processSync";
 
-//  [@bs.module] external remarkHtml: plugin(string, string) = "remark-html";
+module RemarkReact = {
+  type sanitizingSchema;
+  type codeHighlighter;
 
-[@bs.module]
-external remarkReact: plugin(string, React.element) = "remark-react";
+  type options = {
+    .
+    "sanitize": sanitizingSchema,
+    "remarkReactComponents": {. "code": codeHighlighter},
+  };
 
-let processor = remark()->use(remarkReact);
+  [@bs.module]
+  external plugin: plugin(string, React.element, options) = "remark-react";
+
+  let schema: sanitizingSchema = [%raw
+    {|
+      (githubSchema => ({
+        ...githubSchema,
+        attributes: {...githubSchema.attributes,
+          code: [
+            ...(githubSchema.attributes.code || []),
+            'className'
+          ],
+        }
+      }))(require('hast-util-sanitize/lib/github.json'))
+    |}
+  ];
+};
 
 module Lowlight = {
   type langPlugin;
 
   // The fabric accepts an object, but numeric keys will probably work
-  [@bs.module]
-  external lowlightFabric: array(langPlugin) => codeHighlighter =
-    "remark-react-lowlight";
+  [@bs.module "remark-react-lowlight"]
+  external lowlightFabric: array(langPlugin) => RemarkReact.codeHighlighter =
+    "default";
 
   [@bs.module]
   external langJs: langPlugin = "highlight.js/lib/languages/javascript";
@@ -51,6 +72,21 @@ module Lowlight = {
 
   let make = () => lowlightFabric(langAll);
 };
+
+// todo: move actual data out of the submodules?
+// But then again, Lowlight should probably know about sanitizing schema
+
+let processor =
+  remark()
+  ->use2(
+      RemarkReact.plugin,
+      {
+        "sanitize": RemarkReact.schema,
+        "remarkReactComponents": {
+          "code": Lowlight.make(),
+        },
+      },
+    );
 /*
 
  import githubSchema from 'hast-util-sanitize/lib/github.json';
