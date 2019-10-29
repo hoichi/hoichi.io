@@ -9,36 +9,18 @@ module AnyOld = {
     tags: ["hello", "world"],
   };
 
-  let source: ReadSource.sourceFile = {
-    path: {
-      dir: "",
-      ext: "",
-      name: "",
-      dirs: [],
-      full: "",
-    },
-    rawContent: ReadSource.RawContent("Who cares"),
-  };
+  let source =
+    SourceFile.{
+      path: {
+        dir: "",
+        ext: "",
+        name: "",
+        dirs: [],
+        full: "",
+      },
+      rawContent: SourceFile.RawContent("Who cares"),
+    };
 };
-
-describe("Basic article, happy path", () =>
-  test("", _ =>
-    Article.{
-      meta: AnyOld.meta,
-      content: Markup.Markdown("Good _day_, kind sir!"),
-      excerpt:
-        Markup.Markdown("Should we render excerpt on the post at all?"),
-      title: "Hello world!",
-      source: AnyOld.source,
-    }
-    |> RenderedArticle.reactElementFromArticle(_, article =>
-         <Mock__PostPage article />
-       )
-    |> render
-    |> expect
-    |> toMatchSnapshot
-  )
-);
 
 describe("Rendering code blocks", () =>
   test("", _ =>
@@ -55,7 +37,7 @@ console.log(0.1 + 0.2);
         ),
       excerpt:
         Markup.Markdown("Are there other languages besides JavaScript?"),
-      title: "Hello world!",
+      title: "Hello code!",
       source: AnyOld.source,
     }
     |> RenderedArticle.reactElementFromArticle(_, article =>

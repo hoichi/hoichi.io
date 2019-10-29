@@ -1,15 +1,16 @@
 open Jest;
 
-let anyOldPath: ReadSource.filePath = {
-  dir: "a/b/c",
-  name: "d",
-  ext: ".e",
-  dirs: ["a", "b", "c"],
-  full: "a/b/c/d.e",
-};
+let anyOldPath =
+  SourceFile.{
+    dir: "a/b/c",
+    name: "d",
+    ext: ".e",
+    dirs: ["a", "b", "c"],
+    full: "a/b/c/d.e",
+  };
 
 module RawContent = {
-  let noFm = "# H1\n\nWho needs the fm anyway.\n"->ReadSource.RawContent;
+  let noFm = "# H1\n\nWho needs the fm anyway.\n"->SourceFile.RawContent;
 
   let coupleProps =
     {|---
@@ -19,7 +20,7 @@ bar: BAR
 
 Here comes the content
 |}
-    ->ReadSource.RawContent;
+    ->SourceFile.RawContent;
 
   let fullMeta =
     {|---
@@ -33,7 +34,7 @@ title: The Sentinel
 Along deserted avenues
 The steam begins to rise
 |}
-    ->ReadSource.RawContent;
+    ->SourceFile.RawContent;
 };
 
 describe("ParsedSource", () => {
@@ -55,7 +56,7 @@ describe("ParsedSource", () => {
   );
 
   test("no fm at all", () => {
-    let ReadSource.RawContent(contentString) = RawContent.noFm;
+    let SourceFile.RawContent(contentString) = RawContent.noFm;
 
     Article.ParsedSource.(
       fromFile({path: anyOldPath, rawContent: RawContent.noFm})
@@ -85,7 +86,7 @@ describe("Article.fromSource", () => {
 
   test("full meta", () => {
     let source =
-      ReadSource.{path: anyOldPath, rawContent: RawContent.fullMeta};
+      SourceFile.{path: anyOldPath, rawContent: RawContent.fullMeta};
 
     Expect.(
       expect(Article.fromSource(source))

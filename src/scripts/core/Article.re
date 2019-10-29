@@ -5,11 +5,11 @@ module ParsedSource = {
     rawMeta: Js.Json.t,
     rawMarkup: Markup.t, /* Not validated, hence raw, in theory
                             In practice, we don’t ever parse it so far */
-    source: ReadSource.sourceFile,
+    source: SourceFile.t,
   };
 
-  let fromFile = (source: ReadSource.sourceFile) => {
-    let ReadSource.RawContent(content) = source.rawContent;
+  let fromFile = (source: SourceFile.t) => {
+    let SourceFile.RawContent(content) = source.rawContent;
     let parsed = FrontMatter.parse(content);
 
     {rawMarkup: Markdown(parsed##body), rawMeta: parsed##attributes, source};
@@ -46,7 +46,7 @@ type t = {
   title: string,
   content: Markup.t,
   excerpt: Markup.t,
-  source: ReadSource.sourceFile,
+  source: SourceFile.t,
 }
 and articleMeta = {
   date: Js.Date.t,
@@ -54,7 +54,7 @@ and articleMeta = {
   tags: list(string),
 };
 
-let fromSource = (sourceFile: ReadSource.sourceFile): t => {
+let fromSource = (sourceFile: SourceFile.t): t => {
   let {rawMarkup, rawMeta, source}: ParsedSource.t =
     ParsedSource.fromFile(sourceFile);
   let meta = Meta.parse(rawMeta);

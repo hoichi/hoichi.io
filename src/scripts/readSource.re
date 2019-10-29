@@ -1,26 +1,10 @@
 open Tablecloth;
 
-type filePath = {
-  dir: string,
-  ext: string,
-  name: string,
-  dirs: list(string),
-  full: string,
-};
-
-type rawContent =
-  | RawContent(string);
-
-type sourceFile = {
-  path: filePath,
-  rawContent,
-};
-
 exception FileNotFound(string);
 
 let parsePath = path => {
   let pathObj = Node.Path.parse(path);
-  {
+  SourceFile.{
     dir: pathObj##dir,
     ext: pathObj##ext,
     name: pathObj##name,
@@ -44,7 +28,7 @@ let readSourceFile = path => {
       )
     };
 
-  {path: parsePath(path), rawContent: RawContent(content)};
+  SourceFile.{path: parsePath(path), rawContent: RawContent(content)};
 };
 
 module Most = {

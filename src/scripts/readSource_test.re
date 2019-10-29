@@ -7,6 +7,7 @@ open Jest;
 
 describe("readSource", () => {
   open ReadSource;
+  open SourceFile;
   open Expect;
 
   let prevCwd = Node.Process.cwd();

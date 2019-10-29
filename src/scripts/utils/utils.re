@@ -39,3 +39,8 @@ let dateShort = t =>
 
 let renderArray = (a, cb) => Belt.Array.map(a, cb) |> ReasonReact.array;
 let renderList = (l, cb) => Belt.List.toArray(l)->renderArray(cb);
+
+let tap = (t, f) => {
+  f(t);
+  t;
+};
