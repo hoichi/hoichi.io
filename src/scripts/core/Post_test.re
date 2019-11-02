@@ -38,7 +38,7 @@ The steam begins to rise
 };
 
 describe("ParsedSource", () => {
-  let expectToEqual = (expected, received: Article.ParsedSource.t) => {
+  let expectToEqual = (expected, received: Post.ParsedSource.t) => {
     let Markup.Markdown(markup) = received.rawMarkup;
     let meta = received.rawMeta;
 
@@ -46,7 +46,7 @@ describe("ParsedSource", () => {
   };
 
   test("fm with a couple of props", () =>
-    Article.ParsedSource.(
+    Post.ParsedSource.(
       fromFile({path: anyOldPath, rawContent: RawContent.coupleProps})
       |> expectToEqual((
            {|{"foo":"FOO","bar":"BAR"}|},
@@ -58,7 +58,7 @@ describe("ParsedSource", () => {
   test("no fm at all", () => {
     let SourceFile.RawContent(contentString) = RawContent.noFm;
 
-    Article.ParsedSource.(
+    Post.ParsedSource.(
       fromFile({path: anyOldPath, rawContent: RawContent.noFm})
       |> expectToEqual(("{}", contentString))
     );
@@ -69,7 +69,7 @@ describe("Article.fromSource", () => {
   test("no fm", () =>
     Expect.(
       expect(() =>
-        Article.fromSource({path: anyOldPath, rawContent: RawContent.noFm})
+        Post.fromSource({path: anyOldPath, rawContent: RawContent.noFm})
       )
       |> toThrow
     )
@@ -78,7 +78,7 @@ describe("Article.fromSource", () => {
   test("some random meta", () =>
     Expect.(
       expect(() =>
-        Article.fromSource({path: anyOldPath, rawContent: RawContent.noFm})
+        Post.fromSource({path: anyOldPath, rawContent: RawContent.noFm})
       )
       |> toThrow
     )
@@ -89,9 +89,9 @@ describe("Article.fromSource", () => {
       SourceFile.{path: anyOldPath, rawContent: RawContent.fullMeta};
 
     Expect.(
-      expect(Article.fromSource(source))
+      expect(Post.fromSource(source))
       |> toEqual(
-           Article.{
+           Post.{
              meta: {
                date: Js.Date.fromString("2019-06-01T20:38:01.155Z"),
                published: true,

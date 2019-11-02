@@ -42,13 +42,13 @@ module Meta = {
 };
 
 type t = {
-  meta: articleMeta,
+  meta,
   title: string,
   content: Markup.t,
   excerpt: Markup.t,
   source: SourceFile.t,
 }
-and articleMeta = {
+and meta = {
   date: Js.Date.t,
   published: bool,
   tags: list(string),

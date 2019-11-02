@@ -1,4 +1,4 @@
-let reactElementFromArticle = (article: Article.t, tplFn) => {
+let reactElementFromArticle = (article: Post.t, tplFn) => {
   tplFn(article);
 };
 

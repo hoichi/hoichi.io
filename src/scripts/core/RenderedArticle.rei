@@ -1,4 +1,4 @@
 let reactElementFromArticle:
-  (Article.t, Article.t => React.element) => React.element;
+  (Post.t, Post.t => React.element) => React.element;
 
-let htmlStringFromArticle: (Article.t, Article.t => React.element) => string;
+let htmlStringFromArticle: (Post.t, Post.t => React.element) => string;

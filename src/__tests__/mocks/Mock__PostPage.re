@@ -2,7 +2,7 @@ module RR = ReasonReact;
 module U = Utils;
 
 [@react.component]
-let make = (~article: Article.t) => {
+let make = (~article: Post.t) => {
   <>
     <header> <h1> {RR.string(article.title)} </h1> </header>
     <main id="content">
