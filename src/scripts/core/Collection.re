@@ -1,10 +1,19 @@
-type t = array(Post.t);
+open Belt;
 
-let make = () => [||];
+module PostCmp =
+  Id.MakeComparable({
+    type t = string;
+    let cmp = Pervasives.compare;
+  });
 
-let add = (arr, el) => Js.Array2.concat(arr, [|el|]);
+type t = Map.t(string, Post.t, PostCmp.identity);
 
-let toArray =
-  Belt.SortArray.stableSortBy(_, (p1: Post.t, p2: Post.t) =>
-    Js.Date.(compare(p1.meta.date->getTime, p2.meta.date->getTime))
-  );
+let make = () => Map.make(~id=(module PostCmp));
+
+let add = (m, p: Post.t) => Belt.Map.set(m, p.source.path.full, p);
+
+let toArray = m =>
+  Map.valuesToArray(m)
+  ->SortArray.stableSortBy(_, (p1: Post.t, p2: Post.t) =>
+      Js.Date.(compare(p1.meta.date->getTime, p2.meta.date->getTime))
+    );

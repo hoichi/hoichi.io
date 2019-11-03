@@ -66,3 +66,26 @@ test("several unsorted values", () =>
        |]),
      )
 );
+
+test("same paths get updated", () =>
+  expect(
+    Collection.(
+      make()
+      ->addPosts([|
+          ("a/x.md", "2019-09-01"),
+          ("a/y.md", "2019-07-01"),
+          ("a/z.md", "2019-05-02"),
+          ("a/y.md", "2019-04-01"),
+          ("a/x.md", "2019-01-09"),
+        |])
+      ->toArray
+    ),
+  )
+  |> toEqual(
+       postsArray([|
+         ("a/x.md", "2019-01-09"),
+         ("a/y.md", "2019-04-01"),
+         ("a/z.md", "2019-05-02"),
+       |]),
+     )
+);
