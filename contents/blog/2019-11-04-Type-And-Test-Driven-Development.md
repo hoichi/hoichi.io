@@ -97,7 +97,7 @@ let toArray: t => array(Post.t);
 
 Maybe we wouldn’t even end up with those useless `int` tests. Because I already smell trouble ahead. But so far, let’s continue on our precarious path and see where it leads.
 
-## Sorting
+## Sorting, Interrupted
 
 Let’s test for sorting order. Look out below.
 
@@ -106,7 +106,7 @@ expect(Collection.(make()->add(3)->add(5)->add(2)->add(-4)->toArray))
 |> toEqual([|(-4), 2, 3, 5|])
 ```
 
-I knew it. Broken. Let’s implement the sorting
+I knew it. Broken. Let’s implement the sorting then.
 
 ## Types Head Their Rear Again
 
@@ -124,4 +124,181 @@ So, getting back to sorting, I could go and change `Collection.t` to `Js.Date.t`
 
 ## Enter The Actual Posts
 
+But before we get back into the red-green rush, let’s procrastinate a wee bit more. We’re probably going to create a few mock posts for our tests, so let’s create some helpers for greater readability.
 
+```reason
+module Any = { module Old = Mock.AnyOld; }
+
+let postWithDate =
+  dateStr => Post.{
+    meta: {
+      ...Any.Old.meta,
+      date: Js.Date.fromString(dateStr),
+    },
+    title: "",
+    content: Markup.Markdown(""),
+    excerpt: Markup.Markdown(""),
+    source: Any.Old.source,
+  };
+
+let postsArray = Belt.Array.map(_, postWithDate);
+let addPosts = (c: Collection.t, posts) =>
+  postsArray(posts)->Belt.Array.reduce(c, Collection.add);
+```
+
+And with that, let’s rewrite our singleton collection test:
+
+```reason
+test("single value", () =>
+  expect(
+    Collection.(make()->addPosts([|"2019-06-01T20:38:01.155Z"|])->toArray),
+  )
+  |> toEqual(postsArray([|"2019-06-01T20:38:01.155Z"|]))
+);
+```
+
+Green. Alright.
+
+## Sorting, Continued
+
+Feel like breaking something?
+
+```reason
+test("several unsorted values", () =>
+  expect(
+    Collection.(
+      make()->addPosts([|"2019-09-01", "2019-07-01", "2019-05-02"|])->toArray
+    ),
+  )
+  |> toEqual(postsArray([|"2019-05-02", "2019-07-01", "2019-09-01"|]))
+);
+```
+
+Happy now? It’s broken!
+
+Now let’s do the sorting.
+
+```reason
+let toArray =
+  Belt.SortArray.stableSortBy(_, (p1: Post.t, p2: Post.t) =>
+    Js.Date.(compare(p1.meta.date->getTime, p2.meta.date->getTime))
+  );
+```
+
+That wasn’t too hard. Of course, it’s not a final implementation, as we’ll see in a minute, but it’s pretty close.
+
+## Updating by Path
+
+There’s one part of spec left to implement. Basically, if we add a post with the same full path a second or third or whichever time, our collection should only hold the latest value.
+
+First, let’s upgrade our test helpers to accept different paths.
+
+```reason
+let postWithDate = ((fullPath, dateStr)) =>
+  Post.{
+    meta: {
+      ...AnyOld.meta,
+      date: Js.Date.fromString(dateStr),
+    },
+    title: "",
+    content: Markup.Markdown(""),
+    excerpt: Markup.Markdown(""),
+    source: {
+      ...AnyOld.source,
+      path: {
+        ...AnyOld.source.path,
+        full: fullPath,
+      },
+    },
+  };
+```
+
+And here’s how tests should look now:
+
+```reason
+test("several unsorted values", () =>
+  expect(
+    Collection.(
+      make()
+      ->addPosts([|
+          ("a/x.md", "2019-09-01"),
+          ("a/y.md", "2019-07-01"),
+          ("a/z.md", "2019-05-02"),
+        |])
+      ->toArray
+    ),
+  )
+  |> toEqual(
+       postsArray([|
+         ("a/z.md", "2019-05-02"),
+         ("a/y.md", "2019-07-01"),
+         ("a/x.md", "2019-09-01"),
+       |]),
+     )
+);
+```
+
+Now let’s try to repeat some paths:
+
+```reason
+test("same paths get updated", () =>
+  expect(
+    Collection.(
+      make()
+      ->addPosts([|
+          ("a/x.md", "2019-09-01"),
+          ("a/y.md", "2019-07-01"),
+          ("a/z.md", "2019-05-02"),
+          ("a/y.md", "2019-04-01"),
+          ("a/x.md", "2019-01-09"),
+        |])
+      ->toArray
+    ),
+  )
+  |> toEqual(
+       postsArray([|
+         ("a/x.md", "2019-01-09"),
+         ("a/y.md", "2019-04-01"),
+         ("a/z.md", "2019-05-02"),
+       |]),
+     )
+);
+```
+
+Red, of course. Let’s update the implementation. Sounds like a job for a set, which means we should update the `t` implementation, and also, `toArray`.
+
+```reason
+open Belt;
+
+module PostCmp =
+  Id.MakeComparable({
+    type t = string;
+    let cmp = Pervasives.compare;
+  });
+
+type t = Map.t(string, Post.t, PostCmp.identity);
+
+let make = () => Map.make(~id=(module PostCmp));
+
+let add = (m, p: Post.t) => Belt.Map.set(m, p.source.path.full, p);
+
+let toArray = m =>
+  Map.valuesToArray(m)
+  ->SortArray.stableSortBy(_, (p1: Post.t, p2: Post.t) =>
+      Js.Date.(compare(p1.meta.date->getTime, p2.meta.date->getTime))
+    );
+```
+
+And with that, we’re more or less done.
+
+## Summary
+
+In the beginning we’ve asked ourselves is it possible to combine type-driven development and red-green-refactor-flavored test driven development. And the short answer is that it is indeed possible to more or less combine both and do it iteratively.
+
+Of course, the above is just one data point, and the module signature wasn’t too complicated, but in this particular example it seems the combined complexity of types and test cases isn’t to great.
+
+Here’s a few finer points:
+
+1. You still do need unit tests even if you have types. E.g., you can’t encode sorting order in types (at least not in ML).
+2. It’s nice to be able to keep your red-green cycles short, but sometimes you still have to stop and think. Of course that breaks your stride, but I think the ability to stop and think is as crucial for a programmer as the ability to pivot for an agile team.
+3. It pays to have a written spec, however brief, before you start coding. Were I to start writing my “specs” in tests, or even in types, it might take much, much longer.
