@@ -7,13 +7,13 @@ tags: [ Reason, types, tdd ]
 
 ## The Question
 
-I get what type-driven development is (didn’t say I’ve mastered it). I sort of get what is test-driven development, or even [red-green-refactor](https://www.jamesshore.com/Blog/Red-Green-Refactor.html). But can you do both at the same time? If you start with types, is there anything left of the green-red-refactor cycle? Or does that mean you write your tests post factum?
+I know what type-driven development is (didn’t say I’ve mastered it). I sort of get what is test-driven development, or even [red-green-refactor](https://www.jamesshore.com/Blog/Red-Green-Refactor.html). But can you do both at the same time? If you start with types, is there anything left of the green-red-refactor cycle? Or does that mean you write your tests post factum?
 
-Spoiler: turns out doing both iteratively is easier than I thought, but it’s also not such an even-going process as the basic TDD examples would make you think.
+Spoiler: turns out doing both iteratively is easier than I thought, but it’s not always such an even-going process as the basic TDD examples would make you believe.
 
 ## The Task
 
-Let’s suppose that we need is collections of blog posts to use in a blog pages, tag pages, and also in rss feed. For simplicity’s sake, though, let’s not think about pagination or filtering, and instead create a simple API that allows:
+Let’s suppose that we need collections of blog posts to use in all kinds of post lists, like a blog feed, tag pages, and RSS. For simplicity’s sake, though, let’s not think about pagination or filtering, and instead create a simple API that allows:
 
 - Creating a collection;
 - Adding posts to a collection;
@@ -21,13 +21,13 @@ Let’s suppose that we need is collections of blog posts to use in a blog pages
 - Getting an array of posts;
   - should be a sorted array.
 
-And without any further design (some people would make you think that tests are all the design you’ll ever need, and others advise you _design with types_), we begin.
+And without any further design (some people would make you think that tests are all the design you’ll ever need, and others advise you _design with types_), we set off.
 
 ## The Most Minimal Array
 
-A real true honest-to god TDD aficionado might start with `expect([||]) |> toBe([||])`. Coming from statical types, that feels like like too little code, but hey, maybe that’s a good exercise, so let’s roll with it.
+A real true honest-to-god TDD aficionado might start with `expect([||]) |> toBe([||])`. Coming from static types, that feels like too little code, but hey, maybe that’s a good exercise, so let’s roll with it.
 
-Next:
+But let’s actually have some code to test:
 
 ```reason
 // Collection_test.re
@@ -43,7 +43,7 @@ That API is not quite right. Shouldn’t we create a collection first? Shouldn�
 expect(Collection.make()->Collection.toArray) |> toEqual([||]);
 ```
 
-That breaks our types. Lets fix them:
+That breaks our types. Let’s fix them:
 
 ```reason
 let make = () => ();
@@ -59,11 +59,11 @@ let make = () => [||];
 let toArray = a => a;
 ```
 
-Again, I try keep up the red-green spirit and write the least amount of code to pass the test.
+Again, we try to keep up the red-green spirit and write the least amount of code to pass a test.
 
 ## Adding values
 
-An empty collection is more or less covered, let’s add some values.
+An empty collection is more or less covered; let’s add values.
 
 ```reason
 // collection_test.re
@@ -73,13 +73,13 @@ expect(Collection.(make()->add(1)->toArray)) |> toEqual([|1|]);
 let add = (arr, el) => Js.Array2.concat(arr, [|el|]);
 ```
 
-Now 2 values.
+Now two values.
 
 ```reason
 expect(Collection.(make()->add(1)->add(2)->toArray)) |> toEqual([|1, 2|])
 ```
 
-3 values!
+Three values!
 
 ```reason
 expect(Collection.(
@@ -87,7 +87,7 @@ expect(Collection.(
 |> toEqual([|1, 2, 3|])
 ```
 
-Ok, ok, let’s stop before someone gets hurt.
+Hey, I could do this all day.
 
 ## And How Is It Type-Driven, Exactly?
 
@@ -100,7 +100,7 @@ let add: (t, Post.t) => t;
 let toArray: t => array(Post.t);
 ```
 
-Maybe we wouldn’t even end up with those useless `int` tests. Because I already smell trouble ahead. But let’s ignore the smell for a minute and see where where does this precarious path lead.
+Maybe we wouldn’t even end up with those useless `int` tests. Because I already smell trouble ahead. But let’s ignore the smell for a minute and see where does this precarious path lead.
 
 ## A Stab at Sorting
 
@@ -111,7 +111,7 @@ expect(Collection.(make()->add(3)->add(5)->add(2)->add(-4)->toArray))
 |> toEqual([|(-4), 2, 3, 5|])
 ```
 
-I knew it. Broken.
+I just knew it. Broken.
 
 By the way, that test exemplifies a possible bug that types won’t catch. Not the OCaml/Reason types, at least.
 
@@ -121,15 +121,15 @@ But let’s implement sorting.
 
 This is when I’m beginning to have second thoughts about the red-green minimalism. Obviously (to me), the next _minimal_ step is to sort the `int`s to fix the test. But our actual goal isn’t to sort `int`s. We need to sort _articles_. By _dates_. And if we sort `int`s now, we’ll have more tests to refactor later.
 
-Shall we skip to the next step then, and sort dates? The quickest would be to use polymorphic comparison, which feels a little flaky, and anyway, all this thinking got me thinking: do I want to create a collection of _anything_, or do I just need a collection of post? Because the former would require a functor with a few parameters.
+Shall we skip to the next step then, and sort dates? The quickest would be to use polymorphic comparison, which feels a little flaky, and anyway, all this thinking got me thinking: do I want to create a collection of _anything_, or do I merely need a collection of posts? Because the former would require a functor with a few parameters.
 
-Of course, functors are cool and make you feel like a real programmer. They also probably make property testing easier, and property tests make you feel safer. But then again, a functor would make you have to write more tests just to make sure parametrization works correctly. So, no, can’t be bothered with functors for now. Not before I need to collect something other than posts.
+Of course, functors are cool and make you feel like a real programmer. They also probably make property testing easier, and property tests make you feel safer. But then again, a functor would make you have to write more tests to make sure parametrization works correctly. So, no, can’t be bothered with functors for now. Not until I need to collect something other than posts.
 
-So, answering he question of what to sort, yes, I could go and change `Collection.t` to `Js.Date.t` and rewrite the `int` tests accordingly. I’d even be able to reuse the date sorting logic and the date values in the tests. But since I’ve already took myself out of the busy mood, I say let’s bite the bullet and switch to the actual posts already.
+So, answering the question of what to sort, yes, I could go and change `Collection.t` to `Js.Date.t` and rewrite the `int` tests accordingly. I’d even be able to reuse the dates sorting logic and the date values in the tests. But since I’ve already taken myself out of the busy mood, I say let’s bite the bullet and switch to the actual posts already.
 
 ## Enter The Actual Posts
 
-One more thing before we get back into the red-green rush. We’re probably going to create a few mock posts for our tests, so let’s create some helpers for greater readability.
+One more thing before we dive back into the red-green rush. We’re probably going to create more mock posts that is healthy to read in full form. Better add some helpers for readability.
 
 ```reason
 // some mocks from our stash
@@ -163,7 +163,7 @@ test("single value", () =>
 );
 ```
 
-Green. Alright.
+Green. All right.
 
 ## Sorting, Continued
 
@@ -180,7 +180,7 @@ test("several unsorted values", () =>
 );
 ```
 
-Broken. Here we go again. Sorting time.
+And we’re in the red again. Time to do the sorting.
 
 ```reason
 let toArray =
@@ -193,7 +193,7 @@ That wasn’t too hard. Of course, it’s not a final implementation, as we’ll
 
 ## Updating by Path
 
-There’s one part of spec left to implement. Basically, if we add a post with the same full path for a second or third or whichever time, our collection should only hold the latest value.
+There’s one part of spec left to implement. If we add a post with the same full path for a second or third or whichever time, our collection should only hold the latest value.
 
 First, let’s add a parameter to our test helpers to accept different paths.
 
@@ -201,23 +201,23 @@ First, let’s add a parameter to our test helpers to accept different paths.
 let postWithDate = ((fullPath, dateStr)) =>
   Post.{
     meta: {
-      ...AnyOld.meta,
+      ...Any.Old.meta,
       date: Js.Date.fromString(dateStr),
     },
     title: "",
     content: Markup.Markdown(""),
     excerpt: Markup.Markdown(""),
     source: {
-      ...AnyOld.source,
+      ...Any.Old.source,
       path: {
-        ...AnyOld.source.path,
+        ...Any.Old.source.path,
         full: fullPath,
       },
     },
   };
 ```
 
-Did you notice how I didn’t have to update `postArray` and `addPosts`? Point-free programming in OCaml is pretty neat, even without the `composeRight` operator.
+Digression: did you notice how I didn’t have to update `postArray` and `addPosts`? Point-free programming in OCaml is pretty neat, even without the `composeRight` operator.
 
 Anyway, here’s how tests should look now:
 
@@ -271,7 +271,7 @@ test("same paths get updated", () =>
 );
 ```
 
-Red, as expected. Let’s update the implementation. Which sounds like a job for a Map, which means we should update the `t` implementation and pretty much all the functions.
+Red, as expected. Let’s update the implementation. Our requirements sound like a job for a Map, which means we should update the `t` implementation and pretty much all the functions.
 
 ```reason
 open Belt;
@@ -295,18 +295,18 @@ let toArray = m =>
     );
 ```
 
-And with that, we’re more or less done.
+And with that, we’re green once again and more or less done.
 
-## Summary
+## Conclusion
 
-In the beginning we’ve asked ourselves if it’s possible to combine type-driven development and red-green-refactor-flavored _test_-driven development. And the short answer is that it is indeed possible to more or less do them both at once and do it iteratively.
+In the beginning, we’ve asked ourselves if it’s possible to combine type-driven development and red-green-refactor-flavored _test_-driven development. And the short answer is that it is indeed possible to do both at once and do it iteratively.
 
-Of course, the above is just one data point, and neither the types nor the implementation was too complicated, but in this particular example it seems the combined complexity of types and test cases is very manageable.
+Of course, the above is just one data point, and neither the types nor the implementation was too complicated. Still, in this particular example, it seems the combined complexity of types and test cases is very manageable.
 
-Here’s a few finer points:
+Here are a few finer points:
 
-1. You still do need unit tests even if you have types. E.g., you can’t encode sorting order in types (at least not in ML).
-2. It’s nice to be able to keep your red-green cycles short, but sometimes you still have to stop and think. That breaks your stride, yes, but I think the ability to stop and think when called for is as crucial for a programmer as the ability to pivot for an agile team.
-3. It pays to have a written spec, however brief, before you start coding. Were I to start writing my “specs” in tests, or even in types, it might take noticeably longer.
-
-Or maybe not.
+1. Even with types, you still need some unit tests. E.g., you can’t encode sorting order in types (at least not in ML).
+2. It’s nice to be able to keep your red-green cycles short, but sometimes it makes more sense to slow down. That breaks your stride, yes, but I think the ability to stop and think when called for is as crucial for a programmer as the ability to pivot for an agile team.
+3. It pays to have a written spec, however brief, before you start coding. Were we to start writing my “specs” in tests, or even in types, it might have taken noticeably more cycles.
+4. And by the way, with the helpers we wrote, it should be relatively easy to write property tests.
+5. But that is a story for another day.
