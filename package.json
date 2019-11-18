@@ -52,7 +52,7 @@
     "@types/mkpath": "^0.1.29",
     "@types/ramda": "^0.25.18",
     "browser-sync": "2.10.0",
-    "bs-platform": "^5.0.6",
+    "bs-platform": "6.2.1",
     "connect-modrewrite": "^0.8.2",
     "jest": "^24.7.1",
     "mock-fs": "^4.9.0",
