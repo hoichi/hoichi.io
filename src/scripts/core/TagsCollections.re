@@ -29,11 +29,15 @@ let add = (t, post: Post.t) =>
         t->Map.set(tag, feed->Collection.add(post));
       },
     );
-// todo: removal of an added tag
 
 let all = t =>
   t->Belt.Map.toList->Belt.List.map(((tag, feed)) => {tag, feed});
 
-// todo: latest is harder
+// todo: actual latest
 // keep some private `lastAdded`
-let latest = _ => [];
+let latest = all;
+
+/*
+   todo [later]
+     - removal of an added tag
+ */
