@@ -9,7 +9,7 @@ tags: [ Reason, types, tdd ]
 
 I know what type-driven development is (didn’t say I’ve mastered it). I sort of get what is test-driven development, or even [red-green-refactor](https://www.jamesshore.com/Blog/Red-Green-Refactor.html). But can you do both at the same time? If you start with types, is there anything left of the green-red-refactor cycle? Or does that mean you write your tests post factum?
 
-The type system I use for the experience is, by the way, ReasonML, which is basically another syntax for OCaml. Not that I think it matters all that much: I have more experience with TypeScript, but OCaml is probably a smaller language and its type system is, one feels, simpler. Overall, whether a cognitive load of doing OCaml types is bigger or smaller compared to TS, it’s not, one feels, by much.
+The typed language I use for the experiment is, by the way, ReasonML, which is basically another syntax for OCaml. Not that I think it matters much: I have more experience with TypeScript, but OCaml is seemingly a smaller language and its type system feels slightly simpler. Overall, whether a cognitive load of doing OCaml types is bigger or smaller compared to TS, it’s probably not by much. Or something.
 
 Spoiler: turns out doing both iteratively is easier than I thought, but it’s not always such an even-going process as the basic TDD examples would make you believe.
 
