@@ -4,13 +4,13 @@
 import { map, filter } from '@most/core';
 import { pipe } from 'ramda';
 
-import { observeSource } from './scripts/readSource';
+import { observeSource } from './scripts/_ts/readSource';
 import { parsePost, parseStaticPage } from './scripts/parsePage'
-import { getTemplates, renderPage } from './scripts/templates';
-import { write } from './scripts/writeToDest';
-import { collect } from './scripts/collection';
+import { getTemplates, renderPage } from './scripts/_ts/templates';
+import { write } from './scripts/_ts/writeToDest';
+import { collect } from './scripts/_ts/collection';
 import { SiteMeta } from './scripts/model';
-import { withLog } from './scripts/helpers';
+import { withLog } from './scripts/_ts/helpers';
 import  {setDefaultUrl } from "./scripts/utils/utils"
 
 const _ = require('lodash'),

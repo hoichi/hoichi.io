@@ -3,8 +3,8 @@ open Tablecloth;
 module ParsedSource = {
   type t = {
     rawMeta: Js.Json.t,
-    rawMarkup: Markup.t, /* Not validated, hence raw, in theory
-                            In practice, we don’t ever parse it so far */
+    rawMarkup: Markup.t, /* Not validated, hence raw, in theory.
+                            In practice, we don’t ever parse it so far. */
     source: SourceFile.t,
   };
 
@@ -25,7 +25,7 @@ module Meta = {
     title: string,
   };
 
-  let parse = json =>
+  let parseExn = json =>
     Json.Decode.{
       date:
         json
@@ -46,18 +46,19 @@ type t = {
   title: string,
   content: Markup.t,
   excerpt: Markup.t,
-  source: SourceFile.t,
+  id,
 }
 and meta = {
   date: Js.Date.t,
   published: bool,
   tags: list(string),
-};
+}
+and id = string;
 
 let fromSource = (sourceFile: SourceFile.t): t => {
   let {rawMarkup, rawMeta, source}: ParsedSource.t =
     ParsedSource.fromFile(sourceFile);
-  let meta = Meta.parse(rawMeta);
+  let meta = Meta.parseExn(rawMeta);
   let content = rawMarkup->Markup.map(~f=String.trim);
 
   {
@@ -78,6 +79,6 @@ let fromSource = (sourceFile: SourceFile.t): t => {
               ->Option.withDefault(~default="")
             ),
         ),
-    source,
+    id: source.path.full,
   };
 };

@@ -1,4 +1,6 @@
-module PostPage = Mock__PostPage;
+module PostTpl = Mock__PostTpl;
+module FeedTpl = Mock__FeedTpl;
+module RawContent = Mock__RawContent;
 
 module AnyOld = {
   let meta: Post.meta = {

@@ -10,7 +10,7 @@ type t = Map.t(string, Post.t, PostCmp.identity);
 
 let make = () => Map.make(~id=(module PostCmp));
 
-let add = (m, p: Post.t) => Belt.Map.set(m, p.source.path.full, p);
+let add = (m, p: Post.t) => Belt.Map.set(m, p.id, p);
 
 let toArray = m =>
   Map.valuesToArray(m)

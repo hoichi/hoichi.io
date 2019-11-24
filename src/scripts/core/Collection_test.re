@@ -6,8 +6,9 @@ open Expect;
  */
 module AnyOld = Mock.AnyOld;
 
-let makeSemiMockPost = ((fullPath, dateStr, tags)) =>
+let makeMockPost = ((id, dateStr, tags)) =>
   Post.{
+    id,
     meta: {
       ...AnyOld.meta,
       date: Js.Date.fromString(dateStr),
@@ -16,16 +17,9 @@ let makeSemiMockPost = ((fullPath, dateStr, tags)) =>
     title: "",
     content: Markup.Markdown(""),
     excerpt: Markup.Markdown(""),
-    source: {
-      ...AnyOld.source,
-      path: {
-        ...AnyOld.source.path,
-        full: fullPath,
-      },
-    },
   };
 
-let postsArray = Belt.Array.map(_, makeSemiMockPost);
+let postsArray = Belt.Array.map(_, makeMockPost);
 let addPosts = (c: Collection.t, posts) =>
   postsArray(posts)->Belt.Array.reduce(c, Collection.add);
 

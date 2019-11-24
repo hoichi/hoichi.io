@@ -1,41 +1,7 @@
 open Jest;
 
-let anyOldPath =
-  SourceFile.{
-    dir: "a/b/c",
-    name: "d",
-    ext: ".e",
-    dirs: ["a", "b", "c"],
-    full: "a/b/c/d.e",
-  };
-
-module RawContent = {
-  let noFm = "# H1\n\nWho needs the fm anyway.\n"->SourceFile.RawContent;
-
-  let coupleProps =
-    {|---
-foo: FOO
-bar: BAR
----
-
-Here comes the content
-|}
-    ->SourceFile.RawContent;
-
-  let fullMeta =
-    {|---
-date: '2019-06-01T20:38:01.155Z'
-exerpt: Upon the sign the challengers with shrieks and cries rush forth
-published: true
-tags: [foo, bar]
-title: The Sentinel
----
-
-Along deserted avenues
-The steam begins to rise
-|}
-    ->SourceFile.RawContent;
-};
+module AnyOld = Mock.AnyOld;
+module RawContent = Mock.RawContent;
 
 describe("ParsedSource", () => {
   let expectToEqual = (expected, received: Post.ParsedSource.t) => {
@@ -47,7 +13,7 @@ describe("ParsedSource", () => {
 
   test("fm with a couple of props", () =>
     Post.ParsedSource.(
-      fromFile({path: anyOldPath, rawContent: RawContent.coupleProps})
+      fromFile({path: AnyOld.source.path, rawContent: RawContent.coupleProps})
       |> expectToEqual((
            {|{"foo":"FOO","bar":"BAR"}|},
            "\nHere comes the content\n",
@@ -59,7 +25,7 @@ describe("ParsedSource", () => {
     let SourceFile.RawContent(contentString) = RawContent.noFm;
 
     Post.ParsedSource.(
-      fromFile({path: anyOldPath, rawContent: RawContent.noFm})
+      fromFile({path: AnyOld.source.path, rawContent: RawContent.noFm})
       |> expectToEqual(("{}", contentString))
     );
   });
@@ -69,7 +35,10 @@ describe("Article.fromSource", () => {
   test("no fm", () =>
     Expect.(
       expect(() =>
-        Post.fromSource({path: anyOldPath, rawContent: RawContent.noFm})
+        Post.fromSource({
+          path: AnyOld.source.path,
+          rawContent: RawContent.noFm,
+        })
       )
       |> toThrow
     )
@@ -78,20 +47,28 @@ describe("Article.fromSource", () => {
   test("some random meta", () =>
     Expect.(
       expect(() =>
-        Post.fromSource({path: anyOldPath, rawContent: RawContent.noFm})
+        Post.fromSource({
+          path: AnyOld.source.path,
+          rawContent: RawContent.noFm,
+        })
       )
       |> toThrow
     )
   );
 
   test("full meta", () => {
-    let source =
-      SourceFile.{path: anyOldPath, rawContent: RawContent.fullMeta};
+    let id = AnyOld.source.path.full;
 
     Expect.(
-      expect(Post.fromSource(source))
+      expect(
+        Post.fromSource({
+          path: AnyOld.source.path,
+          rawContent: RawContent.fullMeta,
+        }),
+      )
       |> toEqual(
            Post.{
+             id,
              meta: {
                date: Js.Date.fromString("2019-06-01T20:38:01.155Z"),
                published: true,
@@ -106,7 +83,6 @@ describe("Article.fromSource", () => {
                Markup.Markdown(
                  "Upon the sign the challengers with shrieks and cries rush forth",
                ),
-             source,
            },
          )
     );

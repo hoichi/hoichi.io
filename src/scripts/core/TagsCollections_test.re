@@ -7,7 +7,7 @@ open Expect;
 module AnyOld = Mock.AnyOld;
 
 let addSemiMock = (tc, tup) =>
-  TagsCollections.add(tc, Collection_test.makeSemiMockPost(tup));
+  TagsCollections.add(tc, Collection_test.makeMockPost(tup));
 
 // Map.toList guarantees an increasing order, so it’s ok to compare lists
 let toArrays =
@@ -17,7 +17,7 @@ let toArrays =
       feed
       ->Collection.toArray
       ->Belt.Array.map((p: Post.t) =>
-          (p.source.path.full, p.meta.date->Js.Date.toISOString, p.meta.tags)
+          (p.id, p.meta.date->Js.Date.toISOString, p.meta.tags)
         ),
     )
   );
