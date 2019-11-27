@@ -1,82 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Render a single post  1`] = `
+exports[`Render a blog feed 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <header>
         <h1>
-          Hello code!
+          blog
         </h1>
       </header>
       <main
         id="content"
       >
         <article>
-          <aside>
-            <div>
-              Jun 1, 2019
-            </div>
-            <div>
-              <a
-                href="/tag/hello"
-              >
-                #hello
-              </a>
-              <a
-                href="/tag/world"
-              >
-                #world
-              </a>
-            </div>
-          </aside>
-          <p>
-            What do you mean, other languages?
-          </p>
-          
-
-          <pre>
-            <code
-              class="hljs 0"
-              style="display: inline;"
+          <h2>
+            A Month Without Lunches!
+          </h2>
+          <div>
+            Jul 1, 2019
+          </div>
+          <div>
+            <a
+              href="/tag/learning"
             >
-              <span
-                class="hljs-built_in"
-              >
-                console
-              </span>
-              .log(
-              <span
-                class="hljs-number"
-              >
-                0.1
-              </span>
-               + 
-              <span
-                class="hljs-number"
-              >
-                0.2
-              </span>
-              );
-
-            </code>
-          </pre>
+              #learning
+            </a>
+            <a
+              href="/tag/lunches"
+            >
+              #lunches
+            </a>
+          </div>
+          <p>
+            I wasnât that hungry anyway
+          </p>
         </article>
-      </main>
-    </div>
-  </body>,
-  "container": <div>
-    <header>
-      <h1>
-        Hello code!
-      </h1>
-    </header>
-    <main
-      id="content"
-    >
-      <article>
-        <aside>
+        <article>
+          <h2>
+            Hello code!
+          </h2>
           <div>
             Jun 1, 2019
           </div>
@@ -92,38 +55,113 @@ Object {
               #world
             </a>
           </div>
-        </aside>
-        <p>
-          What do you mean, other languages?
-        </p>
-        
-
-        <pre>
-          <code
-            class="hljs 0"
-            style="display: inline;"
+          <p>
+            Are there other languages besides JavaScript?
+          </p>
+        </article>
+        <article>
+          <h2>
+            Had me before hello
+          </h2>
+          <div>
+            May 1, 2019
+          </div>
+          <div>
+            <a
+              href="/tag/hello"
+            >
+              #hello
+            </a>
+            <a
+              href="/tag/impending"
+            >
+              #impending
+            </a>
+          </div>
+          <p>
+            We were destined for each other, World
+          </p>
+        </article>
+      </main>
+    </div>
+  </body>,
+  "container": <div>
+    <header>
+      <h1>
+        blog
+      </h1>
+    </header>
+    <main
+      id="content"
+    >
+      <article>
+        <h2>
+          A Month Without Lunches!
+        </h2>
+        <div>
+          Jul 1, 2019
+        </div>
+        <div>
+          <a
+            href="/tag/learning"
           >
-            <span
-              class="hljs-built_in"
-            >
-              console
-            </span>
-            .log(
-            <span
-              class="hljs-number"
-            >
-              0.1
-            </span>
-             + 
-            <span
-              class="hljs-number"
-            >
-              0.2
-            </span>
-            );
-
-          </code>
-        </pre>
+            #learning
+          </a>
+          <a
+            href="/tag/lunches"
+          >
+            #lunches
+          </a>
+        </div>
+        <p>
+          I wasnât that hungry anyway
+        </p>
+      </article>
+      <article>
+        <h2>
+          Hello code!
+        </h2>
+        <div>
+          Jun 1, 2019
+        </div>
+        <div>
+          <a
+            href="/tag/hello"
+          >
+            #hello
+          </a>
+          <a
+            href="/tag/world"
+          >
+            #world
+          </a>
+        </div>
+        <p>
+          Are there other languages besides JavaScript?
+        </p>
+      </article>
+      <article>
+        <h2>
+          Had me before hello
+        </h2>
+        <div>
+          May 1, 2019
+        </div>
+        <div>
+          <a
+            href="/tag/hello"
+          >
+            #hello
+          </a>
+          <a
+            href="/tag/impending"
+          >
+            #impending
+          </a>
+        </div>
+        <p>
+          We were destined for each other, World
+        </p>
       </article>
     </main>
   </div>,
@@ -181,7 +219,7 @@ Object {
 }
 `;
 
-exports[`Rendering code blocks  1`] = `
+exports[`Render a single post 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body>

@@ -15,5 +15,5 @@ let add = (m, p: Post.t) => Belt.Map.set(m, p.id, p);
 let toArray = m =>
   Map.valuesToArray(m)
   ->SortArray.stableSortBy(_, (p1: Post.t, p2: Post.t) =>
-      Js.Date.(compare(p1.meta.date->getTime, p2.meta.date->getTime))
+      Js.Date.(compare(-. getTime(p1.meta.date), -. getTime(p2.meta.date)))
     );

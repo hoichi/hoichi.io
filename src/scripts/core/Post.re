@@ -8,6 +8,7 @@ type t = {
 and meta = {
   date: Js.Date.t,
   published: bool,
+  slug: string,
   tags: list(string),
 }
 and id = string;

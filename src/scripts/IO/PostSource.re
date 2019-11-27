@@ -24,14 +24,22 @@ let toPost = (sourceFile: SourceFile.t): Post.t => {
     ParsedSource.fromFile(sourceFile);
   let content = String.trim(rawMarkup);
 
+  let title = rawMeta |> Decode.(field("title", string));
+
   Decode.{
     id: source.path.full,
     meta: {
       date: rawMeta |> field("date", string) |> Js.Date.fromString,
       published: rawMeta |> (field("published", bool) |> withDefault(true)),
+      slug:
+        rawMeta
+        |> (
+          field("slug", string)
+          |> withDefault(title->Npm.slugify->Js.String2.toLowerCase)
+        ),
       tags: rawMeta |> field("tags", list(string)),
     },
-    title: rawMeta |> field("title", string),
+    title,
     content: Markup.Markdown(content),
     excerpt:
       rawMeta

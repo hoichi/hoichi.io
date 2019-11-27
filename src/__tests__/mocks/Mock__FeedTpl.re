@@ -7,7 +7,7 @@ let make = (~posts: array(Post.t), ~category: string) => {
     <header> <h1> {RR.string(category)} </h1> </header>
     <main id="content">
       {posts->U.renderArray(post =>
-         <article>
+         <article key={post.id}>
            <h2> {RR.string(post.title)} </h2>
            <div> {U.dateShort(post.meta.date)->RR.string} </div>
            <div>

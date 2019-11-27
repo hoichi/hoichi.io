@@ -44,6 +44,7 @@ describe("PostSource.toPost", () => {
              meta: {
                date: Js.Date.fromString("2019-06-01T20:38:01.155Z"),
                published: true,
+               slug: "the-sentinel",
                tags: ["foo", "bar"],
              },
              title: "The Sentinel",
