@@ -1,5 +1,12 @@
-// @import url(https://fonts.googleapis.com/css?family=Cousine);
-@import url(https://cdn.jsdelivr.net/font-hack/2.018/css/hack-extended.min.css);
+@font-face {
+  font-family: 'Iosevka Slab';
+  src:
+    url('/fonts/iosevka-slab-regular.woff2') format('woff2'),
+    url('/fonts/iosevka-slab-regular.woff') format('woff'),
+    url('/fonts/iosevka-slab-regular.ttf')  format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 /*
   @include-media breakpoints.
@@ -8,8 +15,8 @@
 */
 $breakpoints: (phone: 320px, tablet: 768px, desktop: 1024px);
 
-$font-family: (Hack, 'Courier New', Courier, monospace);
-$font-size: 15px;
+$font-family: ('Iosevka Slab', 'PT Mono', Consolas, monospace);
+$font-size: 16px;
 $line-height: $font-size*1.5;
 $l-pad: ($line-height - $font-size) / 2;
 
