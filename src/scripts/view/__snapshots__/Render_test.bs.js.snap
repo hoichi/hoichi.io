@@ -7,6 +7,67 @@ Object {
     <div>
       <header>
         <h1>
+          Hello code!
+        </h1>
+      </header>
+      <main
+        id="content"
+      >
+        <article>
+          <aside>
+            <div>
+              Jun 1, 2019
+            </div>
+            <div>
+              <a
+                href="/tag/hello"
+              >
+                #hello
+              </a>
+              <a
+                href="/tag/world"
+              >
+                #world
+              </a>
+            </div>
+          </aside>
+          <p>
+            What do you mean, other languages?
+          </p>
+          
+
+          <pre>
+            <code
+              class="hljs 0"
+              style="display: inline;"
+            >
+              <span
+                class="hljs-built_in"
+              >
+                console
+              </span>
+              .log(
+              <span
+                class="hljs-number"
+              >
+                0.1
+              </span>
+               + 
+              <span
+                class="hljs-number"
+              >
+                0.2
+              </span>
+              );
+
+            </code>
+          </pre>
+        </article>
+      </main>
+    </div>
+    <div>
+      <header>
+        <h1>
           blog
         </h1>
       </header>

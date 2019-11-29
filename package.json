@@ -66,7 +66,7 @@
     "build": "tsc && bsb -make-world && gulp",
     "clean": "rm -rf ./lib; rm -rf ./build",
     "rebuild": "rm -rf ./node_modules && yarn && yarn run clean && yarn build",
-    "test": "tsc && bsb -make-world && ./node_modules/.bin/jest"
+    "test": "bsb -make-world && ./node_modules/.bin/jest"
   },
   "jest": {
     "transform": {
