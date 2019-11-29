@@ -7,7 +7,7 @@ let make = (~siteTitle, ~pageTitle, ~category, ~content) => {
     <body>
       <PageHeader title=pageTitle category />
       <PageContent content />
-      <PageFooter />
+      <PageFooter humble=true />
     </body>
   </html>;
 };
