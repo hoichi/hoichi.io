@@ -160,7 +160,11 @@ gulp.task('static-img', () => {
   gulp.src('./files/img/**/*').pipe(gulp.dest('./build/img/'));
 });
 
-gulp.task('static', ['static-js', 'static-redirects', 'static-img']);
+gulp.task('static-fonts', () => {
+  gulp.src('./src/theme/fonts/*').pipe(gulp.dest('./build/fonts/'));
+});
+
+gulp.task('static', ['static-js', 'static-redirects', 'static-img', 'static-fonts']);
 
 gulp.task('sass:watch', function gtSassWatch() {
   gulp.watch('./src/theme/sass/**/*.scss', ['sass']);
