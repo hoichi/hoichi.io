@@ -15,6 +15,15 @@ type itemOptions = {
   "date": Js.Date.t,
 };
 
+let postedFirstBecause = [|
+  {js|, because home sweet home.|js},
+  {js|, because you can’t be too paranoid.|js},
+  {js|, but you’re welcome to read it anywhere.|js},
+  {js|. Not that it matters.|js},
+  {js|. DIY FTW!|js},
+  {js|, narcissist that I am.|js},
+|];
+
 class type _rssClass =
   [@bs]
   {
@@ -36,13 +45,21 @@ let render =
       "language": "en-US",
       "pubDate": siteUpdatedAt,
     });
-  posts->Belt.Array.forEach(post =>
+  posts->Belt.Array.forEach(post => {
+    let becauseIdx =
+      Js.Math.random_int(0, postedFirstBecause->Js.Array2.length);
+    let postedFirstDisclaimer =
+      "\n<hr />\n<p>Posted first at "
+      ++ "<a href=\"https://hoichi.io\">hoichi.io</a>"
+      ++ postedFirstBecause[becauseIdx]
+      ++ "</p>";
+
     feed##item({
       "title": post##title,
-      "description": post##content,
+      "description": post##content ++ postedFirstDisclaimer,
       "url": siteUrl ++ "/blog/" ++ post##slug,
       "date": post##date,
-    })
-  );
+    });
+  });
   feed##xml();
 };
