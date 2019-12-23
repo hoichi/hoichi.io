@@ -42,16 +42,15 @@ function collect(
     ...meta
   } = options;
 
-
   const idxFn =
     typeof collectBy === 'string'
-      ? pipe(always(collectBy), Array.of)
+      ? pipe(
+          always(collectBy),
+          Array.of,
+        )
       : collectBy;
 
-
-  const urlFn = typeof url === 'string'
-    ? always(url)
-    : url;
+  const urlFn = typeof url === 'string' ? always(url) : url;
 
   /**
    * Init the lists
@@ -70,7 +69,11 @@ function collect(
     chain(fromArray),
   )(pagesToCollect);
 
-  return mergeArray<Page>([pagesToCollect, pagesIgnored, collections]);
+  return mergeArray<ReadonlyArray<Stream<Page>>>([
+    pagesToCollect,
+    pagesIgnored,
+    collections,
+  ]);
 
   function addPage(post: Post): Collection[] {
     const result: Collection[] = [];
@@ -82,7 +85,7 @@ function collect(
 
     for (const idx of idxs) {
       let el = dic[idx];
-      const pre = prefill[idx] || {}
+      const pre = prefill[idx] || {};
 
       if (!el) {
         el = dic[idx] = [
