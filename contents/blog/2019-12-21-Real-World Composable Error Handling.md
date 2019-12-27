@@ -14,7 +14,7 @@ But how does it look in practice?
 
 ## The Experiment
 
-Let’s try and write a simple `useFetch`, a custom [ReasonReact hook](https://reasonml.github.io/reason-react/docs/en/components#hooks) that wraps [bs-fetch](https://github.com/reasonml-community/bs-fetch). Then we’ll use another dep, [decco](https://github.com/reasonml-labs/decco), for decoding. And — the whole purpose for this experiment — we’ll try to compose their errors.
+Let’s try and write a simple `useFetch`, a custom [ReasonReact hook](https://reasonml.github.io/reason-react/docs/en/components#hooks) that wraps [bs-fetch](https://github.com/reasonml-community/bs-fetch). Then we’ll use another dependency, for decoding. And — the whole purpose for this experiment — we’ll try to compose their errors.
 
 ## Using bs-fetch
 
@@ -66,7 +66,7 @@ let make = () => {
 
   Js.log(reposJson);
 
-  <h1> {ReasonReact.string("App")} </h1>;
+  ReasonReact.string("Fetching...");
 };
 ```
 
@@ -76,13 +76,13 @@ It does work, as in, it logs some JSON.
 
 Now let’s talk about error handling. Note how `fetchError` has only one variant because bs-fetch uses `Js.Promise.error` for everything, and `Js.Promise.error` is [opaque by design](https://reasonml.chat/t/how-do-i-allow-consumers-of-promise-catch-the-errors/136/4). The thing is, you can technically throw anything in JS, not just an exception. If that worries you, run before it gets worse: the upcoming React [Suspense for Data Fetching in React](https://reactjs.org/docs/concurrent-mode-suspense.html) is officially supposed to throw promises [by way of algebraic effects](https://overreacted.io/algebraic-effects-for-the-rest-of-us/)).
 
-So here’s one spanner in the works: opaque types in underlying libs. We sort of know that what bs-fetch happens to throw _are_ exceptions, so we could use magic to convert `Js.Promise.error`, and then extract the message, but even if we _were_ to parse error messages, what good is that? Parsing messages is heuristic and, therefore, brittle, and using them raw is only any good for technical purposes, like logging, not for anything user-facing.
+So here’s one spanner in the works: opaque types in underlying libs. We sort of know that what bs-fetch happens to throw _are_ exceptions, so we could use [magic](https://bucklescript.github.io/docs/en/intro-to-external.html#special-identity-external) to convert `Js.Promise.error`, and then extract the message, but even if we _were_ to parse error messages, what good is that? Parsing messages is heuristic and, therefore, brittle, and using them raw is only any good for technical purposes, like logging, not for anything user-facing.
 
-But speaking of logging, we didn’t fetch JSON to print it to console. Let’s decode.
+But speaking of logging, we didn’t fetch JSON just to dump it it to console. Let’s decode.
 
 ## Decoding
 
-Of all the Reason json decoders I know, decco is by far the most sugary, using ppx to create decoders from annotated type definitions. Here’s how it looks.
+Of all the Reason json decoders I know, [decco](https://github.com/reasonml-labs/decco) is by far the most sugary, using ppx to create decoders from annotated type definitions. Here’s how it looks.
 
 ```reason
 // GhRepo.re
@@ -121,7 +121,7 @@ let mapOk = (t, f) =>
 
 `UseFetch.mapOk` is similar to `Result.flatMap`: the function parameter that it takes can return either `Ok(data)` or `Error(error)`—exactly the signature of Decco decoders.
 
-Now let’s put it all together.
+All together now:
 
 ```reason
 // App.re
@@ -135,7 +135,7 @@ let make = () => {
       ->mapOk(r => GhRepo.t_decode(r)->Decode.mapDecodingError)
     );
 
-  <h1> {ReasonReact.string("App")} </h1>;
+  ReasonReact.string("Fetching...");
 };
 ```
 
@@ -145,7 +145,7 @@ But lo, an error.
 
 Immediately we get an error somewhere inside that `mapOk` call:
 
-```
+```log
   This has type:
     result(Js.Array.t(GhRepo.t), ([> `DecodeError(Decco.decodeError) ] as 'a))
       (defined as Belt_Result.t(Js.Array.t(GhRepo.t), 'a))
@@ -159,7 +159,7 @@ Immediately we get an error somewhere inside that `mapOk` call:
     Js.Json.t (defined as Js.Json.t)
 ```
 
-I won’t pretend I understood this error right off the bat, but neither will I burden you with the story of my googling. The culprit is the way that `UseFetch.mapOk` is defined: our decoding process yields decoded data and [a superset of] decoding error, but `mapOk` expects strictly `Js.Json.t` and `fetchError`. So we need to parametrize both, and we start by parametrizing `t`.
+I won’t pretend I understood this error right off the bat, but neither will I burden you with the story of my googling. The culprit is the way that `UseFetch.mapOk` is defined: our decoding process yields decoded data and a decoding error (typed as a superset of the same error), but `mapOk` expects strictly `Js.Json.t` and `fetchError`. So we need to parametrize both, and we start by parametrizing `UseFetch.t`.
 
 ```reason
 type t('d, 'e) =
@@ -179,9 +179,9 @@ let mapOk: 'a 'b 'e. (t('a, 'e), 'a => result('b, 'e)) => t('b, 'e) =
     };
 ```
 
-As you can see, there are two type parameters for data, “a` & “b`, because obviously, the mapping function converts data from one type to another (e.g., from JSON to a record). But the error type stays the same because unifying an error type is precisely what we’re after.
+As you can see, there are two type parameters for data, `'a` & `'b`, because obviously, the mapping function can, and usually will, convert data from one type to another (e.g., from JSON to a record). But the error type stays the same because unifying an error type is precisely what we’re after. And again, let me remind you we don’t actually have to spell out the `mapOk` type.
 
-And here we are, consuming the decoded result and the possible errors:
+Anyway, here we are, consuming the decoded result and the possible errors:
 
 ```reason
 [@react.component]
@@ -193,7 +193,7 @@ let make = () => {
     ->mapOk(r => GhRepo.t_decode(r)->Decode.mapDecodingError)
     ->(
         fun
-        | Fetching => ReasonReact.string("Loading...")
+        | Fetching => ReasonReact.string("Fetching...")
         | Complete(Ok(({items}: GhRepo.t))) =>
           <ul>
             {Belt.Array.map(items, ({fullName, htmlUrl}: GhRepo.repo) =>
@@ -204,9 +204,9 @@ let make = () => {
              ->React.array}
           </ul>
         | Complete(Error(`FetchError(_))) =>
-          <div> {ReasonReact.string("Fetch error!")} </div>
+          ReasonReact.string("Fetch error!")
         | Complete(Error(`DecodeError(_))) =>
-          <div> {ReasonReact.string("Decode error!")} </div>
+          ReasonReact.string("Decode error!")
       )
   );
 };
@@ -220,4 +220,4 @@ Firstly, out of 2 libs we’ve tried, neither used polymorphic variants, so we�
 
 Secondly, to make polymorphic variants extensible, you’re going to have to parametrize a few things here and there. But OCaml type inference being seriously impressive, that problem is very manageable; at least, you don’t have to be verbose to solve it.
 
-Is that all? Maybe that’s all. And ow, [here’s the repo](https://github.com/hoichi/rwceh) with the whole experiment.
+Is that all? Maybe that’s all. And ow, [here’s the repo](https://github.com/hoichi/rwceh) with the code.
