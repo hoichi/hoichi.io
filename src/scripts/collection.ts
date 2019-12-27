@@ -69,11 +69,7 @@ function collect(
     chain(fromArray),
   )(pagesToCollect);
 
-  return mergeArray<ReadonlyArray<Stream<Page>>>([
-    pagesToCollect,
-    pagesIgnored,
-    collections,
-  ]);
+  return mergeArray<Page>([pagesToCollect, pagesIgnored, collections]);
 
   function addPage(post: Post): Collection[] {
     const result: Collection[] = [];
