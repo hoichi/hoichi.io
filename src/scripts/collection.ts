@@ -42,16 +42,15 @@ function collect(
     ...meta
   } = options;
 
-
   const idxFn =
     typeof collectBy === 'string'
-      ? pipe(always(collectBy), Array.of)
+      ? pipe(
+          always(collectBy),
+          Array.of,
+        )
       : collectBy;
 
-
-  const urlFn = typeof url === 'string'
-    ? always(url)
-    : url;
+  const urlFn = typeof url === 'string' ? always(url) : url;
 
   /**
    * Init the lists
@@ -82,7 +81,7 @@ function collect(
 
     for (const idx of idxs) {
       let el = dic[idx];
-      const pre = prefill[idx] || {}
+      const pre = prefill[idx] || {};
 
       if (!el) {
         el = dic[idx] = [
