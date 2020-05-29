@@ -135,7 +135,7 @@ gulp.task('contents', async function gtContents(cb_t) {
 });
 
 gulp.task('sass', function gtSass() {
-  gulp
+  return gulp
     .src('./src/theme/sass/**/*.scss')
     .pipe(sourcemaps.init())
     .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
@@ -143,32 +143,30 @@ gulp.task('sass', function gtSass() {
     .pipe(gulp.dest('./build/css'));
 });
 
-gulp.task('static-js', function gtStaticJS() {
-  gulp.src('./src/theme/js/lib/*.js').pipe(gulp.dest('./build/js/'));
-});
+gulp.task(
+  'static-js',
+  () => gulp.src('./src/theme/js/lib/*.js').pipe(gulp.dest('./build/js/'))
+);
 
-gulp.task('static-redirects', function gtStaticRw() {
-  gulp.src('./src/theme/_redirects').pipe(gulp.dest('./build/ z')); // rewrite
-  // rules for netlify. for browserSync, see below.
-});
+// rewrite rules for netlify. for browserSync, see below.
+gulp.task(
+  'static-redirects',
+  () => gulp.src('./src/theme/_redirects').pipe(gulp.dest('./build/ z'))
+);
 
-gulp.task('static-img', () => {
-  gulp.src('./files/img/**/*').pipe(gulp.dest('./build/img/'));
-});
+gulp.task(
+  'static-img',
+  () => gulp.src('./files/img/**/*').pipe(gulp.dest('./build/img/'))
+);
 
-gulp.task('static-fonts', () => {
-  gulp.src('./src/theme/fonts/*').pipe(gulp.dest('./build/fonts/'));
-});
+gulp.task(
+  'static-fonts',
+  () => gulp.src('./src/theme/fonts/*').pipe(gulp.dest('./build/fonts/'))
+);
 
-gulp.task('static', ['static-js', 'static-redirects', 'static-img', 'static-fonts']);
+gulp.task('static', gulp.parallel('static-js', 'static-redirects', 'static-img', 'static-fonts'));
 
-gulp.task('sass:watch', function gtSassWatch() {
-  gulp.watch('./src/theme/sass/**/*.scss', ['sass']);
-});
-
-gulp.task('watch', ['sass:watch']);
-
-gulp.task('serve', ['watch'], function gtServe() {
+gulp.task('watch', function gtServe() {
   bSync.init({
     server: {
       baseDir: './build',
@@ -179,6 +177,8 @@ gulp.task('serve', ['watch'], function gtServe() {
       ]),
     ],
   });
+
+  gulp.watch('./src/theme/sass/**/*.scss', gulp.series('sass'));
 });
 
-gulp.task('default', ['static', 'sass', 'contents']);
+gulp.task('default', gulp.parallel('static', 'sass', 'contents'), cb => cb());
