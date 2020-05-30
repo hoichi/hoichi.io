@@ -145,7 +145,7 @@ But lo, an error.
 
 Immediately we get an error somewhere inside that `mapOk` call:
 
-```log
+```
   This has type:
     result(Js.Array.t(GhRepo.t), ([> `DecodeError(Decco.decodeError) ] as 'a))
       (defined as Belt_Result.t(Js.Array.t(GhRepo.t), 'a))
