@@ -216,8 +216,8 @@ let make = () => {
 
 So, all in all, composable error handling with real-world ReasonML libraries is quite possible, with a few caveats.
 
-Firstly, out of 2 libs we’ve tried, neither used polymorphic variants, so we’ve taken their own (non-discernible) errors and wrapped them in our polymorphic variants. Not very granular, but then the consuming code didn’t have to branch over a whole lot of variants. I imagine having a few dozens possible variants would bring its inconveniences as well.
+Firstly, out of 2 libs we’ve tried, neither used polymorphic variants, so we’ve taken their own (non-discernible) errors and wrapped them in our polymorphic variants. Not very granular, but then the consuming code didn’t have to branch over a whole lot of variants. I imagine having a few dozens possible variants would bring its inconveniences.
 
 Secondly, to make polymorphic variants extensible, you’re going to have to parametrize a few things here and there. But OCaml type inference being seriously impressive, that problem is very manageable; at least, you don’t have to be verbose to solve it.
 
-Is that all? Maybe that’s all. And ow, [here’s the repo](https://github.com/hoichi/rwceh) with the code.
+Is that all? Maybe that’s all. And oh, [here’s the repo](https://github.com/hoichi/rwceh).
