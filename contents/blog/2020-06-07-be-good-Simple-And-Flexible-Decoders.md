@@ -1,6 +1,7 @@
 ---
 title: "be-good: Simple and Flexible Data Decoders for TypeScript"
 date: 2020-06-04T11:53:00
+published: false
 slug: be-good-p1
 tags: [TypeScript, "decoders"]
 excerpt: This post is an introduction to both JSON decoders and my humble library of building blocks for them, called [`be-good`](https://github.com/hoichi/be-good).
