@@ -34,7 +34,7 @@ const RPComponent = (props: RenderProps<number>) => {
 <RPComponent kind="render" render={n => <i>{n}</i>} />
 ```
 
-Now, I’m fine with JS in templates (if you still call of JSX as of templates, and why not), but that unnecessary `kind` prop gets my goat.
+Now, I’m fine with JS in templates (if you still think of JSX as of templates, and why not), but that unnecessary `kind` prop gets my goat.
 
 So here’s a more compact solution:
 
