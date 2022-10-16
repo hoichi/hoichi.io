@@ -1,5 +1,5 @@
 import { Stream } from '@most/types';
-import { Collection, Page, Post } from './model';
+import {Collection, Page, Post, PostMeta} from './model';
 import { SortedList } from './sortedList';
 import { chain, map, mergeArray, multicast } from '@most/core';
 import { curry2 } from '@most/prelude';
@@ -10,12 +10,12 @@ import { exhaustiveCheck } from 'ts-exhaustive-check';
 import { split } from './helpers';
 
 interface CollectionOptions {
-  collectBy: ((p: Post) => string[]) | string;
-  sortBy?: <T>(p: Post) => T;
-  uniqueBy?: (p: Post) => string | number | symbol;
+  collectBy: ((p: Post & PostMeta) => string[]) | string;
+  sortBy?: <T>(p: Post & PostMeta) => T;
+  uniqueBy?: (p: Post & PostMeta) => string | number;
   prefill?: Dict<Partial<Collection>>;
   content?: string;
-  filter?: (p: Post) => boolean;
+  filter?: (p: Post & PostMeta) => boolean;
   limit?: number;
   template: string;
   url: ((c: Collection) => string) | string;
@@ -31,7 +31,7 @@ function collect(
    */
   let {
     collectBy,
-    sortBy = p => -(p.date || Date.now()),
+    sortBy = p => p.id,
     uniqueBy = p => p.id,
     prefill = {},
     content = '',
@@ -71,7 +71,7 @@ function collect(
 
   return mergeArray<Page>([pagesToCollect, pagesIgnored, collections]);
 
-  function addPage(post: Post): Collection[] {
+  function addPage(post: Post & PostMeta): Collection[] {
     const result: Collection[] = [];
 
     const idxs = idxFn(post);

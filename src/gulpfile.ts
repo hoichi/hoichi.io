@@ -1,11 +1,11 @@
 ///<reference path="../node_modules/@types/node/index.d.ts" />
-'use strict';
+('use strict');
 
 import { map, filter } from '@most/core';
 import { pipe } from 'ramda';
 
 import { observeSource } from './scripts/readSource';
-import {parsePost, parseStaticPage} from './scripts/parsePage'
+import { parsePost, parseStaticPage } from './scripts/parsePage';
 import { getTemplates, renderPage } from './scripts/templates';
 import { write } from './scripts/writeToDest';
 import { collect } from './scripts/collection';
@@ -15,10 +15,9 @@ import { withLog } from './scripts/helpers';
 const _ = require('lodash'),
   bSync = require('browser-sync').create(),
   fs = require('fs'),
-  gulp = require('gulp'),
+  { dest, parallel, series, src, task, watch } = require('gulp'),
   modRw = require('connect-modrewrite'),
   Path = require('path'),
-  sass = require('gulp-sass'),
   sourcemaps = require('gulp-sourcemaps'),
   u = require('./scripts/utils.js'),
   yaml = require('js-yaml');
@@ -34,7 +33,7 @@ const cfg = {
       extensions: 'md|mdown|markdown',
     },
     templates: 'theme/jade',
-    styles: 'theme/sass',
+    styles: 'theme/styles',
   },
   rootDir: __dirname,
   date_short: u.dateFormatter('en-US', {
@@ -44,14 +43,14 @@ const cfg = {
   }),
 };
 
-gulp.task('loadCfg', function gt_loadCfg(cb) {
+task('loadCfg', function gt_loadCfg(cb) {
   // just start with loading global stuff
   let rootCfg = yaml.safeLoad(fs.readFileSync('config.yaml', 'utf8'));
   _.merge(cfg, rootCfg);
   cb();
 });
 
-gulp.task('contents', async function gtContents(cb_t) {
+task('contents', async function gtContents(cb_t) {
   const tplCfg = {
     // todo: centralize config
     default: 'post',
@@ -76,10 +75,10 @@ gulp.task('contents', async function gtContents(cb_t) {
       map(parsePost),
       filter(({ title, published }) => published !== false), // hack
     )(
-      observeSource(
-        ['**/*', `!me.md`],
-        { cwd: Path.join(__dirname, 'contents') }
-    ));
+      observeSource(['**/*', `!me.md`], {
+        cwd: Path.join(__dirname, 'contents'),
+      }),
+    );
 
     // collect, render & write pages
     pipe(
@@ -88,7 +87,7 @@ gulp.task('contents', async function gtContents(cb_t) {
         filter: ({ category }) => category !== 'learning',
         template: 'blog',
         uniqueBy: ({ id }) => id,
-        url: ({ index }) => index === 'blog' ? '' : index,
+        url: ({ index }) => (index === 'blog' ? '' : index),
         // meta
         content: 'You won’t believe what this developer didn’t know',
         title: 'blog',
@@ -120,10 +119,7 @@ gulp.task('contents', async function gtContents(cb_t) {
       observeSource('*.md', { cwd: Path.join(__dirname, 'contents') }),
     );
 
-    pipe(
-      map(renderPage(tplDic, tplCfg, siteMeta)),
-      write('build'),
-    )(pages);
+    pipe(map(renderPage(tplDic, tplCfg, siteMeta)), write('build'))(pages);
 
     l(`Ready to roll`);
   } catch (err) {
@@ -134,39 +130,27 @@ gulp.task('contents', async function gtContents(cb_t) {
   }
 });
 
-gulp.task('sass', function gtSass() {
-  return gulp
-    .src('./src/theme/sass/**/*.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass({ outputStyle: 'compressed' }).on('error', sass.logError))
-    .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest('./build/css'));
-});
-
-gulp.task(
-  'static-js',
-  () => gulp.src('./src/theme/js/lib/*.js').pipe(gulp.dest('./build/js/'))
+task('static-js', () =>
+  src('./src/theme/js/lib/*.js').pipe(dest('./build/js/')),
 );
 
 // rewrite rules for netlify. for browserSync, see below.
-gulp.task(
-  'static-redirects',
-  () => gulp.src('./src/theme/_redirects').pipe(gulp.dest('./build/ z'))
+task('static-redirects', () =>
+  src('./src/theme/_redirects').pipe(dest('./build/ z')),
 );
 
-gulp.task(
-  'static-img',
-  () => gulp.src('./files/img/**/*').pipe(gulp.dest('./build/img/'))
+task('static-img', () => src('./files/img/**/*').pipe(dest('./build/img/')));
+
+task('static-fonts', () =>
+  src('./src/theme/fonts/*').pipe(dest('./build/fonts/')),
 );
 
-gulp.task(
-  'static-fonts',
-  () => gulp.src('./src/theme/fonts/*').pipe(gulp.dest('./build/fonts/'))
+task(
+  'static',
+  parallel('static-js', 'static-redirects', 'static-img', 'static-fonts'),
 );
 
-gulp.task('static', gulp.parallel('static-js', 'static-redirects', 'static-img', 'static-fonts'));
-
-gulp.task('watch', function gtServe() {
+task('watch', function gtServe() {
   bSync.init({
     server: {
       baseDir: './build',
@@ -177,8 +161,6 @@ gulp.task('watch', function gtServe() {
       ]),
     ],
   });
-
-  gulp.watch('./src/theme/sass/**/*.scss', gulp.series('sass'));
 });
 
-gulp.task('default', gulp.parallel('static', 'sass', 'contents'), cb => cb());
+task('default', parallel('static', 'contents'), (cb) => cb());

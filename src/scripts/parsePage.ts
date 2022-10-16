@@ -2,7 +2,7 @@ import * as fm from 'front-matter';
 import * as markdownIt from 'markdown-it';
 import * as prism from 'markdown-it-prism';
 
-import { Page, Post, SourceFile, StaticPage } from './model';
+import { Page, Post, PostMeta, SourceFile, StaticPage } from './model';
 import { extract1stHtmlParagraph, constructPageUrl } from './utils';
 import slugify from 'slugify';
 
@@ -22,13 +22,12 @@ function parseSource(page: SourceFile) {
 
   return {
     content: md.render(body),
-    meta: attributes,
-    path
-  }
-
+    meta: attributes as object,
+    path,
+  };
 }
 
-function parsePost(page: SourceFile): Post {
+function parsePost(page: SourceFile): Post & PostMeta {
   const { path, content, meta } = parseSource(page);
 
   const result = {
@@ -48,7 +47,7 @@ function parsePost(page: SourceFile): Post {
     // not too lazy, yes
     ...meta,
 
-    tags: (meta['tags'] || []).map(tag => ({
+    tags: (meta['tags'] || []).map((tag) => ({
       title: tag,
       slug: slugify(tag),
     })),
@@ -74,8 +73,7 @@ function parseStaticPage(page: SourceFile): StaticPage {
     template: 'single',
     ...meta,
     url: constructPageUrl({ ...page, ...meta }),
-  }
+  };
 }
-
 
 export { parsePost, parseStaticPage };

@@ -19,12 +19,12 @@ type SortValue = string | number;
 export type SortIteratee = (el: any) => SortValue;
 
 /*
-* What does it do
-* - adds value
-* - sorts values on demand
-* - reports length
-* - returns all
-* */
+ * What does it do
+ * - adds value
+ * - sorts values on demand
+ * - reports length
+ * - returns all
+ * */
 
 export function SortedList<T>(options: SLOptions<T>): SortedList<T> {
   const _dic = Object.create(null);
@@ -33,8 +33,8 @@ export function SortedList<T>(options: SLOptions<T>): SortedList<T> {
   /* options defaults */
   let _options = {
     debug: false,
-    index: options.index || (el => el.toString()),
-    sort: options.sort || options.index || (el => el.toString()),
+    index: options.index || ((el) => el.toString()),
+    sort: options.sort || options.index || ((el) => el.toString()),
     ...options,
   };
 
@@ -58,7 +58,10 @@ export function SortedList<T>(options: SLOptions<T>): SortedList<T> {
    * @returns {ReadonlyArray<T>}
    */
   function _sort() {
-    _list = sortBy(_options.sort, Object.keys(_dic).map(k => _dic[k]));
+    _list = sortBy(
+      _options.sort,
+      Object.keys(_dic).map((k) => _dic[k]),
+    );
   }
 
   let api: SortedList<T> = {

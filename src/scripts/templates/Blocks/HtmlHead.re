@@ -11,7 +11,7 @@ let make = (~title) => {
 	  technologies involved and problems solved."
     />
     <meta name="viewport" content="width=device-width initial-scale=1" />
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/styles.css" />
     <link rel="alternate" type_="application/rss+xml" href="/feed.xml" />
     <script src="/js/vendor/modernizr-2.8.3.min.js" />
   </head>;

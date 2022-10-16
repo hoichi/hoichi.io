@@ -1,0 +1,45 @@
+@include './palette.css'
+
+@font-face {
+  font-family: 'Iosevka Slab';
+  src:
+    url('/fonts/iosevka-slab-regular.woff2') format('woff2'),
+    url('/fonts/iosevka-slab-regular.woff') format('woff'),
+    url('/fonts/iosevka-slab-regular.ttf')  format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*
+  @include-media breakpoints.
+  Those are the defaults, actually, but let's be explicit:
+    we'll be using those three keys for all our responsive settings.
+*/
+/* $breakpoints: (phone: 320px, tablet: 768px, desktop: 1024px); */
+@custom-media --tablet-or-more (min-width: 768px);
+@custom-media --tablet-only (max-width: 768px) and (min-width: 320px);
+@custom-media --phone-or-less (max-width: 320px);
+
+:root {
+  --font-family: 'Iosevka Slab', 'PT Mono', Consolas, monospace;
+  --base-font-size: 16px;
+  --base-line-height: calc(var(--base-font-size) * 1.5);
+  --base-line-padding: calc(
+    (var(--base-line-height) - var(--base-font-size))
+    / 2
+  );
+
+  /* colors */
+  --color-obsidian: #192124;
+
+  --root-color: --color-secondary-1-3;
+  --root-bg-color: --color-obsidian;
+
+  --hdr-color: --color-primary-4;
+  --hdr-link-color: --color-primary-3;
+  --hdr-link-active-color: --color-primary-0;
+  --hdr-meta-color:
+    hsl(from var(--color-primary-4) h calc(s - 6%) calc(l - 6%));
+  --page-meta-color: --color-secondary-1-4;
+}
+

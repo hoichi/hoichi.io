@@ -1,6 +1,12 @@
 {
   "name": "hoichi.io",
   "private": true,
+  "scripts": {
+    "build": "tsc && bsb -make-world && gulp && yarn run build:css",
+    "build:css": "lightningcss --custom-media --minify --nesting --bundle -o build/styles.css src/theme/styles/styles.css",
+    "clean": "rm -rf ./lib; rm -rf ./build",
+    "rebuild": "rm -rf ./node_modules && yarn && yarn run clean && yarn build"
+  },
   "dependencies": {
     "@most/core": "^1.2.3",
     "@most/dom-event": "^2.0.0",
@@ -14,7 +20,6 @@
     "front-matter": "^2.2.0",
     "graceful-fs": "^4.1.11",
     "gulp": "^4.0.2",
-    "gulp-sass": "3.1.0",
     "gulp-sourcemaps": "^2.6.1",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.21",
@@ -39,6 +44,7 @@
     "@most/types": "^1.0.0",
     "@types/chokidar": "^1.7.5",
     "@types/core-js": "^2.5.0",
+    "@types/gulp": "^4.0.9",
     "@types/jest": "^23.3.1",
     "@types/mkpath": "^0.1.29",
     "@types/ramda": "^0.25.18",
@@ -46,15 +52,11 @@
     "bs-platform": "^7.3.2",
     "connect-modrewrite": "^0.8.2",
     "jest": "^23.4.2",
+    "lightningcss-cli": "^1.16.0",
     "mock-fs": "^4.4.1",
     "ts-jest": "^23.0.1",
     "ts-node": "^7.0.0",
-    "typescript": "^2.8.3"
-  },
-  "scripts": {
-    "build": "tsc && bsb -make-world && gulp",
-    "clean": "rm -rf ./lib; rm -rf ./build",
-    "rebuild": "rm -rf ./node_modules && yarn && yarn run clean && yarn build"
+    "typescript": "^4.8.4"
   },
   "jest": {
     "transform": {

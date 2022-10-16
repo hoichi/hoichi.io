@@ -1,13 +1,12 @@
 // built into TypeScript 2.9
-import {SourceFile} from "./file"
-
+import { SourceFile } from './file';
 
 type Page = Post | Collection | StaticPage;
 
 /**
  * Full-blown page, with metadata and content probably converted to html
  */
-interface Post extends PostMeta {
+interface Post {
   kind: 'post';
   id: PropertyKey;
   source?: SourceFile;
@@ -32,7 +31,7 @@ interface StaticPage {
   url: string; // relative to site root
 }
 
-interface PostMeta {
+export interface PostMeta {
   title: string;
   date: Date;
 
@@ -47,7 +46,7 @@ interface PostMeta {
   // [k: string]: any;
 }
 
-type PropertyKey = string | number | symbol;
+type PropertyKey = string | number;
 
 interface Tag {
   title: string;

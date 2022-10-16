@@ -1,0 +1,29 @@
+/*  Palette color codes
+    Palette URL: http://paletton.com/#uid=70i0A0kwi++bu++hX++++rd++kX
+    Feel free to copy&paste color codes to your application */
+
+:root {
+  --color-primary-0: #FF5300;	/* Main Primary color */
+  --color-primary-1: #FFC1A4;
+  --color-primary-2: #FF9E70;
+  --color-primary-3: #D94600;
+  --color-primary-4: #A73600;
+
+  --color-secondary-1-0: #FFA200;	/* Main Secondary color (1) */
+  --color-secondary-1-1: #FFDEA4;
+  --color-secondary-1-2: #FFCB70;
+  --color-secondary-1-3: #D98A00;
+  --color-secondary-1-4: #A76A00;
+
+  --color-secondary-2-0: #1771FF;	/* Main Secondary color (2) */
+  --color-secondary-2-1: #ACCCFF;
+  --color-secondary-2-2: #7DAFFF;
+  --color-secondary-2-3: #00378F;
+  --color-secondary-2-4: #002B6E;
+
+  --color-complement-0: #00FFA5;	/* Main Complement color */
+  --color-complement-1: #A4FFDF;
+  --color-complement-2: #70FFCD;
+  --color-complement-3: #00915E;
+  --color-complement-4: #007048;
+}
