@@ -1,5 +1,4 @@
 ---
-permalink: false
 title: Look Ma, No Comments!
 date: 2016-01-09
 slug: look-ma-no-comments

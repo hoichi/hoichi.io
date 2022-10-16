@@ -1,5 +1,4 @@
 ---
-permalink: false
 title: "Pipes are Fast but We Are Faster"
 date: 2018-11-15T11:53:00
 slug: fast-and-faster

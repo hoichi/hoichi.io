@@ -1,4 +1,0 @@
-# Netlify rewrite rules
-# see https://www.netlify.com/docs/redirects
-/feed       /feed.xml
-/feed/      /feed.xml

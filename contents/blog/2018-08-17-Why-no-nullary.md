@@ -1,5 +1,4 @@
 ---
-permalink: false
 title: "TIL: Why ReasonML Has No Nullary Functions"
 date: 2018-08-17
 slug: why-no-nullary

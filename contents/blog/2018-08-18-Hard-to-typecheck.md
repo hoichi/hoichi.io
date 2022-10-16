@@ -1,5 +1,4 @@
 ---
-permalink: false
 title: "Types vs clever code"
 date: 2018-08-18T14:30:00
 slug: hard to typecheck

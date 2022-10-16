@@ -1,5 +1,4 @@
 ---
-permalink: false
 title: "Tail-optimized functions in ReasonML"
 date: 2018-09-15T11:30:00
 slug: ptc-in-reason

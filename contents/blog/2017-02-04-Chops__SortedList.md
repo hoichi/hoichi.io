@@ -1,5 +1,4 @@
 ---
-permalink: false
 title: Sorting Lists, Testing Units
 date: 2016-02-04
 slug: sorting-lists-testing-units

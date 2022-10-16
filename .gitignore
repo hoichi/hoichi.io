@@ -1,37 +1,9 @@
-# Created by https://www.gitignore.io/api/webstorm,node,sass
-
-## Project files
-.idea/
-
-### Node ###
-# Logs
-logs
-*.log
-npm-debug.log*
-
-# libraries
-/lib/bs/
-/node_modules
-
-### generated files ###
-build/
-/gulpfile.js.map
-/gulpfile.js
-/scripts/
-/**/*.bs.js
-
-# temporary files
+!.env.example
 .DS_Store
-.merlin
-.bsb.lock
-npm-debug.log
-
-### Sass ###
-.sass-cache/
-*.css.map
-
-### incoming stuff dir ###
-.in/
-
-### iMDone ###
-.imdone/
+.env
+.env.*
+.idea/
+/.svelte-kit
+/build
+/package
+node_modules
