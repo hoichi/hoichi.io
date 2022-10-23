@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "build": "tsc && bsb -make-world && gulp && yarn run build:css",
-    "build:css": "lightningcss --custom-media --minify --nesting --bundle -o build/styles.css src/theme/styles/styles.css",
+    "build:css": "lightningcss --custom-media --nesting --bundle --targets='>= 0.25%' --minify -o build/styles.css src/theme/styles/styles.css",
+    "watch:css": "watchexec -e css,pcss -- 'lightningcss --custom-media --nesting --bundle --targets=\">= 0.25%\" -o build/styles.css src/theme/styles/styles.css'",
     "clean": "rm -rf ./lib; rm -rf ./build",
     "rebuild": "rm -rf ./node_modules && yarn && yarn run clean && yarn build"
   },

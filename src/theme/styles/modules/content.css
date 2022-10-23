@@ -1,3 +1,5 @@
+@import '../globals/palette.css';
+
 .b-Content {
   width: 80%;
   max-width: 700px;
@@ -10,28 +12,27 @@
 }
 
 .b-post {
-  margin-bottom: $line-height * 2;
+  margin-bottom: calc(var(--base-line-height) * 2);
 }
 
 .b-post__header {
-  @include media('>=tablet') {
+  @media (--tablet-or-more) {
     margin-left: -13ch;
   }
 }
 
 .b-post__date {
-  @include media('>=tablet') {
+  width: 12ch;
+  /*color: var(--hdr-meta-color);*/
+
+  @media (--tablet-or-more) {
     display: inline-block;
     text-align: right;
   }
-
-  width: 12ch;
-
-  color: $hdr-meta-color;
 }
 
 .b-post__title {
-  @include media('>=tablet') {
+  @media (--tablet-or-more) {
     display: inline-block;
   }
 }
@@ -46,26 +47,30 @@
   }
 }
 
+/*
 .b-post__tag:not(last-of-type) {
   margin-right: 1ch;
 }
+*/
 
 .Content {
-  p, pre, ul, ol {
-    margin-bottom: $line-height;
+  & p, & pre, & ul, & ol {
+    margin-bottom: var(--base-line-height);
   }
 
-  ul {
+  & ul {
     list-style-type: none;
 
-    li {
+    & li {
+      text-indent: -2ch;
+
+      /*
       &::before {
         content: '- ';
       }
+      */
 
-      text-indent: -2ch;
-
-      ul {
+      & ul {
         margin-left: 4ch;
         margin-bottom: 0;
       }
@@ -74,6 +79,7 @@
 }
 
 article {
+  /*
   @mixin hashed-header($level) {
     // prepend the header text with $level*hash signs (plus one space)
     $prefix: ' ';
@@ -107,6 +113,7 @@ article {
       @include hashed-header($i)
     }
   }
+  */
 }
 
 .b-Content__meta {
@@ -114,7 +121,7 @@ article {
   flex-direction: row;
   justify-content: space-between;
 
-  margin-bottom: $line-height;
+  margin-bottom: var(--base-line-height);
 }
 
 .b-Content__meta-date {
@@ -123,11 +130,11 @@ article {
 
 .b-Content__meta-tags a {
   text-align: right;
-  color: $page-meta-color;
+  color: var(--page-meta-color);
 
   &:hover,
   &:focus,
   &:active {
-    color: $hdr-link-active-color;
+    color: var(--hdr-link-active-color);
   }
 }
